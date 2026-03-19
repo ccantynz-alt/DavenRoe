@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
-    ai, banking, entities, forensic, specialists, tax, toolkit, transactions,
+    agentic, ai, banking, entities, forensic, specialists, tax, toolkit, transactions,
     reports, clients, documents, multicurrency, auditlog,
     permissions_routes, notifications_routes, integrations,
     messaging, scheduling, integrations_hub,
@@ -50,6 +50,7 @@ app.include_router(forensic.router, prefix="/api/v1")
 app.include_router(banking.router, prefix="/api/v1")
 app.include_router(specialists.router, prefix="/api/v1")
 app.include_router(toolkit.router, prefix="/api/v1")
+app.include_router(agentic.router, prefix="/api/v1")
 
 # Platform Features
 app.include_router(reports.router, prefix="/api/v1")
@@ -79,6 +80,12 @@ async def root():
             "autonomous_ledger": "AI-drafted double-entry with human review workflow",
             "simple_speak": "Natural language queries and financial narratives",
             "audit_shield": "Real-time risk scoring and continuous audit",
+        },
+        "agentic_ai": {
+            "orchestrator": "Natural language → multi-agent dispatch and execution",
+            "month_end_close": "Autonomous close: reconcile, adjust, report, narrate in minutes",
+            "cash_flow_forecaster": "13-week rolling forecast with receivables risk scoring",
+            "compliance_monitor": "Real-time regulatory monitoring across US, AU, NZ, GB",
         },
         "collaboration": {
             "messaging": "Secure team chat, client portal, tax authority correspondence tracking",

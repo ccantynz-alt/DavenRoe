@@ -10,6 +10,7 @@ const nav = [
   { path: '/specialists', label: 'Specialist Tools', icon: '*' },
   { path: '/toolkit', label: 'Toolkit', icon: '#' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
+  { path: '/agentic', label: 'Agentic AI', icon: '&' },
 ];
 
 export default function Layout({ children }) {
@@ -56,7 +57,7 @@ export default function Layout({ children }) {
         </div>
 
         <div className="p-4 border-t border-gray-800 text-xs text-gray-500">
-          Phase 1 — The Brain
+          Phase 2 — Agentic AI
         </div>
       </aside>
 
