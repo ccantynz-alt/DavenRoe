@@ -6,7 +6,7 @@ Main FastAPI application entry point.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import ai, banking, entities, forensic, specialists, tax, transactions
+from app.api.routes import ai, banking, entities, forensic, specialists, tax, toolkit, transactions
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
 
@@ -43,6 +43,7 @@ app.include_router(ai.router, prefix="/api/v1")
 app.include_router(forensic.router, prefix="/api/v1")
 app.include_router(banking.router, prefix="/api/v1")
 app.include_router(specialists.router, prefix="/api/v1")
+app.include_router(toolkit.router, prefix="/api/v1")
 
 
 @app.get("/")
@@ -60,6 +61,7 @@ async def root():
         "add_ons": {
             "forensic_accounting": "M&A Due Diligence — Benford's Law, anomaly detection, vendor/payroll cross-ref",
             "specialist_toolkits": "12 accounting specializations, 90+ automations",
+            "universal_toolkit": "Calculators, validators, reconciliation, reference — everyday tools for every user",
         },
     }
 

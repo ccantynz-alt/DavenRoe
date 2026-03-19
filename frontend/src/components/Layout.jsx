@@ -6,6 +6,7 @@ const nav = [
   { path: '/review', label: 'Review Queue', icon: '>' },
   { path: '/tax', label: 'Tax Engine', icon: '$' },
   { path: '/specialists', label: 'Specialist Tools', icon: '*' },
+  { path: '/toolkit', label: 'Toolkit', icon: '#' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
 ];
 
