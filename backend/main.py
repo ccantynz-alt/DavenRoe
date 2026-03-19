@@ -6,8 +6,9 @@ Main FastAPI application entry point.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import ai, entities, forensic, tax, transactions
+from app.api.routes import ai, banking, entities, forensic, tax, transactions
 from app.core.config import get_settings
+from app.legal.middleware import LegalHeadersMiddleware
 
 settings = get_settings()
 
@@ -21,6 +22,9 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
 )
+
+# Legal compliance headers on every response
+app.add_middleware(LegalHeadersMiddleware)
 
 # CORS
 app.add_middleware(
@@ -37,6 +41,7 @@ app.include_router(transactions.router, prefix="/api/v1")
 app.include_router(tax.router, prefix="/api/v1")
 app.include_router(ai.router, prefix="/api/v1")
 app.include_router(forensic.router, prefix="/api/v1")
+app.include_router(banking.router, prefix="/api/v1")
 
 
 @app.get("/")
