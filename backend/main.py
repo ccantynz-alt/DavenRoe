@@ -6,7 +6,11 @@ Main FastAPI application entry point.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import ai, banking, entities, forensic, specialists, tax, toolkit, transactions
+from app.api.routes import (
+    ai, banking, entities, forensic, specialists, tax, toolkit, transactions,
+    reports, clients, documents, multicurrency, auditlog,
+    permissions_routes, notifications_routes, integrations,
+)
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
 
@@ -35,7 +39,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routes
+# Core Routes
 app.include_router(entities.router, prefix="/api/v1")
 app.include_router(transactions.router, prefix="/api/v1")
 app.include_router(tax.router, prefix="/api/v1")
@@ -44,6 +48,16 @@ app.include_router(forensic.router, prefix="/api/v1")
 app.include_router(banking.router, prefix="/api/v1")
 app.include_router(specialists.router, prefix="/api/v1")
 app.include_router(toolkit.router, prefix="/api/v1")
+
+# Platform Features
+app.include_router(reports.router, prefix="/api/v1")
+app.include_router(clients.router, prefix="/api/v1")
+app.include_router(documents.router, prefix="/api/v1")
+app.include_router(multicurrency.router, prefix="/api/v1")
+app.include_router(auditlog.router, prefix="/api/v1")
+app.include_router(permissions_routes.router, prefix="/api/v1")
+app.include_router(notifications_routes.router, prefix="/api/v1")
+app.include_router(integrations.router, prefix="/api/v1")
 
 
 @app.get("/")
@@ -57,6 +71,16 @@ async def root():
             "autonomous_ledger": "AI-drafted double-entry with human review workflow",
             "simple_speak": "Natural language queries and financial narratives",
             "audit_shield": "Real-time risk scoring and continuous audit",
+        },
+        "platform": {
+            "reporting": "P&L, Balance Sheet, Trial Balance, Cash Flow, GL, Aged AR/AP",
+            "client_management": "Multi-entity management with groups and consolidated reporting",
+            "documents": "Upload, OCR, link to transactions, retention tracking",
+            "multi_currency": "Foreign currency ledger with realized/unrealized FX gains",
+            "audit_trail": "Immutable hash-chain audit log for every change",
+            "permissions": "Role-based access: Partner, Manager, Senior, Bookkeeper, Client",
+            "notifications": "Deadline alerts, review reminders, anomaly warnings",
+            "integrations": "Import/export: Xero, QuickBooks, MYOB, Sage, FreshBooks, CSV",
         },
         "add_ons": {
             "forensic_accounting": "M&A Due Diligence — Benford's Law, anomaly detection, vendor/payroll cross-ref",

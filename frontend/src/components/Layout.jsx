@@ -3,7 +3,9 @@ import { clsx } from 'clsx';
 
 const nav = [
   { path: '/', label: 'Dashboard', icon: '~' },
+  { path: '/clients', label: 'Clients', icon: '@' },
   { path: '/review', label: 'Review Queue', icon: '>' },
+  { path: '/reports', label: 'Reports', icon: '=' },
   { path: '/tax', label: 'Tax Engine', icon: '$' },
   { path: '/specialists', label: 'Specialist Tools', icon: '*' },
   { path: '/toolkit', label: 'Toolkit', icon: '#' },
