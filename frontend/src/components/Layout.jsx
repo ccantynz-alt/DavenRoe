@@ -36,6 +36,21 @@ export default function Layout({ children }) {
             </Link>
           ))}
         </nav>
+
+        {/* Forensic Add-on */}
+        <div className="px-4 pb-2">
+          <p className="text-[10px] uppercase tracking-wider text-gray-600 mb-2 px-3">Add-ons</p>
+          <a
+            href="http://localhost:3001"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-pink-400 hover:bg-gray-800 transition-colors"
+          >
+            <span className="text-lg font-mono">!</span>
+            Forensic / M&A
+          </a>
+        </div>
+
         <div className="p-4 border-t border-gray-800 text-xs text-gray-500">
           Phase 1 — The Brain
         </div>
