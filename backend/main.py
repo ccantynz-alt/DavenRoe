@@ -11,6 +11,7 @@ from app.api.routes import (
     reports, clients, documents, multicurrency, auditlog,
     permissions_routes, notifications_routes, integrations,
     messaging, scheduling, integrations_hub,
+    inventory, invoicing, marketplace,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -62,6 +63,9 @@ app.include_router(integrations.router, prefix="/api/v1")
 app.include_router(messaging.router, prefix="/api/v1")
 app.include_router(scheduling.router, prefix="/api/v1")
 app.include_router(integrations_hub.router, prefix="/api/v1")
+app.include_router(inventory.router, prefix="/api/v1")
+app.include_router(invoicing.router, prefix="/api/v1")
+app.include_router(marketplace.router, prefix="/api/v1")
 
 
 @app.get("/")
