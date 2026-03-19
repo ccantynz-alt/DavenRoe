@@ -30,4 +30,14 @@ export const askAstra = (query) => api.post('/ai/query', { query });
 export const categorizeTransaction = (data) => api.post('/ai/categorize', data);
 export const generateNarrative = (data) => api.post('/ai/narrative', data);
 
+// Agentic AI
+export const orchestrate = (request, entityId, context) =>
+  api.post('/agentic/orchestrate', { request, entity_id: entityId, context });
+export const runAutomation = (process, params) =>
+  api.post(`/agentic/automate/${process}`, params);
+export const getAgentStatus = () => api.get('/agentic/agents/status');
+export const runMonthEndClose = (data) => api.post('/agentic/close/run', data);
+export const generateCashForecast = (data) => api.post('/agentic/forecast', data);
+export const checkCompliance = (data) => api.post('/agentic/compliance/check', data);
+
 export default api;

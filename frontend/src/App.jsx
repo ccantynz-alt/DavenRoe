@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import ReviewQueue from './pages/ReviewQueue';
 import TaxEngine from './pages/TaxEngine';
 import AskAstra from './pages/AskAstra';
+import AgenticDashboard from './pages/AgenticDashboard';
 import Specialists from './pages/Specialists';
 import Toolkit from './pages/Toolkit';
 import Reports from './pages/Reports';
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/specialists" element={<Specialists />} />
         <Route path="/toolkit" element={<Toolkit />} />
         <Route path="/ask" element={<AskAstra />} />
+        <Route path="/agentic" element={<AgenticDashboard />} />
       </Routes>
     </Layout>
   );
