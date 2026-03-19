@@ -5,6 +5,7 @@ const nav = [
   { path: '/', label: 'Dashboard', icon: '~' },
   { path: '/review', label: 'Review Queue', icon: '>' },
   { path: '/tax', label: 'Tax Engine', icon: '$' },
+  { path: '/specialists', label: 'Specialist Tools', icon: '*' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
 ];
 

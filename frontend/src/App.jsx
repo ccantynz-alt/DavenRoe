@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import ReviewQueue from './pages/ReviewQueue';
 import TaxEngine from './pages/TaxEngine';
 import AskAstra from './pages/AskAstra';
+import Specialists from './pages/Specialists';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/review" element={<ReviewQueue />} />
         <Route path="/tax" element={<TaxEngine />} />
+        <Route path="/specialists" element={<Specialists />} />
         <Route path="/ask" element={<AskAstra />} />
       </Routes>
     </Layout>
