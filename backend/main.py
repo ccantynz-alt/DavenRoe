@@ -10,6 +10,7 @@ from app.api.routes import (
     ai, banking, entities, forensic, specialists, tax, toolkit, transactions,
     reports, clients, documents, multicurrency, auditlog,
     permissions_routes, notifications_routes, integrations,
+    messaging, scheduling, integrations_hub,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -58,6 +59,9 @@ app.include_router(auditlog.router, prefix="/api/v1")
 app.include_router(permissions_routes.router, prefix="/api/v1")
 app.include_router(notifications_routes.router, prefix="/api/v1")
 app.include_router(integrations.router, prefix="/api/v1")
+app.include_router(messaging.router, prefix="/api/v1")
+app.include_router(scheduling.router, prefix="/api/v1")
+app.include_router(integrations_hub.router, prefix="/api/v1")
 
 
 @app.get("/")
@@ -71,6 +75,11 @@ async def root():
             "autonomous_ledger": "AI-drafted double-entry with human review workflow",
             "simple_speak": "Natural language queries and financial narratives",
             "audit_shield": "Real-time risk scoring and continuous audit",
+        },
+        "collaboration": {
+            "messaging": "Secure team chat, client portal, tax authority correspondence tracking",
+            "scheduling": "Appointment booking with ICS calendar invites, availability management",
+            "integrations_hub": "28 integrations — Zoom, Teams, DocuSign, ATO, IRS, Xero, Stripe, Karbon",
         },
         "platform": {
             "reporting": "P&L, Balance Sheet, Trial Balance, Cash Flow, GL, Aged AR/AP",
