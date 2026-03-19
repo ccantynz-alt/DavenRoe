@@ -1,0 +1,89 @@
+import { useState, useEffect } from 'react';
+
+export default function Dashboard() {
+  const [status, setStatus] = useState(null);
+
+  useEffect(() => {
+    fetch('/api/v1/../')
+      .then((r) => r.json())
+      .then(setStatus)
+      .catch(() => setStatus({ status: 'connecting...' }));
+  }, []);
+
+  return (
+    <div>
+      <h2 className="text-3xl font-bold mb-2">Dashboard</h2>
+      <p className="text-gray-500 mb-8">Your autonomous accounting overview</p>
+
+      {/* Pillar Status Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <PillarCard
+          title="Tax Engine"
+          description="US, AU, NZ, GB + 6 bilateral DTAs"
+          status="active"
+          pillar="1"
+        />
+        <PillarCard
+          title="Autonomous Ledger"
+          description="AI-drafted double-entry with review workflow"
+          status="active"
+          pillar="2"
+        />
+        <PillarCard
+          title="Simple-Speak"
+          description="Natural language financial queries"
+          status="active"
+          pillar="3"
+        />
+        <PillarCard
+          title="Audit Shield"
+          description="Real-time risk scoring & continuous audit"
+          status="active"
+          pillar="4"
+        />
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <StatCard label="Pending Review" value="--" note="Transactions awaiting approval" />
+        <StatCard label="Risk Alerts" value="--" note="Items flagged by audit agent" />
+        <StatCard label="Jurisdictions" value="4" note="US, AU, NZ, GB active" />
+      </div>
+
+      {/* System Status */}
+      {status && (
+        <div className="bg-white rounded-xl border p-6">
+          <h3 className="font-semibold mb-3">System Status</h3>
+          <pre className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4 overflow-auto">
+            {JSON.stringify(status, null, 2)}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PillarCard({ title, description, status, pillar }) {
+  return (
+    <div className="bg-white rounded-xl border p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-xs font-mono text-gray-400">PILLAR {pillar}</span>
+        <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">
+          {status}
+        </span>
+      </div>
+      <h3 className="font-semibold text-lg mb-1">{title}</h3>
+      <p className="text-sm text-gray-500">{description}</p>
+    </div>
+  );
+}
+
+function StatCard({ label, value, note }) {
+  return (
+    <div className="bg-white rounded-xl border p-6">
+      <p className="text-sm text-gray-500 mb-1">{label}</p>
+      <p className="text-3xl font-bold mb-1">{value}</p>
+      <p className="text-xs text-gray-400">{note}</p>
+    </div>
+  );
+}
