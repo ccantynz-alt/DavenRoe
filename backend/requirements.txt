@@ -29,7 +29,7 @@ babel==2.16.0
 pycountry==24.6.1
 
 # Email
-mailgun-python==0.1
+mailgun==1.6.0
 
 # Payments
 stripe==11.3.0
