@@ -7,11 +7,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
-    agentic, ai, banking, entities, forensic, specialists, tax, toolkit, transactions,
+    agentic, ai, auth, banking, dashboard, entities, forensic, specialists, tax,
+    toolkit, transactions,
     reports, clients, documents, multicurrency, auditlog,
     permissions_routes, notifications_routes, integrations,
     messaging, scheduling, integrations_hub,
-    inventory, invoicing, marketplace,
+    inventory, invoicing, marketplace, pdf_export,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -41,6 +42,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Auth & Dashboard
+app.include_router(auth.router, prefix="/api/v1")
+app.include_router(dashboard.router, prefix="/api/v1")
+
 # Core Routes
 app.include_router(entities.router, prefix="/api/v1")
 app.include_router(transactions.router, prefix="/api/v1")
@@ -67,6 +72,7 @@ app.include_router(integrations_hub.router, prefix="/api/v1")
 app.include_router(inventory.router, prefix="/api/v1")
 app.include_router(invoicing.router, prefix="/api/v1")
 app.include_router(marketplace.router, prefix="/api/v1")
+app.include_router(pdf_export.router, prefix="/api/v1")
 
 
 @app.get("/")

@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react';
+import api from '../services/api';
 
 export default function Dashboard() {
+  const [stats, setStats] = useState(null);
   const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/v1/../')
-      .then((r) => r.json())
-      .then(setStatus)
-      .catch(() => setStatus({ status: 'connecting...' }));
+    Promise.all([
+      api.get('/dashboard/stats').then(r => r.data).catch(() => null),
+      fetch('/api/v1/../').then(r => r.json()).catch(() => null),
+    ]).then(([s, st]) => {
+      setStats(s);
+      setStatus(st);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -17,44 +24,63 @@ export default function Dashboard() {
 
       {/* Pillar Status Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <PillarCard
-          title="Tax Engine"
-          description="US, AU, NZ, GB + 6 bilateral DTAs"
-          status="active"
-          pillar="1"
+        <PillarCard title="Tax Engine" description="US, AU, NZ, GB + 6 bilateral DTAs" status="active" pillar="1" />
+        <PillarCard title="Autonomous Ledger" description="AI-drafted double-entry with review workflow" status="active" pillar="2" />
+        <PillarCard title="Simple-Speak" description="Natural language financial queries" status="active" pillar="3" />
+        <PillarCard title="Audit Shield" description="Real-time risk scoring & continuous audit" status="active" pillar="4" />
+      </div>
+
+      {/* Live Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          label="Pending Review"
+          value={loading ? '...' : stats?.pending_review ?? 0}
+          note="Transactions awaiting approval"
+          color={stats?.pending_review > 0 ? 'yellow' : 'green'}
         />
-        <PillarCard
-          title="Autonomous Ledger"
-          description="AI-drafted double-entry with review workflow"
-          status="active"
-          pillar="2"
+        <StatCard
+          label="Risk Alerts"
+          value={loading ? '...' : stats?.risk_alerts ?? 0}
+          note="Items flagged by audit agent"
+          color={stats?.risk_alerts > 0 ? 'red' : 'green'}
         />
-        <PillarCard
-          title="Simple-Speak"
-          description="Natural language financial queries"
-          status="active"
-          pillar="3"
+        <StatCard
+          label="Active Entities"
+          value={loading ? '...' : stats?.active_entities ?? 0}
+          note="Businesses under management"
         />
-        <PillarCard
-          title="Audit Shield"
-          description="Real-time risk scoring & continuous audit"
-          status="active"
-          pillar="4"
+        <StatCard
+          label="Jurisdictions"
+          value="4"
+          note="US, AU, NZ, GB active"
         />
       </div>
 
-      {/* Quick Stats */}
+      {/* Financial Summary */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard label="Pending Review" value="--" note="Transactions awaiting approval" />
-        <StatCard label="Risk Alerts" value="--" note="Items flagged by audit agent" />
-        <StatCard label="Jurisdictions" value="4" note="US, AU, NZ, GB active" />
+        <StatCard
+          label="This Month"
+          value={loading ? '...' : stats?.transactions_this_month ?? 0}
+          note={`${stats?.approved_this_month ?? 0} approved`}
+        />
+        <StatCard
+          label="Outstanding"
+          value={loading ? '...' : `$${(stats?.outstanding_amount ?? 0).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+          note={`${stats?.overdue_invoices ?? 0} overdue`}
+          color={stats?.overdue_invoices > 0 ? 'red' : 'green'}
+        />
+        <StatCard
+          label="Revenue Collected"
+          value={loading ? '...' : `$${(stats?.total_revenue ?? 0).toLocaleString('en', { minimumFractionDigits: 2 })}`}
+          note="Paid receivable invoices"
+        />
       </div>
 
       {/* System Status */}
       {status && (
         <div className="bg-white rounded-xl border p-6">
           <h3 className="font-semibold mb-3">System Status</h3>
-          <pre className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4 overflow-auto">
+          <pre className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4 overflow-auto max-h-64">
             {JSON.stringify(status, null, 2)}
           </pre>
         </div>
@@ -78,9 +104,10 @@ function PillarCard({ title, description, status, pillar }) {
   );
 }
 
-function StatCard({ label, value, note }) {
+function StatCard({ label, value, note, color }) {
+  const ring = color === 'red' ? 'border-l-red-500' : color === 'yellow' ? 'border-l-yellow-500' : color === 'green' ? 'border-l-green-500' : '';
   return (
-    <div className="bg-white rounded-xl border p-6">
+    <div className={`bg-white rounded-xl border p-6 ${ring ? `border-l-4 ${ring}` : ''}`}>
       <p className="text-sm text-gray-500 mb-1">{label}</p>
       <p className="text-3xl font-bold mb-1">{value}</p>
       <p className="text-xs text-gray-400">{note}</p>
