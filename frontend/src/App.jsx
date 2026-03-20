@@ -19,11 +19,21 @@ import Invoicing from './pages/Invoicing';
 import Documents from './pages/Documents';
 import ComplianceCalendar from './pages/ComplianceCalendar';
 import ClientPortal from './pages/ClientPortal';
+import Inventory from './pages/Inventory';
+import Integrations from './pages/Integrations';
+import Settings from './pages/Settings';
+import About from './pages/About';
+import SecurityPage from './pages/Security';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Contact from './pages/Contact';
+import NotFound from './pages/NotFound';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
   const [onboarded, setOnboarded] = useState(() => localStorage.getItem('astra_onboarded') === 'true');
   const [showLogin, setShowLogin] = useState(false);
+  const [publicPage, setPublicPage] = useState(null);
 
   if (loading) {
     return (
@@ -39,15 +49,23 @@ function AppRoutes() {
     );
   }
 
-  // Not logged in: show cinematic landing page (or login form)
+  const goHome = () => { setPublicPage(null); setShowLogin(false); };
+
+  // Public pages (accessible without login)
   if (!user) {
+    if (publicPage === 'about') return <About onBack={goHome} />;
+    if (publicPage === 'security') return <SecurityPage onBack={goHome} />;
+    if (publicPage === 'privacy') return <Privacy onBack={goHome} />;
+    if (publicPage === 'terms') return <Terms onBack={goHome} />;
+    if (publicPage === 'contact') return <Contact onBack={goHome} />;
+
     if (showLogin) {
       return (
         <div>
           <Login />
           <div className="fixed top-4 left-4 z-50">
             <button
-              onClick={() => setShowLogin(false)}
+              onClick={goHome}
               className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
             >
               &larr; Back to homepage
@@ -56,7 +74,7 @@ function AppRoutes() {
         </div>
       );
     }
-    return <Landing onLogin={() => setShowLogin(true)} />;
+    return <Landing onLogin={() => setShowLogin(true)} onNavigate={setPublicPage} />;
   }
 
   if (!onboarded) {
@@ -85,6 +103,10 @@ function AppRoutes() {
         <Route path="/toolkit" element={<Toolkit />} />
         <Route path="/ask" element={<AskAstra />} />
         <Route path="/agentic" element={<AgenticDashboard />} />
+        <Route path="/inventory" element={<Inventory />} />
+        <Route path="/integrations" element={<Integrations />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>
     </Layout>
   );

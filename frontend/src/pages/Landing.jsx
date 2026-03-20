@@ -26,7 +26,7 @@ import FAQ from '../components/landing/FAQ';
  * 12. Final CTA
  * 13. Footer
  */
-export default function Landing({ onLogin }) {
+export default function Landing({ onLogin, onNavigate }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -201,45 +201,33 @@ export default function Landing({ onLogin }) {
               <p className="text-gray-400 text-sm leading-relaxed mb-6">
                 Autonomous accounting intelligence for the modern practice. AI-powered bookkeeping, multi-jurisdiction tax compliance, and forensic anomaly detection.
               </p>
-              <div className="flex gap-4">
-                <SocialIcon label="LinkedIn">
-                  <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" />
-                </SocialIcon>
-                <SocialIcon label="Twitter">
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                </SocialIcon>
-              </div>
             </div>
             <div>
               <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">Platform</h4>
               <ul className="space-y-2.5 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Bookkeeping</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Tax Engine</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Forensics</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Ask Astra</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Bank Feeds</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Reports</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">Resources</h4>
-              <ul className="space-y-2.5 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API Reference</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Migration Guide</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status Page</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Changelog</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Bookkeeping</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Tax Engine</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Forensics</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Ask Astra</a></li>
+                <li><a href="#features" className="hover:text-white transition-colors">Bank Feeds</a></li>
+                <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
               </ul>
             </div>
             <div>
               <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">Company</h4>
               <ul className="space-y-2.5 text-sm text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Security</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+                <li><button onClick={() => onNavigate('about')} className="hover:text-white transition-colors">About</button></li>
+                <li><button onClick={() => onNavigate('security')} className="hover:text-white transition-colors">Security</button></li>
+                <li><button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors">Contact</button></li>
+                <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-sm uppercase tracking-wider text-gray-400 mb-4">Legal</h4>
+              <ul className="space-y-2.5 text-sm text-gray-400">
+                <li><button onClick={() => onNavigate('privacy')} className="hover:text-white transition-colors">Privacy Policy</button></li>
+                <li><button onClick={() => onNavigate('terms')} className="hover:text-white transition-colors">Terms of Service</button></li>
+                <li><button onClick={() => onNavigate('security')} className="hover:text-white transition-colors">Data Security</button></li>
               </ul>
             </div>
           </div>
@@ -260,12 +248,3 @@ export default function Landing({ onLogin }) {
   );
 }
 
-function SocialIcon({ children, label }) {
-  return (
-    <a href="#" aria-label={label} className="w-9 h-9 rounded-lg bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors">
-      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        {children}
-      </svg>
-    </a>
-  );
-}
