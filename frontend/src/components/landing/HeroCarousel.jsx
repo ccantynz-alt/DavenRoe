@@ -7,16 +7,16 @@ import { useState, useEffect, useCallback } from 'react';
 
 const SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80&auto=format',
-    alt: 'Modern workspace with multiple monitors displaying financial data dashboards',
+    image: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=1920&q=80&auto=format',
+    alt: 'New York City skyline with illuminated skyscrapers at night',
   },
   {
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80&auto=format',
     alt: 'Financial analytics dashboard with charts and data visualisation',
   },
   {
-    image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80&auto=format',
-    alt: 'Business team collaborating around a table — trust and partnership',
+    image: 'https://images.unsplash.com/photo-1507925921958-8559cf4e423f?w=1920&q=80&auto=format',
+    alt: 'Minimal clean desk flat-lay with MacBook, coffee, book and watch',
   },
 ];
 
