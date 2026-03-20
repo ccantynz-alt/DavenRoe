@@ -5,6 +5,35 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+// Attach token from localStorage on every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('astra_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Auto-logout on 401
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401 && window.location.pathname !== '/') {
+      localStorage.removeItem('astra_token');
+      window.location.reload();
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Auth
+export const login = (data) => api.post('/auth/login', data);
+export const register = (data) => api.post('/auth/register', data);
+export const getMe = () => api.get('/auth/me');
+
+// Dashboard
+export const getDashboardStats = () => api.get('/dashboard/stats');
+
 // Tax Engine
 export const calculateGST = (data) => api.post('/tax/gst', data);
 export const calculateWHT = (data) => api.post('/tax/withholding', data);
@@ -39,5 +68,23 @@ export const getAgentStatus = () => api.get('/agentic/agents/status');
 export const runMonthEndClose = (data) => api.post('/agentic/close/run', data);
 export const generateCashForecast = (data) => api.post('/agentic/forecast', data);
 export const checkCompliance = (data) => api.post('/agentic/compliance/check', data);
+
+// Banking
+export const getBankProviders = () => api.get('/banking/providers');
+export const connectBank = (data) => api.post('/banking/connect', data);
+export const exchangeBankToken = (data) => api.post('/banking/exchange', data);
+export const syncBankTransactions = (data) => api.post('/banking/sync', data);
+
+// Invoicing
+export const createInvoice = (data) => api.post('/invoicing/', data);
+export const getInvoices = (params) => api.get('/invoicing/', { params });
+export const getInvoiceSummary = () => api.get('/invoicing/summary');
+export const sendInvoice = (id) => api.post(`/invoicing/${id}/send`);
+export const recordPayment = (id, data) => api.post(`/invoicing/${id}/payment`, data);
+
+// Documents
+export const uploadDocument = (data) => api.post('/documents/upload', data);
+export const searchDocuments = (query) => api.get(`/documents/search/${query}`);
+export const getDocumentSummary = () => api.get('/documents/summary');
 
 export default api;

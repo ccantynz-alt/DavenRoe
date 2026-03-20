@@ -4,6 +4,7 @@ from app.models.transaction import Transaction, TransactionLine
 from app.models.invoice import Invoice, InvoiceLine
 from app.models.tax import TaxJurisdiction, TaxRate, TaxTreaty
 from app.models.audit import AuditLog
+from app.models.user import User
 
 __all__ = [
     "Entity",
@@ -17,4 +18,5 @@ __all__ = [
     "TaxRate",
     "TaxTreaty",
     "AuditLog",
+    "User",
 ]
