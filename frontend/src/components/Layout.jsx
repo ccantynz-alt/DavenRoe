@@ -14,10 +14,13 @@ const nav = [
   { path: '/tax', label: 'Tax Engine', icon: '%' },
   { path: '/compliance', label: 'Compliance', icon: '!' },
   { path: '/portal', label: 'Client Portal', icon: '@' },
+  { path: '/inventory', label: 'Inventory', icon: '{' },
   { path: '/specialists', label: 'Specialist Tools', icon: '*' },
   { path: '/toolkit', label: 'Toolkit', icon: '+' },
+  { path: '/integrations', label: 'Integrations', icon: '<' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
   { path: '/agentic', label: 'Agentic AI', icon: '&' },
+  { path: '/settings', label: 'Settings', icon: ':' },
 ];
 
 const roleLabels = {
