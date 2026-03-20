@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
+import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import ReviewQueue from './pages/ReviewQueue';
 import TaxEngine from './pages/TaxEngine';
@@ -14,9 +16,12 @@ import Clients from './pages/Clients';
 import BankFeeds from './pages/BankFeeds';
 import Invoicing from './pages/Invoicing';
 import Documents from './pages/Documents';
+import ComplianceCalendar from './pages/ComplianceCalendar';
+import ClientPortal from './pages/ClientPortal';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
+  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('astra_onboarded') === 'true');
 
   if (loading) {
     return (
@@ -33,6 +38,15 @@ function AppRoutes() {
     return <Login />;
   }
 
+  if (!onboarded) {
+    return (
+      <Onboarding onComplete={() => {
+        localStorage.setItem('astra_onboarded', 'true');
+        setOnboarded(true);
+      }} />
+    );
+  }
+
   return (
     <Layout>
       <Routes>
@@ -44,6 +58,8 @@ function AppRoutes() {
         <Route path="/banking" element={<BankFeeds />} />
         <Route path="/invoicing" element={<Invoicing />} />
         <Route path="/documents" element={<Documents />} />
+        <Route path="/compliance" element={<ComplianceCalendar />} />
+        <Route path="/portal" element={<ClientPortal />} />
         <Route path="/specialists" element={<Specialists />} />
         <Route path="/toolkit" element={<Toolkit />} />
         <Route path="/ask" element={<AskAstra />} />

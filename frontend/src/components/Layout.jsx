@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { useAuth } from '../contexts/AuthContext';
@@ -11,6 +12,8 @@ const nav = [
   { path: '/documents', label: 'Documents', icon: '^' },
   { path: '/reports', label: 'Reports', icon: '=' },
   { path: '/tax', label: 'Tax Engine', icon: '%' },
+  { path: '/compliance', label: 'Compliance', icon: '!' },
+  { path: '/portal', label: 'Client Portal', icon: '@' },
   { path: '/specialists', label: 'Specialist Tools', icon: '*' },
   { path: '/toolkit', label: 'Toolkit', icon: '+' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
@@ -28,20 +31,36 @@ const roleLabels = {
 export default function Layout({ children }) {
   const { pathname } = useLocation();
   const { user, logout } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex">
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white flex flex-col">
-        <div className="p-6 border-b border-gray-800">
-          <h1 className="text-2xl font-bold tracking-tight">Astra</h1>
-          <p className="text-xs text-gray-400 mt-1">Autonomous Accounting</p>
+      <aside className={clsx(
+        'w-64 bg-gray-900 text-white flex flex-col z-50 transition-transform duration-200',
+        'fixed inset-y-0 left-0 lg:relative lg:translate-x-0',
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      )}>
+        <div className="p-6 border-b border-gray-800 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Astra</h1>
+            <p className="text-xs text-gray-400 mt-1">Autonomous Accounting</p>
+          </div>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-white text-xl">
+            x
+          </button>
         </div>
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {nav.map((item) => (
             <Link
               key={item.path}
               to={item.path}
+              onClick={() => setSidebarOpen(false)}
               className={clsx(
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 pathname === item.path
@@ -79,7 +98,7 @@ export default function Layout({ children }) {
               </div>
               <button
                 onClick={logout}
-                className="text-xs text-gray-500 hover:text-white transition-colors px-2 py-1"
+                className="text-xs text-gray-500 hover:text-white transition-colors px-2 py-1 shrink-0"
               >
                 Logout
               </button>
@@ -89,9 +108,22 @@ export default function Layout({ children }) {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-8 overflow-auto bg-gray-50">
-        {children}
-      </main>
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile header */}
+        <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center justify-between">
+          <button onClick={() => setSidebarOpen(true)} className="text-gray-600 hover:text-gray-900">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          <h1 className="font-bold text-lg">Astra</h1>
+          <div className="w-6" />
+        </header>
+
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto bg-gray-50">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
