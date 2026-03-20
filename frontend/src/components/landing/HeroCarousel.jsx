@@ -7,16 +7,16 @@ import { useState, useEffect, useCallback } from 'react';
 
 const SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1920&q=80&auto=format',
-    alt: 'Professional accountant working with financial documents and calculator — precision and trust',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80&auto=format',
+    alt: 'Modern workspace with multiple monitors displaying financial data dashboards',
   },
   {
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80&auto=format',
     alt: 'Financial analytics dashboard with charts and data visualisation',
   },
   {
-    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=1920&q=80&auto=format',
-    alt: 'Person signing financial documents with pen — audit and compliance',
+    image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80&auto=format',
+    alt: 'Business team collaborating around a table — trust and partnership',
   },
 ];
 
