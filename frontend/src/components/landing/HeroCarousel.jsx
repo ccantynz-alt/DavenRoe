@@ -7,16 +7,16 @@ import { useState, useEffect, useCallback } from 'react';
 
 const SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6e?w=1920&q=80&auto=format',
-    alt: 'Professional accountant reviewing financial documents at a modern desk',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80&auto=format',
+    alt: 'Modern glass skyscraper reflecting golden light — corporate authority',
   },
   {
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=80&auto=format',
-    alt: 'Data analytics and financial charts on screen',
+    alt: 'Financial analytics dashboard with charts and data visualisation',
   },
   {
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1920&q=80&auto=format',
-    alt: 'Modern corporate office with city skyline view',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80&auto=format',
+    alt: 'Elegant modern office interior with clean lines and natural light',
   },
 ];
 
