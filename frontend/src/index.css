@@ -9,177 +9,20 @@
 }
 
 /* ============================================================
-   ASTRA LANDING PAGE ANIMATIONS
-   Pure CSS — no libraries, no dependencies, just motion.
+   ASTRA LANDING PAGE — Subtle, elegant animations
    ============================================================ */
 
-/* Matrix-style number cascade */
-@keyframes cascade {
-  0% { transform: translateY(-100%); opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(calc(100vh + 100%)); opacity: 0; }
-}
-
-@keyframes cascade-glow {
-  0%, 100% { text-shadow: 0 0 4px rgba(99, 102, 241, 0.3); }
-  50% { text-shadow: 0 0 12px rgba(99, 102, 241, 0.8), 0 0 24px rgba(99, 102, 241, 0.4); }
-}
-
-/* Pulse ring for the central logo */
-@keyframes pulse-ring {
-  0% { transform: scale(0.8); opacity: 0.8; }
-  50% { transform: scale(1.3); opacity: 0; }
-  100% { transform: scale(0.8); opacity: 0; }
-}
-
-@keyframes pulse-ring-2 {
-  0% { transform: scale(0.9); opacity: 0.6; }
-  50% { transform: scale(1.6); opacity: 0; }
-  100% { transform: scale(0.9); opacity: 0; }
-}
-
-@keyframes pulse-ring-3 {
-  0% { transform: scale(1); opacity: 0.4; }
-  50% { transform: scale(1.9); opacity: 0; }
-  100% { transform: scale(1); opacity: 0; }
-}
-
-/* Scanning line effect */
-@keyframes scan-line {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
-}
-
-/* Data stream horizontal flow */
-@keyframes stream-left {
-  0% { transform: translateX(100%); opacity: 0; }
-  5% { opacity: 0.7; }
-  95% { opacity: 0.7; }
-  100% { transform: translateX(-100%); opacity: 0; }
-}
-
-@keyframes stream-right {
-  0% { transform: translateX(-100%); opacity: 0; }
-  5% { opacity: 0.7; }
-  95% { opacity: 0.7; }
-  100% { transform: translateX(100%); opacity: 0; }
-}
-
-/* Typewriter effect */
-@keyframes typewriter {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-@keyframes blink-caret {
-  0%, 100% { border-color: transparent; }
-  50% { border-color: rgb(99, 102, 241); }
-}
-
-/* Floating particles */
-@keyframes float-up {
-  0% { transform: translateY(100vh) translateX(0) scale(0); opacity: 0; }
-  10% { opacity: 1; scale: 1; }
-  90% { opacity: 0.6; }
-  100% { transform: translateY(-20vh) translateX(var(--drift, 50px)) scale(0.5); opacity: 0; }
-}
-
-/* Circuit trace glow */
-@keyframes trace {
-  0% { stroke-dashoffset: 1000; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { stroke-dashoffset: 0; opacity: 0; }
-}
-
-/* Fade in and slide up */
+/* Smooth fade in and slide up */
 @keyframes fade-up {
-  0% { opacity: 0; transform: translateY(30px); }
+  0% { opacity: 0; transform: translateY(24px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fade-up-delay {
-  0%, 30% { opacity: 0; transform: translateY(30px); }
-  100% { opacity: 1; transform: translateY(0); }
+/* Gentle bounce for scroll indicator */
+@keyframes gentle-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
 }
 
-/* Counter spin */
-@keyframes count-up {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-100%); }
-}
-
-/* Gradient shift for backgrounds */
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Grid pulse */
-@keyframes grid-pulse {
-  0%, 100% { opacity: 0.03; }
-  50% { opacity: 0.08; }
-}
-
-/* Node connection pulse */
-@keyframes node-pulse {
-  0% { r: 2; opacity: 1; }
-  100% { r: 8; opacity: 0; }
-}
-
-/* Staggered reveal */
-@keyframes stagger-in {
-  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* Glow text */
-@keyframes glow-text {
-  0%, 100% { text-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
-  50% { text-shadow: 0 0 20px rgba(99, 102, 241, 0.8), 0 0 40px rgba(99, 102, 241, 0.3); }
-}
-
-/* Orbit */
-@keyframes orbit {
-  0% { transform: rotate(0deg) translateX(var(--orbit-radius, 120px)) rotate(0deg); }
-  100% { transform: rotate(360deg) translateX(var(--orbit-radius, 120px)) rotate(-360deg); }
-}
-
-/* Progress bar fill */
-@keyframes progress-fill {
-  0% { width: 0; }
-  100% { width: var(--fill-width, 80%); }
-}
-
-/* Shimmer effect */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-/* Utility classes for animations */
-.animate-cascade { animation: cascade linear infinite; }
-.animate-cascade-glow { animation: cascade-glow 2s ease-in-out infinite; }
-.animate-pulse-ring { animation: pulse-ring 3s ease-out infinite; }
-.animate-scan-line { animation: scan-line 4s linear infinite; }
-.animate-stream-left { animation: stream-left 8s linear infinite; }
-.animate-stream-right { animation: stream-right 10s linear infinite; }
-.animate-float-up { animation: float-up linear infinite; }
-.animate-fade-up { animation: fade-up 0.8s ease-out forwards; }
-.animate-gradient { animation: gradient-shift 8s ease infinite; background-size: 200% 200%; }
-.animate-grid-pulse { animation: grid-pulse 4s ease-in-out infinite; }
-.animate-stagger-in { animation: stagger-in 0.6s ease-out forwards; }
-.animate-glow-text { animation: glow-text 3s ease-in-out infinite; }
-.animate-orbit { animation: orbit linear infinite; }
-.animate-progress-fill { animation: progress-fill 2s ease-out forwards; }
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
-  background-size: 200% 100%;
-  animation: shimmer 2s linear infinite;
-}
-
-/* Hide scrollbar for data streams */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+/* Utility classes */
+.animate-fade-up { animation: fade-up 0.7s ease-out forwards; }
