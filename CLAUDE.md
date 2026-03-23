@@ -147,3 +147,149 @@ auth, dashboard, entities, transactions, tax, tax_filing, ai, forensic, banking,
 ## Development Branch
 
 All work happens on feature branches prefixed with `claude/`.
+
+---
+
+## Live Competitive Intelligence (Updated March 2026)
+
+### Market Landscape
+
+| Competitor | Subscribers | Revenue | Target | Primary Markets |
+|-----------|------------|---------|--------|-----------------|
+| **Xero** | 4.2M+ | ~NZ$1.9B (~US$1.15B) | SMB + Accountants | AU/NZ/UK (dominant), US (growing) |
+| **QuickBooks** | 7M+ | ~US$16B (Intuit total) | SMB + Self-employed | US/CA (dominant), expanding globally |
+| **MYOB** | ~1.2M | ~A$500M | SMB (legacy) | AU/NZ only |
+| **Sage** | 6M+ | ~GBP2.2B | SMB to Mid-market | UK (dominant), EU, Africa, US (Intacct) |
+| **FreshBooks** | ~5M active | ~US$150M+ (est.) | Freelancers/Micro | US/CA primarily |
+
+### Competitor Weaknesses We Exploit
+
+#### Xero (Our Primary Target)
+- **NO forensic intelligence** — Zero fraud detection, no Benford's, no vendor audit
+- **NO autonomous AI** — "Just Ask Xero" is read-only basic NLP, still in limited rollout
+- **Weak reporting** — #1 user complaint, limited customization, no dimensional analysis
+- **NO compliance calendar** — No deadline tracking across jurisdictions
+- **NO native US payroll** — Requires Gusto integration
+- **Basic inventory** — No assemblies, no multi-location, no serial/lot tracking
+- **NO autonomous month-end close** — Fully manual
+- **Multi-entity = separate subscriptions** — No consolidated view
+- **NO cross-border tax treaties** — Each jurisdiction separate
+- **Pricing pain** — Starter plan (20 invoices/month limit), payroll only in Premium tier
+- **App marketplace is their moat** — 1,000+ apps, 200K+ accountant partners
+
+#### QuickBooks (Our Secondary Target)
+- **NO forensic tools** — Zero fraud detection
+- **Basic AI** — Intuit Assist is conversational but can't take autonomous actions
+- **Aggressive price increases** — Users report 20-30% annual hikes, biggest churn driver
+- **US-centric** — No native payroll outside US, weak multi-jurisdiction
+- **Multi-entity = separate subscriptions** — No consolidated reporting
+- **NO compliance calendar** — Users track deadlines externally
+- **NO client portal** — Must use third-party
+- **Poor customer support** — Consistently rated worst among competitors
+- **Vendor lock-in** — Difficult to export data cleanly
+- **ProAdvisor network is their moat** — 500K+ accountants
+
+#### MYOB (AU/NZ Capture Opportunity)
+- **Outdated UX** — Desktop heritage, looks 10 years behind
+- **NO AI assistant** — No NLP, no chatbot, no autonomous features
+- **AU/NZ only** — No multi-jurisdiction capability
+- **Losing market share** — Declining to Xero, perfect capture window
+- **Weak integration ecosystem** — ~200 apps vs Xero's 1,000+
+- **Mobile app is weak** — Limited functionality, crash reports
+- **Slow feature development** — Users report stagnation
+
+#### Sage (Mid-Market Gap)
+- **Fragmented product line** — Confusing: BC ($33/mo) vs Intacct ($15K+/year)
+- **Pricing gap** — Nothing between $33/mo and $15K+/year (we fill this perfectly)
+- **Sage Copilot is immature** — Just launched, very basic
+- **Legacy brand perception** — Seen as "old school"
+- **Poor mobile experience** — Apps are afterthoughts
+
+#### FreshBooks (Invoicing-Only)
+- **Not real accounting** — Invoicing-first with accounting bolted on
+- **NO inventory** — Critical gap for product businesses
+- **NO native payroll** — Requires Gusto
+- **Can't scale** — Caps at micro-businesses (1-10 employees)
+- **US/CA only** — Limited international tax compliance
+- **NO tax filing** — No direct filing to tax authorities
+
+### Universal Competitor Gaps (NONE of them have these)
+
+| Feature | Xero | QBO | MYOB | Sage | FreshBooks | **Astra** |
+|---------|------|-----|------|------|------------|-----------|
+| Forensic Intelligence | - | - | - | - | - | **YES** |
+| Benford's Law Analysis | - | - | - | - | - | **YES** |
+| Autonomous Month-End Close | - | - | - | - | - | **YES** |
+| Multi-Agent AI Architecture | - | - | - | - | - | **YES** |
+| Cross-Border Tax Treaties (6 DTAs) | - | - | - | - | - | **YES** |
+| Compliance Calendar (40+ deadlines) | - | - | - | - | - | **YES** |
+| Multi-Jurisdiction in One Subscription | - | - | - | - | - | **YES** |
+| Ghost Vendor Detection | - | - | - | - | - | **YES** |
+| AI Confidence Scoring + Review Queue | - | - | - | - | - | **YES** |
+| Native 4-Country Payroll | - | - | - | - | - | **YES** |
+
+### End-User Pain Points (Ranked by Frequency)
+
+1. **Poor customer support** — #1 complaint across ALL platforms
+2. **Price increases without value** — 15-30% annual hikes trigger churn
+3. **Bank feed disconnections** — Universal frustration
+4. **Limited reporting** — Biggest Xero complaint
+5. **Multi-entity nightmare** — Separate subscriptions per business
+6. **Mobile apps are afterthoughts** — "Can check but can't do anything"
+7. **Tax compliance confusion** — Users don't know if they're compliant
+8. **Manual reconciliation tedium** — Hundreds of transactions monthly
+9. **Vendor lock-in** — Poor data export
+10. **Learning curve** — Non-accountants struggle with double-entry
+
+### What Users Actually Want (Priority Order)
+
+1. **AI that saves time, not makes decisions** — "AI drafts, human approves" (our exact model)
+2. **All-in-one pricing** — No add-ons, no per-entity charges
+3. **Cash flow visibility** — "Will I be okay next month?"
+4. **Get paid faster** — Integrated payments, auto-reminders
+5. **95%+ categorisation accuracy** — Current platforms average 60-70%
+6. **Tax confidence** — Certainty they're compliant
+7. **Mobile-first** — Full capability, not companion app
+8. **Plain English financial insights** — Not just raw P&L
+9. **Compliance autopilot** — Auto-file, auto-alert, auto-validate
+10. **Scenario planning** — "What if I hire 2 people?"
+
+### Key Strategic Insight
+
+> **Accountants are kingmakers.** If you win the accountant, you win their 50-200 clients.
+> 38% of users switch platforms due to price. 24% due to missing features. 18% due to poor support.
+> Accountant recommendation drives 8% of switches directly — but influences nearly all.
+
+### Astra's Killer Differentiators (Features NO Competitor Has)
+
+1. **Forensic Intelligence for Everyone** — Not enterprise-only. Benford's, ghost vendors, money trail.
+2. **Autonomous Month-End Close** — 4.2 seconds average. Competitors: days to weeks.
+3. **Multi-Agent AI Architecture** — Not a chatbot. Real autonomous agents that act.
+4. **Cross-Border Tax Treaty Engine** — 6 bilateral DTAs with automatic WHT optimization.
+5. **True Multi-Jurisdiction** — AU/NZ/UK/US in ONE subscription, ONE platform.
+6. **Compliance Calendar** — 40+ deadlines. No competitor tracks these.
+7. **AI Review Queue** — Confidence scoring on every transaction. Human-in-the-loop by design.
+8. **Native Payroll Included** — Not a $50-125/mo add-on like QBO/Xero.
+9. **Client Portal Built-In** — Scoped access, document upload, real-time dashboards.
+10. **Specialist Toolkits** — 12 specializations, 90+ automations. Vertical depth.
+
+### Pricing Strategy (Competitive Positioning)
+
+| Tier | Price | vs Xero | vs QBO | Positioning |
+|------|-------|---------|--------|-------------|
+| Practice ($149/mo) | All-inclusive | Xero Premium = $79 + payroll add-on | QBO Plus = $90 + payroll $45-125 | More features for similar total cost |
+| Firm ($499/mo) | Multi-jurisdiction + forensics | No Xero equivalent at any price | QBO Advanced = $200 but no forensics | Unique — they literally can't buy this elsewhere |
+| Enterprise (custom) | Unlimited, white-label | Xero has no enterprise tier | QBO doesn't compete here | Fills Sage Intacct gap ($15K+/yr) at fraction of cost |
+
+### Next Features to Build (Ranked by Competitive Impact)
+
+1. **Financial Health Score** — Like a credit score for businesses. No competitor has this.
+2. **Intelligent Document Chasing** — AI that auto-emails clients for missing receipts/docs.
+3. **Scenario Planning Engine** — "What if" financial modeling.
+4. **Proactive Tax Alerts** — "You're approaching the VAT threshold" before it happens.
+5. **Cash Flow Timing Optimizer** — "Delay this payment, accelerate these invoices."
+6. **Vendor Intelligence** — "You're paying 23% more than average for this service."
+7. **Smart Payment Reminders** — Tone-appropriate based on client relationship.
+8. **Real-Time Collaboration** — Google Docs-level multi-user financial editing.
+9. **Vertical Specializations** — Construction, healthcare, nonprofit, e-commerce modules.
+10. **Embedded Finance** — Banking, lending, insurance within the platform.
