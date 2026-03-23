@@ -3,8 +3,13 @@
 Main FastAPI application entry point.
 """
 
-from fastapi import FastAPI
+import time
+import logging
+from collections import defaultdict
+
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.routes import (
     agentic, ai, auth, banking, dashboard, entities, forensic, specialists, tax,
@@ -13,10 +18,12 @@ from app.api.routes import (
     permissions_routes, notifications_routes, integrations,
     messaging, scheduling, integrations_hub,
     inventory, invoicing, marketplace, pdf_export,
+    enterprise, payroll, tax_filing,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
 
+logger = logging.getLogger(__name__)
 settings = get_settings()
 
 app = FastAPI(
@@ -30,16 +37,50 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+
+# Rate limiting middleware
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    def __init__(self, app, max_requests: int = 60, window: int = 60):
+        super().__init__(app)
+        self.max_requests = max_requests
+        self.window = window
+        self.requests = defaultdict(list)
+
+    async def dispatch(self, request: Request, call_next):
+        client_ip = request.client.host if request.client else "unknown"
+        now = time.time()
+        # Clean old entries
+        self.requests[client_ip] = [
+            t for t in self.requests[client_ip] if now - t < self.window
+        ]
+        if len(self.requests[client_ip]) >= self.max_requests:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Rate limit exceeded. Please try again later.",
+            )
+        self.requests[client_ip].append(now)
+        response = await call_next(request)
+        response.headers["X-RateLimit-Limit"] = str(self.max_requests)
+        response.headers["X-RateLimit-Remaining"] = str(
+            self.max_requests - len(self.requests[client_ip])
+        )
+        return response
+
+
+# Middleware stack (order matters — last added runs first)
+app.add_middleware(RateLimitMiddleware, max_requests=settings.rate_limit_per_minute)
+
 # Legal compliance headers on every response
 app.add_middleware(LegalHeadersMiddleware)
 
-# CORS
+# CORS — use configurable origins
+cors_origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://localhost:3001"],
+    allow_origins=cors_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "Accept"],
 )
 
 # Auth & Dashboard
@@ -73,6 +114,9 @@ app.include_router(inventory.router, prefix="/api/v1")
 app.include_router(invoicing.router, prefix="/api/v1")
 app.include_router(marketplace.router, prefix="/api/v1")
 app.include_router(pdf_export.router, prefix="/api/v1")
+app.include_router(enterprise.router, prefix="/api/v1")
+app.include_router(payroll.router, prefix="/api/v1")
+app.include_router(tax_filing.router, prefix="/api/v1")
 
 
 @app.get("/")

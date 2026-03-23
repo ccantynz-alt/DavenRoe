@@ -87,4 +87,27 @@ export const uploadDocument = (data) => api.post('/documents/upload', data);
 export const searchDocuments = (query) => api.get(`/documents/search/${query}`);
 export const getDocumentSummary = () => api.get('/documents/summary');
 
+// Enterprise
+export const getPractices = () => api.get('/enterprise/practices');
+export const createPractice = (data) => api.post('/enterprise/practices', data);
+export const getBranding = (params) => api.get('/enterprise/branding', { params });
+export const updateBranding = (data) => api.put('/enterprise/branding', data);
+export const exportData = (data) => api.post('/enterprise/data-export', data);
+export const importData = (data) => api.post('/enterprise/data-import', data);
+export const getBulkTransactions = (params) => api.get('/enterprise/bulk/transactions', { params });
+export const bulkCategorize = (data) => api.post('/enterprise/bulk/categorize', data);
+export const bulkApprove = (data) => api.post('/enterprise/bulk/approve', data);
+
+// Audit / Activity Feed
+export const queryAuditTrail = (params) => api.get('/audit/query', { params });
+export const verifyAuditChain = () => api.get('/audit/verify');
+
+// Tax Filing
+export const generateTaxReturn = (data) => api.post('/tax/returns/generate', data);
+export const listTaxReturns = (params) => api.get('/tax/returns/', { params });
+export const getTaxReturn = (id) => api.get(`/tax/returns/${id}`);
+export const validateTaxReturn = (id) => api.post(`/tax/returns/${id}/validate`);
+export const lodgeTaxReturn = (id) => api.post(`/tax/returns/${id}/lodge`);
+export const getTaxDeadlines = (params) => api.get('/tax/returns/deadlines', { params });
+
 export default api;

@@ -8,9 +8,12 @@ This agent never sleeps — it's always watching.
 """
 
 import json
+import logging
 from datetime import date, timedelta
 from decimal import Decimal
 from enum import Enum
+
+logger = logging.getLogger(__name__)
 
 import anthropic
 
@@ -386,7 +389,7 @@ class ComplianceMonitor:
                         if today - timedelta(days=30) <= d <= horizon:
                             dates.append(d)
                     except ValueError:
-                        pass
+                        logger.exception("Failed to calculate due date for obligation '%s' (year=%d, month=%d)", obl_template.get("name", "unknown"), year, month)
 
         elif freq == ObligationFrequency.MONTHLY:
             due_day = template.get("due_day", 20)
@@ -399,7 +402,7 @@ class ComplianceMonitor:
                     if today - timedelta(days=30) <= d <= horizon:
                         dates.append(d)
                 except ValueError:
-                    pass
+                    logger.exception("Failed to calculate monthly due date for obligation (month=%d, year=%d)", month, year)
 
         elif freq == ObligationFrequency.ANNUALLY:
             due_month = template.get("due_month", 4)
@@ -410,7 +413,7 @@ class ComplianceMonitor:
                     if today - timedelta(days=30) <= d <= horizon:
                         dates.append(d)
                 except ValueError:
-                    pass
+                    logger.exception("Failed to calculate annual due date for obligation (year=%d, month=%d)", year, due_month)
 
         return dates
 

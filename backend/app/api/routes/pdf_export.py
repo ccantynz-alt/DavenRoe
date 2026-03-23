@@ -1,8 +1,7 @@
 """PDF Export API.
 
-Generates professional PDF documents for invoices, reports, and tax summaries.
-Uses a lightweight HTML-to-text approach that works without wkhtmltopdf or WeasyPrint
-on serverless platforms. For production, swap in WeasyPrint or Puppeteer.
+Generates professional HTML documents for invoices, reports, and tax summaries.
+HTML output is print-ready and can be saved as PDF from the browser.
 """
 
 import io
@@ -13,13 +12,46 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.auth.dependencies import get_current_user
+from app.models.user import User
 
 router = APIRouter(prefix="/export", tags=["PDF Export"])
 
 
+def _build_html_report(title: str, sections: list[tuple[str, list[tuple[str, str]]]],
+                        footer: str = "") -> str:
+    """Build a professional HTML report that renders well for print/PDF."""
+    rows_html = ""
+    for section_title, rows in sections:
+        rows_html += f'<h3 style="margin:20px 0 8px;font-size:14px;color:#4c6ef5;text-transform:uppercase;letter-spacing:1px;">{section_title}</h3>'
+        rows_html += '<table style="width:100%;border-collapse:collapse;margin-bottom:12px;">'
+        for label, value in rows:
+            rows_html += f'<tr><td style="padding:6px 0;border-bottom:1px solid #e5e7eb;color:#374151;">{label}</td><td style="padding:6px 0;border-bottom:1px solid #e5e7eb;text-align:right;font-weight:600;color:#111827;">{value}</td></tr>'
+        rows_html += '</table>'
+
+    footer_html = f'<p style="color:#9ca3af;font-size:11px;margin-top:20px;">{footer}</p>' if footer else ""
+
+    return f"""<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>{title}</title>
+<style>
+@media print {{ body {{ margin: 0; }} }}
+body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111827; max-width: 800px; margin: 0 auto; padding: 40px; }}
+</style></head><body>
+<div style="border-bottom:3px solid #4c6ef5;padding-bottom:20px;margin-bottom:30px;">
+  <h1 style="margin:0;font-size:24px;color:#111827;">{title}</h1>
+  <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')} | Astra Autonomous Accounting</p>
+</div>
+{rows_html}
+{footer_html}
+<div style="margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;">
+  <p style="color:#9ca3af;font-size:10px;">Astra — Autonomous Global Accounting. This document is system-generated. Verify against source records.</p>
+</div>
+</body></html>"""
+
+
 def _build_text_report(title: str, sections: list[tuple[str, list[tuple[str, str]]]],
                         footer: str = "") -> str:
-    """Build a formatted plain-text report (PDF-ready when proper engine added)."""
+    """Build a formatted plain-text report as fallback."""
     lines = []
     lines.append("=" * 60)
     lines.append(f"  {title}")
@@ -47,7 +79,7 @@ def _build_text_report(title: str, sections: list[tuple[str, list[tuple[str, str
 
 
 @router.post("/invoice/{invoice_id}")
-async def export_invoice(invoice_id: str):
+async def export_invoice(invoice_id: str, user: User = Depends(get_current_user)):
     """Export an invoice as a downloadable document."""
     # Import the invoicing engine
     from app.api.routes.invoicing import engine as inv_engine
@@ -83,7 +115,7 @@ async def export_invoice(invoice_id: str):
         ]),
     ]
 
-    content = _build_text_report(
+    content = _build_html_report(
         f"INVOICE {invoice.invoice_number}",
         sections,
         footer=invoice.notes or "",
@@ -91,15 +123,15 @@ async def export_invoice(invoice_id: str):
 
     return Response(
         content=content.encode(),
-        media_type="text/plain",
+        media_type="text/html",
         headers={
-            "Content-Disposition": f'attachment; filename="{invoice.invoice_number}.txt"',
+            "Content-Disposition": f'attachment; filename="{invoice.invoice_number}.html"',
         },
     )
 
 
 @router.post("/report")
-async def export_report(data: dict, db: AsyncSession = Depends(get_db)):
+async def export_report(data: dict, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
     """Export a financial report as a downloadable document."""
     from app.api.routes.reports import _fetch_transaction_dicts
     from app.reports.engine import ReportingEngine
@@ -161,9 +193,16 @@ async def export_report(data: dict, db: AsyncSession = Depends(get_db)):
         footer=f"Period: {start or 'All'} to {end or 'All'} | Transactions: {report.get('metadata', {}).get('transactions_included', 'N/A')}",
     )
 
-    filename = f"{report_type}_{(start or date.today()).isoformat()}.txt"
+    # HTML format for browser print-to-PDF
+    html_content = _build_html_report(
+        f"{report.get('report', report_type).upper()}",
+        sections,
+        footer=f"Period: {start or 'All'} to {end or 'All'} | Transactions: {report.get('metadata', {}).get('transactions_included', 'N/A')}",
+    )
+
+    filename = f"{report_type}_{(start or date.today()).isoformat()}.html"
     return Response(
-        content=content.encode(),
-        media_type="text/plain",
+        content=html_content.encode(),
+        media_type="text/html",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )

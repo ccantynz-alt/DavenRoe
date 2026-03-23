@@ -4,14 +4,16 @@ Exposes all forensic engines individually AND as a combined
 "90-minute Financial Health Audit" endpoint.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.auth.dependencies import get_current_user
 from app.forensic.engines.anomaly import AnomalyDetector
 from app.forensic.engines.benfords import BenfordsAnalyzer
 from app.forensic.engines.money_trail import MoneyTrailAnalyzer
 from app.forensic.engines.payroll_crossref import PayrollCrossReferencer
 from app.forensic.engines.vendor_verify import VendorVerifier
 from app.forensic.agents.due_diligence import DueDiligenceAgent
+from app.models.user import User
 from app.schemas.forensic import (
     AnomalyScanRequest,
     BenfordsRequest,
@@ -32,7 +34,7 @@ money_trail = MoneyTrailAnalyzer()
 # ── Individual Engines ───────────────────────────────────────
 
 @router.post("/benfords")
-async def run_benfords_analysis(req: BenfordsRequest):
+async def run_benfords_analysis(req: BenfordsRequest, user: User = Depends(get_current_user)):
     """Run Benford's Law analysis on a set of financial amounts.
 
     Returns first-digit, second-digit, and duplicate analysis
@@ -42,13 +44,13 @@ async def run_benfords_analysis(req: BenfordsRequest):
 
 
 @router.post("/anomalies")
-async def run_anomaly_scan(req: AnomalyScanRequest):
+async def run_anomaly_scan(req: AnomalyScanRequest, user: User = Depends(get_current_user)):
     """Run full anomaly detection: outliers, timing patterns, round numbers."""
     return anomaly.full_anomaly_scan(req.transactions)
 
 
 @router.post("/vendors/verify")
-async def verify_vendors(req: VendorVerificationRequest):
+async def verify_vendors(req: VendorVerificationRequest, user: User = Depends(get_current_user)):
     """Cross-reference vendors for ghost vendors, concentration, and splitting."""
     results = {}
 
@@ -69,7 +71,7 @@ async def verify_vendors(req: VendorVerificationRequest):
 
 
 @router.post("/payroll/cross-reference")
-async def cross_reference_payroll(req: PayrollCrossRefRequest):
+async def cross_reference_payroll(req: PayrollCrossRefRequest, user: User = Depends(get_current_user)):
     """Cross-reference payroll records against tax filings."""
     results = {}
 
@@ -87,7 +89,7 @@ async def cross_reference_payroll(req: PayrollCrossRefRequest):
 
 
 @router.post("/money-trail")
-async def analyze_money_trail(req: AnomalyScanRequest):
+async def analyze_money_trail(req: AnomalyScanRequest, user: User = Depends(get_current_user)):
     """Analyze cash flow patterns and generate funds flow map."""
     return {
         "cash_flow": money_trail.analyze_cash_flow_pattern(req.transactions),
@@ -98,7 +100,7 @@ async def analyze_money_trail(req: AnomalyScanRequest):
 # ── Full Due Diligence Audit ────────────────────────────────
 
 @router.post("/audit")
-async def run_full_due_diligence(req: FullDueDiligenceRequest):
+async def run_full_due_diligence(req: FullDueDiligenceRequest, user: User = Depends(get_current_user)):
     """Run the complete 90-minute Financial Health Audit.
 
     Ingests all available data, runs every forensic engine, aggregates

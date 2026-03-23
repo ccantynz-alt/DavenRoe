@@ -9,9 +9,12 @@ For M&A due diligence, a Benford's violation in vendor payments or expense
 reports is a massive red flag.
 """
 
+import logging
 import math
 from collections import Counter
 from decimal import Decimal
+
+logger = logging.getLogger(__name__)
 
 
 # Benford's expected distribution for first digit (1-9)
@@ -243,7 +246,7 @@ class BenfordsAnalyzer:
                 if ch.isdigit() and ch != "0":
                     return int(ch)
         except (ValueError, TypeError):
-            pass
+            logger.exception("Failed to extract first digit from value '%s'", value)
         return None
 
     @staticmethod
@@ -262,7 +265,7 @@ class BenfordsAnalyzer:
                     if count == 2:
                         return int(d)
         except (ValueError, TypeError):
-            pass
+            logger.exception("Failed to extract second digit from value '%s'", value)
         return None
 
     @staticmethod

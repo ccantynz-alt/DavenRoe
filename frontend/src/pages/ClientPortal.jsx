@@ -30,7 +30,7 @@ function AccountantView() {
       // Register the client user with the client role
       await api.post('/auth/register', {
         email,
-        password: `Welcome${Date.now()}!`, // Temporary password
+        password: crypto.randomUUID().slice(0, 12) + 'A1!',
         full_name: email.split('@')[0],
         role: 'client',
       });

@@ -10,12 +10,14 @@ Next-generation autonomous accounting endpoints:
 from datetime import date
 from decimal import Decimal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.agents.cash_flow_forecaster import CashFlowForecaster
 from app.agents.compliance_monitor import ComplianceMonitor
 from app.agents.month_end_close import MonthEndCloseAgent
+from app.auth.dependencies import get_current_user
 from app.agents.orchestrator import Orchestrator
+from app.models.user import User
 
 router = APIRouter(prefix="/agentic", tags=["Agentic AI"])
 
@@ -23,7 +25,7 @@ router = APIRouter(prefix="/agentic", tags=["Agentic AI"])
 # === Orchestrator ===
 
 @router.post("/orchestrate")
-async def orchestrate_request(request: dict):
+async def orchestrate_request(request: dict, user: User = Depends(get_current_user)):
     """Natural language request → multi-agent execution.
 
     Send any accounting request in plain English and the orchestrator
@@ -44,7 +46,7 @@ async def orchestrate_request(request: dict):
 
 
 @router.post("/automate/{process}")
-async def run_automation(process: str, params: dict):
+async def run_automation(process: str, params: dict, user: User = Depends(get_current_user)):
     """Run a pre-built automation end-to-end.
 
     Available automations:
@@ -62,7 +64,7 @@ async def run_automation(process: str, params: dict):
 
 
 @router.get("/agents/status")
-async def get_agent_status():
+async def get_agent_status(user: User = Depends(get_current_user)):
     """Get the current status of all AI agents."""
     orchestrator = Orchestrator()
     return await orchestrator.get_agent_status()
@@ -71,7 +73,7 @@ async def get_agent_status():
 # === Month-End Close ===
 
 @router.post("/close/run")
-async def run_month_end_close(data: dict):
+async def run_month_end_close(data: dict, user: User = Depends(get_current_user)):
     """Run the autonomous month-end close pipeline.
 
     The agent will:
@@ -102,7 +104,7 @@ async def run_month_end_close(data: dict):
 # === Cash Flow Forecast ===
 
 @router.post("/forecast")
-async def generate_cash_forecast(data: dict):
+async def generate_cash_forecast(data: dict, user: User = Depends(get_current_user)):
     """Generate a 13-week rolling cash flow forecast.
 
     Analyzes historical patterns, scores receivables risk,
@@ -131,7 +133,7 @@ async def generate_cash_forecast(data: dict):
 # === Compliance Monitor ===
 
 @router.post("/compliance/check")
-async def check_compliance(data: dict):
+async def check_compliance(data: dict, user: User = Depends(get_current_user)):
     """Run a full compliance check across jurisdictions.
 
     Monitors:

@@ -12,9 +12,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.auth.dependencies import get_current_user
 from app.core.database import get_db
 from app.models.transaction import Transaction, TransactionLine
 from app.models.account import Account
+from app.models.user import User
 from app.reports.engine import ReportingEngine
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
@@ -65,13 +67,13 @@ async def _fetch_transaction_dicts(
 
 
 @router.get("/available")
-async def available_reports():
+async def available_reports(user: User = Depends(get_current_user)):
     """List all available report types."""
     return {"reports": engine.available_reports()}
 
 
 @router.post("/generate")
-async def generate_report(data: dict, db: AsyncSession = Depends(get_db)):
+async def generate_report(data: dict, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     """Generate a financial report from real ledger data."""
     start = date.fromisoformat(data["start_date"]) if data.get("start_date") else None
     end = date.fromisoformat(data["end_date"]) if data.get("end_date") else None
@@ -95,6 +97,7 @@ async def quick_report(
     report_type: str,
     entity_id: str | None = None,
     months: int = Query(default=1, ge=1, le=24),
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Generate a report with sensible defaults — no body needed."""

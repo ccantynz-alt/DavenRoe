@@ -7,8 +7,10 @@ Calculators, validators, reference data, reconciliation.
 from datetime import date
 from decimal import Decimal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
+from app.auth.dependencies import get_current_user
+from app.models.user import User
 from app.toolkit.calculators import FinancialCalculator, InvoiceCalculator, DepreciationQuickCalc, RatioCalculator
 from app.toolkit.utilities import TaxIdValidator, GSTCalculator, CurrencyConverter, BusinessDateCalculator
 from app.toolkit.reference import FiscalYearReference, LodgmentDueDates, ChartOfAccountsTemplates
@@ -20,7 +22,7 @@ router = APIRouter(prefix="/toolkit", tags=["Universal Toolkit"])
 # ── Financial Calculators ────────────────────────────────────
 
 @router.post("/calc/compound-interest")
-async def compound_interest(data: dict):
+async def compound_interest(data: dict, user: User = Depends(get_current_user)):
     """Compound interest calculator with schedule."""
     calc = FinancialCalculator()
     return calc.compound_interest(
@@ -32,7 +34,7 @@ async def compound_interest(data: dict):
 
 
 @router.post("/calc/loan")
-async def loan_amortization(data: dict):
+async def loan_amortization(data: dict, user: User = Depends(get_current_user)):
     """Loan amortization schedule."""
     calc = FinancialCalculator()
     return calc.loan_amortization(
@@ -44,7 +46,7 @@ async def loan_amortization(data: dict):
 
 
 @router.post("/calc/present-value")
-async def present_value(data: dict):
+async def present_value(data: dict, user: User = Depends(get_current_user)):
     """Present value calculation."""
     calc = FinancialCalculator()
     return calc.present_value(
@@ -55,7 +57,7 @@ async def present_value(data: dict):
 
 
 @router.post("/calc/future-value")
-async def future_value(data: dict):
+async def future_value(data: dict, user: User = Depends(get_current_user)):
     """Future value calculation."""
     calc = FinancialCalculator()
     return calc.future_value(
@@ -66,7 +68,7 @@ async def future_value(data: dict):
 
 
 @router.post("/calc/irr")
-async def irr(data: dict):
+async def irr(data: dict, user: User = Depends(get_current_user)):
     """Internal rate of return."""
     calc = FinancialCalculator()
     cash_flows = [Decimal(str(cf)) for cf in data.get("cash_flows", [])]
@@ -74,7 +76,7 @@ async def irr(data: dict):
 
 
 @router.post("/calc/depreciation")
-async def depreciation(data: dict):
+async def depreciation(data: dict, user: User = Depends(get_current_user)):
     """Quick depreciation calculation."""
     calc = DepreciationQuickCalc()
     return calc.calculate(
@@ -87,7 +89,7 @@ async def depreciation(data: dict):
 
 
 @router.post("/calc/ratios")
-async def financial_ratios(data: dict):
+async def financial_ratios(data: dict, user: User = Depends(get_current_user)):
     """Calculate financial ratios from quick inputs."""
     calc = RatioCalculator()
     return calc.calculate_all(**{k: Decimal(str(v)) if isinstance(v, (int, float, str)) else v for k, v in data.items()})
@@ -96,7 +98,7 @@ async def financial_ratios(data: dict):
 # ── Invoice & Payment ────────────────────────────────────────
 
 @router.post("/invoice/gst")
-async def invoice_gst(data: dict):
+async def invoice_gst(data: dict, user: User = Depends(get_current_user)):
     """GST/VAT inclusive ↔ exclusive calculator."""
     calc = InvoiceCalculator()
     return calc.gst_calculation(
@@ -107,7 +109,7 @@ async def invoice_gst(data: dict):
 
 
 @router.post("/invoice/early-payment")
-async def early_payment(data: dict):
+async def early_payment(data: dict, user: User = Depends(get_current_user)):
     """Early payment discount calculator (e.g., 2/10 net 30)."""
     calc = InvoiceCalculator()
     return calc.early_payment_discount(
@@ -119,7 +121,7 @@ async def early_payment(data: dict):
 
 
 @router.post("/invoice/late-interest")
-async def late_interest(data: dict):
+async def late_interest(data: dict, user: User = Depends(get_current_user)):
     """Late payment interest calculator."""
     calc = InvoiceCalculator()
     return calc.late_payment_interest(
@@ -132,7 +134,7 @@ async def late_interest(data: dict):
 # ── Tax ID Validator ─────────────────────────────────────────
 
 @router.post("/validate/tax-id")
-async def validate_tax_id(data: dict):
+async def validate_tax_id(data: dict, user: User = Depends(get_current_user)):
     """Validate a tax identification number (ABN, EIN, IRD, etc.)."""
     validator = TaxIdValidator()
     return validator.validate(
@@ -145,7 +147,7 @@ async def validate_tax_id(data: dict):
 # ── GST/VAT Multi-Jurisdiction ──────────────────────────────
 
 @router.post("/gst/calculate")
-async def gst_calculate(data: dict):
+async def gst_calculate(data: dict, user: User = Depends(get_current_user)):
     """Multi-jurisdiction GST/VAT calculator."""
     calc = GSTCalculator()
     return calc.calculate(
@@ -157,7 +159,7 @@ async def gst_calculate(data: dict):
 
 
 @router.post("/gst/compare")
-async def gst_compare(data: dict):
+async def gst_compare(data: dict, user: User = Depends(get_current_user)):
     """Compare GST/VAT across all jurisdictions."""
     calc = GSTCalculator()
     return calc.compare_jurisdictions(Decimal(str(data.get("amount", 0))))
@@ -166,7 +168,7 @@ async def gst_compare(data: dict):
 # ── Currency ─────────────────────────────────────────────────
 
 @router.post("/currency/convert")
-async def currency_convert(data: dict):
+async def currency_convert(data: dict, user: User = Depends(get_current_user)):
     """Convert between currencies."""
     converter = CurrencyConverter()
     return converter.convert(
@@ -177,7 +179,7 @@ async def currency_convert(data: dict):
 
 
 @router.get("/currency/rates")
-async def currency_rates():
+async def currency_rates(user: User = Depends(get_current_user)):
     """List all available exchange rates."""
     return CurrencyConverter().list_rates()
 
@@ -185,7 +187,7 @@ async def currency_rates():
 # ── Dates ────────────────────────────────────────────────────
 
 @router.post("/dates/business-days")
-async def business_days(data: dict):
+async def business_days(data: dict, user: User = Depends(get_current_user)):
     """Add business days to a date."""
     calc = BusinessDateCalculator()
     return calc.add_business_days(
@@ -196,7 +198,7 @@ async def business_days(data: dict):
 
 
 @router.post("/dates/payment-due")
-async def payment_due(data: dict):
+async def payment_due(data: dict, user: User = Depends(get_current_user)):
     """Calculate payment due date from invoice terms."""
     calc = BusinessDateCalculator()
     return calc.payment_due_date(
@@ -209,31 +211,31 @@ async def payment_due(data: dict):
 # ── Reference ────────────────────────────────────────────────
 
 @router.get("/reference/fy/{jurisdiction}")
-async def fiscal_year(jurisdiction: str):
+async def fiscal_year(jurisdiction: str, user: User = Depends(get_current_user)):
     """Get current financial year info for a jurisdiction."""
     return FiscalYearReference().current_fy(jurisdiction)
 
 
 @router.get("/reference/fy")
-async def fiscal_year_all():
+async def fiscal_year_all(user: User = Depends(get_current_user)):
     """Financial year info for all jurisdictions."""
     return FiscalYearReference().all_jurisdictions()
 
 
 @router.get("/reference/deadlines/{jurisdiction}")
-async def lodgment_deadlines(jurisdiction: str):
+async def lodgment_deadlines(jurisdiction: str, user: User = Depends(get_current_user)):
     """Get upcoming lodgment/filing deadlines."""
     return LodgmentDueDates().upcoming(jurisdiction)
 
 
 @router.get("/reference/coa")
-async def list_coa_templates():
+async def list_coa_templates(user: User = Depends(get_current_user)):
     """List available chart of accounts templates."""
     return ChartOfAccountsTemplates().list_templates()
 
 
 @router.get("/reference/coa/{template_id}")
-async def get_coa_template(template_id: str):
+async def get_coa_template(template_id: str, user: User = Depends(get_current_user)):
     """Get a chart of accounts template by industry."""
     template = ChartOfAccountsTemplates().get_template(template_id)
     if not template:
@@ -244,7 +246,7 @@ async def get_coa_template(template_id: str):
 # ── Reconciliation ───────────────────────────────────────────
 
 @router.post("/reconciliation/match")
-async def reconciliation_match(data: dict):
+async def reconciliation_match(data: dict, user: User = Depends(get_current_user)):
     """Auto-match bank transactions to ledger entries."""
     matcher = ReconciliationMatcher()
     return matcher.reconcile(
@@ -255,13 +257,13 @@ async def reconciliation_match(data: dict):
 
 
 @router.post("/reconciliation/duplicates")
-async def find_duplicates(data: dict):
+async def find_duplicates(data: dict, user: User = Depends(get_current_user)):
     """Find potential duplicate transactions."""
     return ReconciliationMatcher().find_duplicates(data.get("transactions", []))
 
 
 @router.post("/reconciliation/bank-rec")
-async def bank_rec_summary(data: dict):
+async def bank_rec_summary(data: dict, user: User = Depends(get_current_user)):
     """Generate bank reconciliation summary statement."""
     return ReconciliationMatcher().bank_rec_summary(
         bank_balance=Decimal(str(data.get("bank_balance", 0))),

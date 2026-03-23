@@ -11,8 +11,11 @@ into Astra's internal format.
 import csv
 import io
 import json
+import logging
 from datetime import date
 from decimal import Decimal
+
+logger = logging.getLogger(__name__)
 
 
 class DataImporter:
@@ -169,7 +172,7 @@ class DataImporter:
                     credit = Decimal(txn.pop("credit").replace(",", "")) if txn.get("credit") else Decimal("0")
                     txn["amount"] = str(debit - credit)
                 except Exception:
-                    pass
+                    logger.exception("Failed to parse debit/credit values for row %d during data import", i + 1)
 
             # Clean amount
             if "amount" in txn and txn["amount"]:

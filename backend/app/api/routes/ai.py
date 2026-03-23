@@ -4,17 +4,19 @@ Natural language queries and AI-powered features.
 This is the "Simple-Speak" interface.
 """
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.agents.categorizer import CategorizationAgent
 from app.agents.narrator import NarrativeAgent
+from app.auth.dependencies import get_current_user
+from app.models.user import User
 from app.schemas.tax import NaturalLanguageQuery
 
 router = APIRouter(prefix="/ai", tags=["AI Agent"])
 
 
 @router.post("/query")
-async def natural_language_query(req: NaturalLanguageQuery):
+async def natural_language_query(req: NaturalLanguageQuery, user: User = Depends(get_current_user)):
     """Ask a question about your finances in plain English.
 
     Examples:
@@ -34,7 +36,7 @@ async def natural_language_query(req: NaturalLanguageQuery):
 
 
 @router.post("/categorize")
-async def categorize_transaction(transaction: dict):
+async def categorize_transaction(transaction: dict, user: User = Depends(get_current_user)):
     """AI-categorize a bank feed transaction.
 
     Send raw bank transaction data and get back a suggested
@@ -52,7 +54,7 @@ async def categorize_transaction(transaction: dict):
 
 
 @router.post("/narrative")
-async def generate_narrative(data: dict):
+async def generate_narrative(data: dict, user: User = Depends(get_current_user)):
     """Generate a plain-English narrative from financial data.
 
     Instead of just showing numbers, get a 2-3 paragraph summary
