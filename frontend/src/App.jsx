@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './components/Toast';
+import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
@@ -27,6 +29,12 @@ import SecurityPage from './pages/Security';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Contact from './pages/Contact';
+import Enterprise from './pages/Enterprise';
+import ActivityFeed from './pages/ActivityFeed';
+import Payroll from './pages/Payroll';
+import TaxFiling from './pages/TaxFiling';
+import Marketplace from './pages/Marketplace';
+import AIInsights from './pages/AIInsights';
 import NotFound from './pages/NotFound';
 
 function AppRoutes() {
@@ -105,6 +113,12 @@ function AppRoutes() {
         <Route path="/agentic" element={<AgenticDashboard />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/integrations" element={<Integrations />} />
+        <Route path="/enterprise" element={<Enterprise />} />
+        <Route path="/activity" element={<ActivityFeed />} />
+        <Route path="/payroll" element={<Payroll />} />
+        <Route path="/tax-filing" element={<TaxFiling />} />
+        <Route path="/marketplace" element={<Marketplace />} />
+        <Route path="/ai-insights" element={<AIInsights />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>
@@ -115,7 +129,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppRoutes />
+      <ToastProvider>
+        <ErrorBoundary>
+          <AppRoutes />
+        </ErrorBoundary>
+      </ToastProvider>
     </AuthProvider>
   );
 }

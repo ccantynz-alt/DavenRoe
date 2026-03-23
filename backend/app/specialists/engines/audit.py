@@ -5,11 +5,14 @@ time-consuming audit procedures: sampling, journal entry testing,
 depreciation recalculation, and cut-off testing.
 """
 
+import logging
 import math
 import random
 from collections import defaultdict
 from datetime import date
 from decimal import Decimal
+
+logger = logging.getLogger(__name__)
 
 
 class AuditSamplingEngine:
@@ -158,7 +161,7 @@ class JournalEntryTestingEngine:
                     if d.day >= 28:
                         flags.append({"indicator": "period_end", "detail": "Posted in last 3 days of month"})
                 except ValueError:
-                    pass
+                    logger.exception("Failed to parse journal entry date '%s' during fraud indicator testing", entry_date)
 
             # Just under approval threshold
             if approval_threshold * Decimal("0.9") <= amount < approval_threshold:

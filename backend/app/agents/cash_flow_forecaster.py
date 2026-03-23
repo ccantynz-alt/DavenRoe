@@ -7,9 +7,12 @@ This is the shift from "what happened" to "what will happen."
 """
 
 import json
+import logging
 from datetime import date, timedelta
 from decimal import Decimal
 from uuid import uuid4
+
+logger = logging.getLogger(__name__)
 
 import anthropic
 
@@ -247,7 +250,7 @@ class CashFlowForecaster:
                     due_date = date.fromisoformat(str(due_date_str))
                     days_overdue = max(0, (today - due_date).days)
                 except (ValueError, TypeError):
-                    pass
+                    logger.exception("Failed to parse receivable due date '%s' for customer '%s'", due_date_str, customer)
 
             # Risk scoring
             if days_overdue > 90:
@@ -412,7 +415,7 @@ class CashFlowForecaster:
             try:
                 dates.append(date.fromisoformat(str(t.get("date", ""))))
             except (ValueError, TypeError):
-                pass
+                logger.exception("Failed to parse transaction date '%s' during burn rate calculation", t.get("date", ""))
 
         if len(dates) >= 2:
             span_days = max(1, (max(dates) - min(dates)).days)
@@ -459,6 +462,7 @@ class CashFlowForecaster:
                         due = date.fromisoformat(str(rec.get("due_date", "")))
                         week = max(1, min(13, (due - today).days // 7 + 1))
                     except (ValueError, TypeError):
+                        logger.exception("Failed to parse receivable due date for weekly projection")
                         week = 4
                 receivable_by_week[week] = receivable_by_week.get(week, Decimal("0")) + expected
 
@@ -471,7 +475,7 @@ class CashFlowForecaster:
                 amount = Decimal(str(obl.get("amount", "0"))) if obl.get("amount") != "varies" else Decimal("0")
                 obligation_by_week[week] = obligation_by_week.get(week, Decimal("0")) + amount
             except (ValueError, TypeError, ArithmeticError):
-                pass
+                logger.exception("Failed to parse obligation due date or amount for weekly projection")
 
         for week_num in range(1, 14):
             week_start = today + timedelta(weeks=week_num - 1)

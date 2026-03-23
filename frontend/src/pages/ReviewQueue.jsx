@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getReviewQueue, reviewTransaction } from '../services/api';
+import { useToast } from '../components/Toast';
 
 export default function ReviewQueue() {
   const [filter, setFilter] = useState('all');
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const toast = useToast();
 
   const fetchQueue = async () => {
     setLoading(true);
@@ -28,7 +30,7 @@ export default function ReviewQueue() {
       await reviewTransaction(id, { action });
       fetchQueue();
     } catch (err) {
-      alert(err.response?.data?.detail || 'Action failed');
+      toast.error(err.response?.data?.detail || 'Action failed');
     }
   };
 

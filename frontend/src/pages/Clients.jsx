@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useToast } from '../components/Toast';
 
 const ENTITY_TYPES = ['company', 'trust', 'sole_trader', 'partnership', 'smsf', 'not_for_profit', 'individual'];
 const JURISDICTIONS = ['AU', 'NZ', 'GB', 'US'];
@@ -9,6 +10,7 @@ export default function Clients() {
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState({ search: '', jurisdiction: '', type: '' });
   const [form, setForm] = useState({ name: '', entity_type: 'company', jurisdiction: 'AU', contact_email: '' });
+  const toast = useToast();
 
   useEffect(() => {
     axios.get('/api/v1/clients/', { params: filter })
@@ -25,7 +27,7 @@ export default function Clients() {
       const res = await axios.get('/api/v1/clients/', { params: filter });
       setClients(res.data.entities || []);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.response?.data?.detail || err.message);
     }
   };
 

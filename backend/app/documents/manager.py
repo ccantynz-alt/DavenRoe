@@ -12,11 +12,14 @@ Features:
 - Retention policy tracking
 """
 
+import logging
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from enum import Enum
 import hashlib
 import uuid
+
+logger = logging.getLogger(__name__)
 
 
 class DocumentType(str, Enum):
@@ -98,7 +101,7 @@ class Document:
                 doc_date = date.fromisoformat(self.document_date[:10])
                 self.retention_expiry = str(doc_date.replace(year=doc_date.year + self.retention_years))
             except (ValueError, OverflowError):
-                pass
+                logger.exception("Failed to calculate retention expiry from document date '%s'", self.document_date)
 
     def to_dict(self) -> dict:
         return {
@@ -217,7 +220,7 @@ class DocumentManager:
                     if expiry <= before_date:
                         results.append(doc)
                 except ValueError:
-                    pass
+                    logger.exception("Failed to parse retention expiry date '%s' for document '%s'", doc.retention_expiry, doc.id)
         return results
 
     def summary(self) -> dict:

@@ -14,10 +14,13 @@ Features:
 - Automated reminders
 """
 
+import logging
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, time
 from enum import Enum
 import uuid
+
+logger = logging.getLogger(__name__)
 
 
 class AppointmentType(str, Enum):
@@ -106,7 +109,7 @@ class Appointment:
                 start = datetime.fromisoformat(self.start_time)
                 self.end_time = (start + timedelta(minutes=self.duration_minutes)).isoformat()
             except ValueError:
-                pass
+                logger.exception("Failed to calculate appointment end time from start time '%s'", self.start_time)
 
     def to_dict(self) -> dict:
         return {

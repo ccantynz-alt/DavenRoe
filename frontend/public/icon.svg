@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="96" fill="#111827"/>
+  <rect x="32" y="32" width="448" height="448" rx="72" fill="#1e293b"/>
+  <defs>
+    <linearGradient id="g" x1="128" y1="96" x2="384" y2="416" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#818cf8"/>
+      <stop offset="1" stop-color="#4f46e5"/>
+    </linearGradient>
+  </defs>
+  <!-- Stylized "A" letterform -->
+  <path d="M256 96 L368 416 L320 416 L296 336 L216 336 L192 416 L144 416 L256 96Z" fill="url(#g)"/>
+  <rect x="216" y="280" width="80" height="16" rx="4" fill="#111827"/>
+  <!-- Star accent -->
+  <circle cx="256" cy="180" r="8" fill="#c7d2fe"/>
+  <circle cx="380" cy="140" r="4" fill="#818cf8" opacity="0.6"/>
+  <circle cx="140" cy="160" r="3" fill="#818cf8" opacity="0.4"/>
+</svg>

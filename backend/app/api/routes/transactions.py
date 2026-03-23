@@ -12,8 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.agents.auditor import AuditAgent
+from app.auth.dependencies import get_current_user
 from app.core.database import get_db
 from app.models.transaction import Transaction, TransactionLine
+from app.models.user import User
 from app.schemas.transaction import TransactionApproval, TransactionCreate, TransactionOut
 
 router = APIRouter(prefix="/transactions", tags=["Transactions"])
@@ -22,7 +24,7 @@ auditor = AuditAgent()
 
 
 @router.post("/", response_model=TransactionOut, status_code=201)
-async def create_transaction(data: TransactionCreate, db: AsyncSession = Depends(get_db)):
+async def create_transaction(data: TransactionCreate, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     """Create a new transaction (journal entry).
 
     Validates double-entry: total debits must equal total credits.
@@ -85,6 +87,7 @@ async def list_transactions(
     status: str | None = None,
     limit: int = Query(default=50, le=200),
     offset: int = 0,
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """List transactions with optional filters."""
@@ -102,6 +105,7 @@ async def list_transactions(
 @router.get("/review", response_model=list[TransactionOut])
 async def get_review_queue(
     entity_id: uuid.UUID | None = None,
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Get transactions pending human review (the Reviewer Dashboard feed)."""
@@ -122,6 +126,7 @@ async def get_review_queue(
 async def review_transaction(
     transaction_id: uuid.UUID,
     approval: TransactionApproval,
+    user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Approve, flag, or void a transaction. This is the human-in-the-loop."""

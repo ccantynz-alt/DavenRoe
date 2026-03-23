@@ -26,3 +26,10 @@
 
 /* Utility classes */
 .animate-fade-up { animation: fade-up 0.7s ease-out forwards; }
+
+/* Toast slide in */
+@keyframes slide-in {
+  0% { opacity: 0; transform: translateX(100%); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-in { animation: slide-in 0.3s ease-out forwards; }

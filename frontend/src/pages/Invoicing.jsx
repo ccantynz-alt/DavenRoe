@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { useToast } from '../components/Toast';
 
 export default function Invoicing() {
   const [invoices, setInvoices] = useState([]);
   const [summary, setSummary] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
   const [loading, setLoading] = useState(true);
+  const toast = useToast();
 
   const fetchInvoices = async () => {
     try {
@@ -82,6 +84,7 @@ function SummaryCard({ label, value, color }) {
 }
 
 function CreateInvoiceForm({ onCreated }) {
+  const toast = useToast();
   const [form, setForm] = useState({
     customer_name: '',
     customer_email: '',
@@ -117,7 +120,7 @@ function CreateInvoiceForm({ onCreated }) {
       });
       onCreated();
     } catch (err) {
-      alert(err.response?.data?.detail || 'Failed to create invoice');
+      toast.error(err.response?.data?.detail || 'Failed to create invoice');
     } finally {
       setSubmitting(false);
     }
@@ -209,6 +212,7 @@ function CreateInvoiceForm({ onCreated }) {
 }
 
 function InvoiceRow({ invoice, onAction }) {
+  const toast = useToast();
   const statusColors = {
     draft: 'bg-gray-100 text-gray-700',
     sent: 'bg-blue-100 text-blue-700',
@@ -224,7 +228,7 @@ function InvoiceRow({ invoice, onAction }) {
       await api.post(`/invoicing/${invoice.id}/send`);
       onAction();
     } catch (err) {
-      alert(err.response?.data?.detail || 'Failed');
+      toast.error(err.response?.data?.detail || 'Failed to send invoice');
     }
   };
 

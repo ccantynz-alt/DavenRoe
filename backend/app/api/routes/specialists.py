@@ -5,9 +5,11 @@ Provides tools for every type of chartered accountant.
 
 from decimal import Decimal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
+from app.auth.dependencies import get_current_user
+from app.models.user import User
 from app.specialists.registry import SpecialistRegistry
 from app.specialists.engines.audit import AuditSamplingEngine, JournalEntryTestingEngine, DepreciationEngine
 from app.specialists.engines.management import VarianceAnalysisEngine, CostAllocationEngine, BreakEvenEngine, WorkingCapitalEngine
@@ -23,7 +25,7 @@ registry = SpecialistRegistry()
 # ── Registry ─────────────────────────────────────────────────
 
 @router.get("/")
-async def list_specializations():
+async def list_specializations(user: User = Depends(get_current_user)):
     """List all accounting specializations and their Astra toolkits."""
     specs = registry.list_all()
     return {
@@ -45,7 +47,7 @@ async def list_specializations():
 
 
 @router.get("/{spec_id}")
-async def get_specialization(spec_id: str):
+async def get_specialization(spec_id: str, user: User = Depends(get_current_user)):
     """Get details for a specific specialization."""
     spec = registry.get(spec_id)
     if not spec:
@@ -63,7 +65,7 @@ async def get_specialization(spec_id: str):
 
 
 @router.get("/search/{query}")
-async def search_specializations(query: str):
+async def search_specializations(query: str, user: User = Depends(get_current_user)):
     """Search specializations by keyword."""
     results = registry.search(query)
     return {
@@ -75,7 +77,7 @@ async def search_specializations(query: str):
 # ── Audit Tools ──────────────────────────────────────────────
 
 @router.post("/audit/sampling")
-async def audit_sampling(data: dict):
+async def audit_sampling(data: dict, user: User = Depends(get_current_user)):
     """Statistical audit sampling (MUS or stratified)."""
     engine = AuditSamplingEngine()
     method = data.get("method", "mus")
@@ -90,7 +92,7 @@ async def audit_sampling(data: dict):
 
 
 @router.post("/audit/journal-testing")
-async def journal_entry_testing(data: dict):
+async def journal_entry_testing(data: dict, user: User = Depends(get_current_user)):
     """Test journal entries for fraud indicators."""
     engine = JournalEntryTestingEngine()
     return engine.test_journal_entries(
@@ -100,7 +102,7 @@ async def journal_entry_testing(data: dict):
 
 
 @router.post("/audit/depreciation")
-async def verify_depreciation(data: dict):
+async def verify_depreciation(data: dict, user: User = Depends(get_current_user)):
     """Recalculate and verify asset depreciation."""
     engine = DepreciationEngine()
     if "assets" in data:
@@ -117,14 +119,14 @@ async def verify_depreciation(data: dict):
 # ── Management Accounting Tools ──────────────────────────────
 
 @router.post("/management/variance")
-async def budget_variance(data: dict):
+async def budget_variance(data: dict, user: User = Depends(get_current_user)):
     """Budget vs actual with variance analysis."""
     engine = VarianceAnalysisEngine()
     return engine.budget_vs_actual(data.get("budget", []), data.get("actuals", []))
 
 
 @router.post("/management/cost-allocation")
-async def cost_allocation(data: dict):
+async def cost_allocation(data: dict, user: User = Depends(get_current_user)):
     """Allocate overhead costs across cost centers."""
     engine = CostAllocationEngine()
     return engine.allocate_costs(
@@ -135,7 +137,7 @@ async def cost_allocation(data: dict):
 
 
 @router.post("/management/break-even")
-async def break_even(data: dict):
+async def break_even(data: dict, user: User = Depends(get_current_user)):
     """Break-even analysis with sensitivity."""
     engine = BreakEvenEngine()
     return engine.calculate_break_even(
@@ -146,7 +148,7 @@ async def break_even(data: dict):
 
 
 @router.post("/management/working-capital")
-async def working_capital(data: dict):
+async def working_capital(data: dict, user: User = Depends(get_current_user)):
     """Working capital cycle analysis (DSO, DPO, DIO)."""
     engine = WorkingCapitalEngine()
     return engine.calculate_cycle(
@@ -161,7 +163,7 @@ async def working_capital(data: dict):
 # ── Insolvency Tools ────────────────────────────────────────
 
 @router.post("/insolvency/solvency-test")
-async def solvency_test(data: dict):
+async def solvency_test(data: dict, user: User = Depends(get_current_user)):
     """Run comprehensive solvency tests."""
     engine = SolvencyTestEngine()
     return engine.comprehensive_test(
@@ -173,7 +175,7 @@ async def solvency_test(data: dict):
 
 
 @router.post("/insolvency/creditor-waterfall")
-async def creditor_waterfall(data: dict):
+async def creditor_waterfall(data: dict, user: User = Depends(get_current_user)):
     """Calculate creditor priority waterfall distribution."""
     engine = CreditorWaterfallEngine()
     return engine.calculate_waterfall(
@@ -183,7 +185,7 @@ async def creditor_waterfall(data: dict):
 
 
 @router.post("/insolvency/voidable-transactions")
-async def voidable_transactions(data: dict):
+async def voidable_transactions(data: dict, user: User = Depends(get_current_user)):
     """Scan for voidable transactions in relation-back period."""
     engine = VoidableTransactionScanner()
     from datetime import date
@@ -197,7 +199,7 @@ async def voidable_transactions(data: dict):
 # ── Trust & Estate Tools ────────────────────────────────────
 
 @router.post("/trust/distribution")
-async def trust_distribution(data: dict):
+async def trust_distribution(data: dict, user: User = Depends(get_current_user)):
     """Calculate trust distributions to beneficiaries."""
     engine = TrustDistributionEngine()
     return engine.calculate_distribution(
@@ -207,7 +209,7 @@ async def trust_distribution(data: dict):
 
 
 @router.post("/estate/cgt")
-async def estate_cgt(data: dict):
+async def estate_cgt(data: dict, user: User = Depends(get_current_user)):
     """Calculate estate CGT on death."""
     engine = EstateCGTEngine()
     return engine.calculate_estate_cgt(
@@ -220,7 +222,7 @@ async def estate_cgt(data: dict):
 # ── Payroll Tools ────────────────────────────────────────────
 
 @router.post("/payroll/termination")
-async def termination_pay(data: dict):
+async def termination_pay(data: dict, user: User = Depends(get_current_user)):
     """Calculate termination/redundancy payout."""
     engine = TerminationPayEngine()
     return engine.calculate_termination(
@@ -234,7 +236,7 @@ async def termination_pay(data: dict):
 
 
 @router.post("/payroll/leave-accrual")
-async def leave_accrual(data: dict):
+async def leave_accrual(data: dict, user: User = Depends(get_current_user)):
     """Calculate leave accrual balance and liability."""
     engine = LeaveAccrualEngine()
     return engine.calculate_accrual(
@@ -248,14 +250,14 @@ async def leave_accrual(data: dict):
 # ── ESG Tools ────────────────────────────────────────────────
 
 @router.post("/esg/carbon")
-async def carbon_calculation(data: dict):
+async def carbon_calculation(data: dict, user: User = Depends(get_current_user)):
     """Calculate carbon emissions from activity data."""
     engine = CarbonCalculatorEngine()
     return engine.calculate_emissions(data.get("activities", []))
 
 
 @router.post("/esg/carbon-from-spend")
-async def carbon_from_spend(data: dict):
+async def carbon_from_spend(data: dict, user: User = Depends(get_current_user)):
     """Estimate Scope 3 emissions from financial spend."""
     engine = CarbonCalculatorEngine()
     return engine.estimate_from_spend(data.get("expenses", []))

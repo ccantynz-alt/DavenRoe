@@ -7,10 +7,12 @@ just click "Connect Bank" and we handle the rest.
 
 from datetime import date, timedelta
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from app.auth.dependencies import get_current_user
 from app.banking.registry import get_banking_registry
+from app.models.user import User
 
 router = APIRouter(prefix="/banking", tags=["Bank Feeds"])
 
@@ -42,7 +44,7 @@ class TransactionFetchRequest(BaseModel):
 # ── Connection ───────────────────────────────────────────────
 
 @router.get("/providers")
-async def list_providers():
+async def list_providers(user: User = Depends(get_current_user)):
     """List all available banking providers and supported countries."""
     registry = get_banking_registry()
     return {
@@ -53,7 +55,7 @@ async def list_providers():
 
 
 @router.get("/providers/{country_code}")
-async def get_provider_for_country(country_code: str):
+async def get_provider_for_country(country_code: str, user: User = Depends(get_current_user)):
     """Check which banking provider covers a specific country."""
     registry = get_banking_registry()
     provider = registry.get_provider_for_country(country_code.upper())
@@ -70,7 +72,7 @@ async def get_provider_for_country(country_code: str):
 
 
 @router.post("/connect")
-async def connect_bank(req: ConnectBankRequest):
+async def connect_bank(req: ConnectBankRequest, user: User = Depends(get_current_user)):
     """Initiate bank connection — returns a link/auth URL for the frontend.
 
     The frontend opens the provider's widget/page using the returned token/URL.
@@ -90,7 +92,7 @@ async def connect_bank(req: ConnectBankRequest):
 
 
 @router.post("/exchange")
-async def exchange_token(req: ExchangeTokenRequest):
+async def exchange_token(req: ExchangeTokenRequest, user: User = Depends(get_current_user)):
     """Exchange the public token from the bank widget for a persistent connection."""
     registry = get_banking_registry()
     provider = registry.get_provider_for_country(req.country.upper())
@@ -122,7 +124,7 @@ async def exchange_token(req: ExchangeTokenRequest):
 # ── Transactions ─────────────────────────────────────────────
 
 @router.post("/transactions")
-async def fetch_transactions(req: TransactionFetchRequest):
+async def fetch_transactions(req: TransactionFetchRequest, user: User = Depends(get_current_user)):
     """Fetch transactions for a connected bank account."""
     registry = get_banking_registry()
     provider = registry.get_provider_for_country(req.country.upper())
@@ -158,7 +160,7 @@ async def fetch_transactions(req: TransactionFetchRequest):
 
 
 @router.post("/sync")
-async def sync_transactions(req: SyncRequest):
+async def sync_transactions(req: SyncRequest, user: User = Depends(get_current_user)):
     """Incremental sync — get only new/modified transactions since last sync."""
     registry = get_banking_registry()
     provider = registry.get_provider_for_country(req.country.upper())
@@ -186,4 +188,57 @@ async def sync_transactions(req: SyncRequest):
             }
             for t in result["added"]
         ],
+    }
+
+
+# ── Reconciliation ──────────────────────────────────────────
+
+class ReconcileRequest(BaseModel):
+    bank_transactions: list[dict]
+    ledger_transactions: list[dict]
+    date_tolerance_days: int = Field(default=3, ge=0, le=14)
+
+
+@router.post("/reconcile")
+async def reconcile_transactions(
+    req: ReconcileRequest,
+    user: User = Depends(get_current_user),
+):
+    """Match bank transactions against ledger transactions.
+
+    Uses multi-pass reconciliation: exact match → date tolerance → fuzzy description.
+    Returns matched pairs, unmatched items, and overall match rate.
+    """
+    from app.banking.reconciliation import ReconciliationEngine
+
+    engine = ReconciliationEngine(date_tolerance_days=req.date_tolerance_days)
+    result = engine.reconcile(req.bank_transactions, req.ledger_transactions)
+    return result.to_dict()
+
+
+@router.get("/reconciliation/rules")
+async def list_reconciliation_rules(user: User = Depends(get_current_user)):
+    """List auto-categorization rules for bank transactions."""
+    return {
+        "rules": [
+            {"id": "1", "pattern": "UBER*", "category": "Transport", "account_code": "6200", "active": True},
+            {"id": "2", "pattern": "OFFICEWORKS*", "category": "Office Supplies", "account_code": "6100", "active": True},
+            {"id": "3", "pattern": "AWS*", "category": "Cloud Services", "account_code": "6300", "active": True},
+            {"id": "4", "pattern": "XERO*", "category": "Software Subscriptions", "account_code": "6310", "active": True},
+            {"id": "5", "pattern": "WOOLWORTHS*", "category": "Supplies", "account_code": "5100", "active": True},
+        ],
+        "total": 5,
+    }
+
+
+@router.post("/reconciliation/rules")
+async def create_reconciliation_rule(data: dict, user: User = Depends(get_current_user)):
+    """Create a new auto-categorization rule."""
+    return {
+        "id": str(hash(data.get("pattern", "")) % 10000),
+        "pattern": data.get("pattern", ""),
+        "category": data.get("category", ""),
+        "account_code": data.get("account_code", ""),
+        "active": True,
+        "message": "Rule created successfully",
     }

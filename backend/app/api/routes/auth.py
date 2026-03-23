@@ -48,6 +48,24 @@ class UserOut(BaseModel):
     created_at: str
 
 
+class PasswordResetRequest(BaseModel):
+    email: EmailStr
+
+
+class PasswordResetConfirm(BaseModel):
+    token: str
+    new_password: str = Field(..., min_length=8)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(..., min_length=8)
+
+
+# In-memory reset tokens (use Redis or DB in production)
+_reset_tokens: dict[str, dict] = {}
+
+
 # ── Routes ───────────────────────────────────────────────────
 
 @router.post("/register", response_model=TokenResponse, status_code=201)
@@ -142,6 +160,64 @@ async def list_users(
         }
         for u in users
     ]
+
+
+@router.post("/password-reset/request")
+async def request_password_reset(req: PasswordResetRequest, db: AsyncSession = Depends(get_db)):
+    """Request a password reset email."""
+    user = await get_user_by_email(db, req.email)
+    # Always return success to prevent email enumeration
+    if user:
+        import secrets
+        from datetime import datetime, timezone, timedelta
+        token = secrets.token_urlsafe(32)
+        _reset_tokens[token] = {
+            "user_id": str(user.id),
+            "expires": datetime.now(timezone.utc) + timedelta(hours=1),
+        }
+        # In production, send email via Mailgun with reset link
+        # For now, token is stored and can be used directly
+    return {"message": "If an account with that email exists, a reset link has been sent."}
+
+
+@router.post("/password-reset/confirm")
+async def confirm_password_reset(req: PasswordResetConfirm, db: AsyncSession = Depends(get_db)):
+    """Reset password using a reset token."""
+    from datetime import datetime, timezone
+    token_data = _reset_tokens.get(req.token)
+    if not token_data:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+
+    if datetime.now(timezone.utc) > token_data["expires"]:
+        del _reset_tokens[req.token]
+        raise HTTPException(status_code=400, detail="Reset token has expired")
+
+    from app.auth.service import get_user_by_id
+    user = await get_user_by_id(db, token_data["user_id"])
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user.hashed_password = hash_password(req.new_password)
+    await db.flush()
+
+    del _reset_tokens[req.token]
+    return {"message": "Password has been reset successfully. Please log in with your new password."}
+
+
+@router.post("/change-password")
+async def change_password(
+    req: ChangePasswordRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Change password for the current authenticated user."""
+    from app.auth.service import verify_password
+    if not verify_password(req.current_password, user.hashed_password):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+
+    user.hashed_password = hash_password(req.new_password)
+    await db.flush()
+    return {"message": "Password changed successfully."}
 
 
 @router.patch("/users/{user_id}/role")

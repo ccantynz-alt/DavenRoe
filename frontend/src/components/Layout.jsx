@@ -9,15 +9,21 @@ const nav = [
   { path: '/review', label: 'Review Queue', icon: '>' },
   { path: '/banking', label: 'Bank Feeds', icon: '$' },
   { path: '/invoicing', label: 'Invoicing', icon: '#' },
+  { path: '/payroll', label: 'Payroll', icon: '$' },
   { path: '/documents', label: 'Documents', icon: '^' },
   { path: '/reports', label: 'Reports', icon: '=' },
   { path: '/tax', label: 'Tax Engine', icon: '%' },
+  { path: '/tax-filing', label: 'Tax Filing', icon: '>' },
   { path: '/compliance', label: 'Compliance', icon: '!' },
   { path: '/portal', label: 'Client Portal', icon: '@' },
   { path: '/inventory', label: 'Inventory', icon: '{' },
   { path: '/specialists', label: 'Specialist Tools', icon: '*' },
   { path: '/toolkit', label: 'Toolkit', icon: '+' },
   { path: '/integrations', label: 'Integrations', icon: '<' },
+  { path: '/marketplace', label: 'Marketplace', icon: '#' },
+  { path: '/ai-insights', label: 'AI Insights', icon: '?' },
+  { path: '/enterprise', label: 'Enterprise', icon: '*' },
+  { path: '/activity', label: 'Activity', icon: '~' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
   { path: '/agentic', label: 'Agentic AI', icon: '&' },
   { path: '/settings', label: 'Settings', icon: ':' },
@@ -81,7 +87,7 @@ export default function Layout({ children }) {
         <div className="px-4 pb-2">
           <p className="text-[10px] uppercase tracking-wider text-gray-600 mb-2 px-3">Add-ons</p>
           <a
-            href="http://localhost:3001"
+            href={`${window.location.protocol}//${window.location.hostname}:3001`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-pink-400 hover:bg-gray-800 transition-colors"

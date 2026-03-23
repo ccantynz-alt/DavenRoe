@@ -1,15 +1,17 @@
 """Multi-Currency API routes."""
 
 from decimal import Decimal
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from app.multicurrency.ledger import MultiCurrencyLedger
+from app.auth.dependencies import get_current_user
+from app.models.user import User
 
 router = APIRouter(prefix="/multicurrency", tags=["Multi-Currency"])
 ledger = MultiCurrencyLedger()
 
 
 @router.post("/transaction")
-async def record_fx_transaction(data: dict):
+async def record_fx_transaction(data: dict, user: User = Depends(get_current_user)):
     txn = ledger.record_transaction(
         foreign_currency=data.get("currency", "USD"),
         foreign_amount=Decimal(str(data.get("amount", 0))),
@@ -26,11 +28,11 @@ async def record_fx_transaction(data: dict):
 
 
 @router.post("/revalue")
-async def revalue(data: dict):
+async def revalue(data: dict, user: User = Depends(get_current_user)):
     rates = {k: Decimal(str(v)) for k, v in data.get("rates", {}).items()}
     return ledger.revalue_at_period_end(rates)
 
 
 @router.get("/exposure")
-async def currency_exposure():
+async def currency_exposure(user: User = Depends(get_current_user)):
     return ledger.currency_exposure()

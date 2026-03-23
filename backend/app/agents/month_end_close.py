@@ -9,10 +9,13 @@ This is the shift from "accountant does 40 hours of close work" to
 """
 
 import json
+import logging
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from uuid import uuid4
+
+logger = logging.getLogger(__name__)
 
 import anthropic
 
@@ -366,7 +369,7 @@ class MonthEndCloseAgent:
                                 "severity": "low",
                             })
                     except (ValueError, TypeError):
-                        pass
+                        logger.exception("Failed to parse transaction date '%s' during anomaly scan", txn_date)
 
                 # Duplicate detection (same amount, same day)
                 for other in transactions:

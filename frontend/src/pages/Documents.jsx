@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
+import { useToast } from '../components/Toast';
 
 export default function Documents() {
   const [documents, setDocuments] = useState([]);
@@ -7,6 +8,7 @@ export default function Documents() {
   const [showUpload, setShowUpload] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const toast = useToast();
 
   const fetchSummary = async () => {
     try {
@@ -39,7 +41,7 @@ export default function Documents() {
       setShowUpload(false);
       fetchSummary();
     } catch (err) {
-      alert(err.response?.data?.detail || 'Upload failed');
+      toast.error(err.response?.data?.detail || 'Upload failed');
     }
   };
 

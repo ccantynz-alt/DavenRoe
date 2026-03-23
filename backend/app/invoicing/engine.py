@@ -7,11 +7,14 @@ online payment links, and multi-currency invoicing.
 FreshBooks leads on invoicing UX. We match on features.
 """
 
+import logging
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 import uuid
+
+logger = logging.getLogger(__name__)
 
 TWO_DP = Decimal("0.01")
 
@@ -134,7 +137,7 @@ class Invoice:
                 issue = date.fromisoformat(self.issue_date)
                 self.due_date = str(issue + timedelta(days=self.payment_terms))
             except ValueError:
-                pass
+                logger.exception("Failed to calculate due date from issue date '%s'", self.issue_date)
 
     def calculate_totals(self):
         """Calculate all totals from line items."""

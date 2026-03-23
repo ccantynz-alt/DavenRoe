@@ -4,25 +4,37 @@ import { useAuth } from '../contexts/AuthContext';
 export default function Login() {
   const { login, register } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
+  const [showReset, setShowReset] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [role, setRole] = useState('bookkeeper');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
-      if (isRegister) {
+      if (showReset) {
+        const res = await fetch('/api/v1/auth/password-reset/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
+        setSuccess(data.message);
+        setShowReset(false);
+      } else if (isRegister) {
         await register(email, password, fullName, role);
       } else {
         await login(email, password);
       }
     } catch (err) {
-      setError(err.response?.data?.detail || 'Authentication failed');
+      setError(err.response?.data?.detail || err.message || 'Authentication failed');
     } finally {
       setLoading(false);
     }
@@ -38,12 +50,17 @@ export default function Login() {
 
         <div className="bg-white rounded-xl border shadow-sm p-8">
           <h2 className="text-xl font-semibold mb-6">
-            {isRegister ? 'Create Account' : 'Sign In'}
+            {showReset ? 'Reset Password' : isRegister ? 'Create Account' : 'Sign In'}
           </h2>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
               {error}
+            </div>
+          )}
+          {success && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+              {success}
             </div>
           )}
 
@@ -72,17 +89,19 @@ export default function Login() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                minLength={8}
-                required
-              />
-            </div>
+            {!showReset && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  minLength={8}
+                  required={!showReset}
+                />
+              </div>
+            )}
 
             {isRegister && (
               <div>
@@ -106,13 +125,21 @@ export default function Login() {
               disabled={loading}
               className="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
             >
-              {loading ? 'Please wait...' : isRegister ? 'Create Account' : 'Sign In'}
+              {loading ? 'Please wait...' : showReset ? 'Send Reset Link' : isRegister ? 'Create Account' : 'Sign In'}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
+            {!isRegister && !showReset && (
+              <button
+                onClick={() => { setShowReset(true); setError(''); setSuccess(''); }}
+                className="text-sm text-gray-500 hover:text-gray-700 block mx-auto"
+              >
+                Forgot your password?
+              </button>
+            )}
             <button
-              onClick={() => { setIsRegister(!isRegister); setError(''); }}
+              onClick={() => { setIsRegister(!isRegister); setShowReset(false); setError(''); setSuccess(''); }}
               className="text-sm text-indigo-600 hover:text-indigo-800"
             >
               {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Register"}

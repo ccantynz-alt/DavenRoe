@@ -66,3 +66,29 @@ def require_role(*roles: str):
             )
         return user
     return checker
+
+
+def check_entity_access(user: User, entity_id: str) -> bool:
+    """Check if user has access to a specific entity.
+
+    Partners and managers have full access (empty entity_access = all).
+    Other roles must have the entity_id in their entity_access list.
+    """
+    if user.role in ("partner", "manager"):
+        return True
+    if not user.entity_access:
+        return True  # empty list = all-access for legacy compatibility
+    return str(entity_id) in user.entity_access
+
+
+def require_entity_access(entity_id_param: str = "entity_id"):
+    """Dependency factory — verify user can access the specified entity."""
+    async def checker(user: User = Depends(get_current_user), **kwargs) -> User:
+        entity_id = kwargs.get(entity_id_param)
+        if entity_id and not check_entity_access(user, str(entity_id)):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have access to this entity",
+            )
+        return user
+    return checker
