@@ -44,6 +44,7 @@ import SmartTools from './pages/SmartTools';
 import TimeTracker from './pages/TimeTracker';
 import LiveReceipt from './pages/LiveReceipt';
 import SpendMonitor from './pages/SpendMonitor';
+import ConsentGate from './components/ConsentGate';
 import NotFound from './pages/NotFound';
 
 function AppRoutes() {
@@ -124,12 +125,12 @@ function AppRoutes() {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/enterprise" element={<Enterprise />} />
         <Route path="/activity" element={<ActivityFeed />} />
-        <Route path="/payroll" element={<Payroll />} />
-        <Route path="/tax-filing" element={<TaxFiling />} />
+        <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
+        <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/ai-insights" element={<AIInsights />} />
-        <Route path="/financial-health" element={<FinancialHealthScore />} />
-        <Route path="/incorporate" element={<Incorporation />} />
+        <Route path="/financial-health" element={<ConsentGate feature="financial_health"><FinancialHealthScore /></ConsentGate>} />
+        <Route path="/incorporate" element={<ConsentGate feature="incorporation"><Incorporation /></ConsentGate>} />
         <Route path="/email-scanner" element={<EmailScanner />} />
         <Route path="/tax-agent" element={<TaxAgent />} />
         <Route path="/peer-review" element={<PeerReview />} />
@@ -137,7 +138,7 @@ function AppRoutes() {
         <Route path="/time-tracker" element={<TimeTracker />} />
         <Route path="/live-receipt" element={<LiveReceipt />} />
         <Route path="/live-receipt/:id" element={<LiveReceipt />} />
-        <Route path="/spend-monitor" element={<SpendMonitor />} />
+        <Route path="/spend-monitor" element={<ConsentGate feature="spend_monitor"><SpendMonitor /></ConsentGate>} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

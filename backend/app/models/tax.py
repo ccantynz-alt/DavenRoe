@@ -1,7 +1,7 @@
 """Tax jurisdiction, rate, and treaty models.
 
 This is the DETERMINISTIC layer — hard-coded tax law logic.
-No AI guessing here. Tax math must be 100% legally accurate.
+No AI guessing here. Tax math uses published rates and rules only.
 """
 
 import uuid

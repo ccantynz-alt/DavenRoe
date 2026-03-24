@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 
 const PAY_FREQUENCIES = ['weekly', 'fortnightly', 'monthly'];
 const EMPLOYMENT_TYPES = ['full_time', 'part_time', 'casual', 'contractor'];
@@ -69,6 +70,7 @@ export default function Payroll() {
           <p className="text-gray-500 mt-1">
             Manage employees, pay runs, and leave across {jurisdictions.length > 0 ? jurisdictions.join(', ') : 'AU, NZ, GB, US'}
           </p>
+          <LegalDisclaimer type="payroll" className="mt-3" />
         </div>
         <button
           onClick={() => setShowAdd(!showAdd)}

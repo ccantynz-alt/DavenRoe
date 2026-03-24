@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 
 const STEPS = ['Jurisdiction', 'Structure', 'Company Details', 'Directors & Shareholders', 'Review & Submit'];
 
@@ -95,6 +96,7 @@ export default function Incorporation() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Incorporate a Company</h2>
         <p className="text-gray-500 mt-1">Set up a new business entity across Australia, New Zealand, UK, or US</p>
+        <LegalDisclaimer type="incorporation" className="mt-3" />
       </div>
 
       {/* Existing applications */}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 
 const PAYMENT_ICONS = {
   eftpos: 'EFTPOS', debit: 'Debit', credit: 'Credit',
@@ -158,6 +159,7 @@ export default function LiveReceipt() {
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Live Receipt</h2>
           <p className="text-gray-500 mt-1">Tap to assign expenses the moment they happen</p>
+          <LegalDisclaimer type="live_receipt" className="mt-3" />
         </div>
         <button onClick={() => setShowManual(true)}
           className="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">

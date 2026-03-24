@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 
 const PILLAR_CONFIG = {
   liquidity: { label: 'Liquidity', color: 'blue', description: 'Cash position & short-term solvency' },
@@ -267,6 +268,7 @@ export default function FinancialHealthScore() {
           </span>
         </div>
         <p className="text-gray-500">Comprehensive financial wellness assessment powered by AI analysis across five key pillars</p>
+        <LegalDisclaimer type="financial_health" className="mt-3" />
       </div>
 
       {/* Hero: Score Ring + Pillar Summary */}

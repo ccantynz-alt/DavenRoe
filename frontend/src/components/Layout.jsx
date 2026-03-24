@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { useAuth } from '../contexts/AuthContext';
+import { GlobalFooterDisclaimer } from './LegalDisclaimer';
 
 const nav = [
   { path: '/', label: 'Dashboard', icon: '~' },
@@ -140,6 +141,7 @@ export default function Layout({ children }) {
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto bg-gray-50">
           {children}
+          <GlobalFooterDisclaimer />
         </main>
       </div>
     </div>

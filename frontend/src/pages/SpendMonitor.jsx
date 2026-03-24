@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 
 const SEVERITY_STYLES = {
   critical: { bg: 'bg-red-50 border-red-300', badge: 'bg-red-600 text-white', icon: '\u{1F6A8}', text: 'text-red-700' },
@@ -69,6 +70,7 @@ export default function SpendMonitor() {
       <div className="mb-6">
         <h2 className="text-3xl font-bold text-gray-900">Spend Monitor</h2>
         <p className="text-gray-500 mt-1">Real-time employee expense monitoring, anomaly detection, and fraud prevention</p>
+        <LegalDisclaimer type="spend_monitor" className="mt-3" />
       </div>
 
       {/* Summary cards */}

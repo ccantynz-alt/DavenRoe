@@ -57,7 +57,10 @@ export default function TaxEngine() {
   return (
     <div>
       <h2 className="text-3xl font-bold mb-2">Tax Engine</h2>
-      <p className="text-gray-500 mb-8">Deterministic tax calculations — 100% legally accurate</p>
+      <p className="text-gray-500 mb-6">Deterministic tax calculations based on published legislation</p>
+      <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-8 text-xs text-amber-700">
+        Tax calculations are based on published rates and rules as of the date shown. Tax law is subject to change, interpretation, and jurisdiction-specific exceptions. These calculations are for informational purposes only and do not constitute tax advice. Always verify with a qualified tax professional before filing.
+      </div>
 
       {/* Tabs */}
       <div className="flex gap-2 mb-8">
