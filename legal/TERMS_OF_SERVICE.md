@@ -1,6 +1,6 @@
 # Astra — Terms of Service
 
-**Last Updated: March 2026** | **Version: 2026.03.2**
+**Last Updated: March 2026** | **Version: 2026.03.3**
 
 By creating an account, accessing any feature, or using any output from Astra, you agree to these Terms of Service in their entirety. If you do not agree, do not use the service.
 
@@ -143,32 +143,166 @@ THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIN
 
 ## 9. Dispute Resolution
 
-### 9.1 Governing Law
-These Terms are governed by the laws of New South Wales, Australia, without regard to its conflict of laws provisions.
+### 9.1 Governing Law — General
+Except where overridden by Section 10 (United States Users), these Terms are governed by the laws of New Zealand, without regard to its conflict of laws provisions. The parties submit to the exclusive jurisdiction of the courts of New Zealand for any dispute not subject to arbitration.
 
-### 9.2 Arbitration
-Any dispute arising out of or relating to these Terms shall be finally resolved by binding arbitration administered under the rules of the Australian Centre for International Commercial Arbitration (ACICA), or the equivalent body in your jurisdiction if outside Australia.
+### 9.2 Arbitration — General
+Any dispute arising out of or relating to these Terms shall be finally resolved by binding arbitration administered under the Arbitration Act 1996 (NZ) or, for users outside New Zealand, under the UNCITRAL Arbitration Rules. The seat of arbitration shall be Auckland, New Zealand. The language of arbitration shall be English. The arbitral award shall be final and binding and may be entered as a judgement in any court of competent jurisdiction.
 
 ### 9.3 Class Action Waiver
-TO THE MAXIMUM EXTENT PERMITTED BY LAW, YOU AGREE THAT ANY DISPUTE RESOLUTION PROCEEDINGS WILL BE CONDUCTED ONLY ON AN INDIVIDUAL BASIS AND NOT IN A CLASS, CONSOLIDATED, OR REPRESENTATIVE ACTION.
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, YOU AGREE THAT ANY DISPUTE RESOLUTION PROCEEDINGS WILL BE CONDUCTED ONLY ON AN INDIVIDUAL BASIS AND NOT IN A CLASS, CONSOLIDATED, OR REPRESENTATIVE ACTION. IF THIS CLASS ACTION WAIVER IS FOUND TO BE UNENFORCEABLE WITH RESPECT TO A PARTICULAR CLAIM, THAT CLAIM (AND ONLY THAT CLAIM) MUST BE SEVERED FROM THE ARBITRATION AND MAY BE BROUGHT IN COURT.
 
 ### 9.4 Injunctive Relief
-Nothing in these Terms prevents either party from seeking injunctive or other equitable relief from a court of competent jurisdiction.
+Nothing in these Terms prevents either party from seeking injunctive or other equitable relief from a court of competent jurisdiction to prevent irreparable harm.
 
-## 10. Changes to Terms
+### 9.5 Small Claims Exception
+Either party may bring an individual action in small claims court (or its equivalent) in the claimant's jurisdiction, provided the claim falls within that court's jurisdictional limits.
 
-Astra may modify these Terms at any time. Material changes will be notified via email and/or in-app notification at least 30 days before taking effect. Continued use of the service after the effective date constitutes acceptance of the modified Terms.
+---
 
-## 11. Severability
+## 10. United States — Supplemental Terms
 
-If any provision of these Terms is found to be unenforceable, the remaining provisions shall continue in full force and effect. The unenforceable provision shall be modified to the minimum extent necessary to make it enforceable.
+**If you are a resident of the United States, or access Astra from within the United States, the following supplemental terms apply and override any conflicting provisions in the general Terms above.**
 
-## 12. Entire Agreement
+### 10.1 Entity and Relationship
 
-These Terms, together with the Privacy Policy, AI Disclosure, and any feature-specific disclaimers presented within the service, constitute the entire agreement between you and Astra regarding your use of the service.
+Astra is operated by a New Zealand entity. Astra has no physical presence, registered agent, employees, or offices in the United States. By using the service, you acknowledge that you are contracting with a foreign entity and that the service is provided from outside the United States.
 
-## 13. Contact
+### 10.2 Not a Licensed Professional Service
+
+Astra is **not** a certified public accountant (CPA), enrolled agent (EA), registered tax return preparer, licensed attorney, registered investment advisor (RIA), broker-dealer, or any other licensed professional under federal or state law. Astra does not hold any professional licence in any US state, territory, or federal jurisdiction.
+
+**Astra does not:**
+- Prepare tax returns within the meaning of IRC § 7701(a)(36) — it generates drafts for licensed professionals to review and file
+- Provide "tax advice" as defined under Circular 230 (31 CFR Part 10)
+- Represent users before the IRS, any state tax authority, or any regulatory body
+- Provide investment advice under the Investment Advisers Act of 1940
+- Practice law in any US jurisdiction
+- Act as an employer of record or payroll service provider — it is a calculation tool only
+
+You acknowledge that no CPA-client, attorney-client, fiduciary, or advisor-client relationship is created by your use of Astra.
+
+### 10.3 US Tax-Specific Disclaimers
+
+- All US tax calculations (federal income tax, state income tax, sales tax, payroll tax, FUTA, SUTA, self-employment tax) are based on published IRS and state Department of Revenue rates and rules. They are **informational only**.
+- Astra's outputs do not constitute a "covered opinion" or "other written advice" under IRS Circular 230.
+- **You may not rely on Astra's outputs to avoid penalties under the Internal Revenue Code.** This includes but is not limited to accuracy-related penalties (IRC § 6662), fraud penalties (IRC § 6663), preparer penalties (IRC § 6694), and the substantial understatement penalty.
+- State-specific sales tax nexus determinations are indicative only. Astra does not determine your sales tax collection obligations. Consult a state tax specialist.
+- For any US tax filing, you must engage an IRS-authorized preparer (CPA, EA, or attorney) to review and sign the return before submission.
+
+### 10.4 US Payroll-Specific Disclaimers
+
+- Astra calculates federal and state income tax withholding based on published IRS and state tax tables. You are solely responsible for verifying accuracy.
+- FICA (Social Security and Medicare), FUTA, SUTA, and state-specific withholdings are informational calculations only.
+- Astra does **not** file Forms W-2, 941, 940, 1099, state withholding returns, or any other federal or state employment tax form on your behalf.
+- Astra does **not** make tax deposits to the IRS Electronic Federal Tax Payment System (EFTPS) or any state agency.
+- Worker classification (employee vs. independent contractor) is your responsibility. Astra's categorisation is not a legal determination under the IRS common law test, ABC test, or any state-specific test. Misclassification can result in significant federal and state penalties.
+- You are responsible for compliance with FLSA (minimum wage, overtime), state wage-and-hour laws, and all applicable employment regulations.
+
+### 10.5 US Dispute Resolution
+
+#### 10.5.1 Governing Law for US Users
+For US residents, these Terms shall be governed by the Federal Arbitration Act (9 U.S.C. §§ 1-16) with respect to the enforceability of the arbitration agreement. All other aspects shall be governed by the laws of the State of Delaware, without regard to its conflict of laws provisions.
+
+#### 10.5.2 Arbitration for US Users
+Any dispute between you and Astra shall be resolved through **binding individual arbitration** administered by the American Arbitration Association (AAA) under its Consumer Arbitration Rules, or, if applicable, its Commercial Arbitration Rules. The arbitration shall be conducted in English, and the arbitrator's decision shall be final and binding.
+
+**Fee allocation:** If you are a consumer (non-business user) and the claim is for less than $10,000, Astra shall pay all arbitration filing fees and AAA costs. For claims exceeding $10,000, fees shall be allocated as provided by the AAA Rules.
+
+**Location:** Arbitration shall be conducted in the county of your primary residence (for US individuals) or by video/teleconference at either party's election.
+
+#### 10.5.3 Class Action Waiver (US)
+YOU AND ASTRA EACH WAIVE THE RIGHT TO A JURY TRIAL AND THE RIGHT TO PARTICIPATE IN A CLASS ACTION, CLASS ARBITRATION, OR OTHER REPRESENTATIVE PROCEEDING. If this waiver is found unenforceable under applicable law, then the entirety of this arbitration provision (except for this sentence) shall be null and void, and the dispute shall be brought in the state or federal courts located in Wilmington, Delaware.
+
+#### 10.5.4 Mass Arbitration
+If 25 or more similar claims are filed against Astra, you agree that the AAA's Mass Arbitration Supplementary Rules shall apply, or the parties shall negotiate a bellwether protocol under which a random sample of claims are arbitrated first, with results informing resolution of remaining claims.
+
+#### 10.5.5 Opt-Out Right
+You may opt out of this arbitration agreement by sending written notice to legal@astra.ai within 30 days of first accepting these Terms. The opt-out notice must include your full name, account email, and a clear statement that you decline arbitration. If you opt out, disputes shall be resolved in the state or federal courts located in Wilmington, Delaware.
+
+### 10.6 US State-Specific Provisions
+
+#### 10.6.1 California (CCPA/CPRA)
+If you are a California resident, you have additional rights under the California Consumer Privacy Act (CCPA) as amended by the California Privacy Rights Act (CPRA). See Section 5 of our Privacy Policy for full CCPA/CPRA disclosures, including your right to know, delete, correct, opt-out of sale/sharing, and non-discrimination. Astra does **not** sell or share your personal information as defined under the CCPA/CPRA.
+
+#### 10.6.2 California Civil Code § 1542 Waiver
+If you are a California resident, you expressly waive the benefits of California Civil Code § 1542, which provides: *"A general release does not extend to claims that the creditor or releasing party does not know or suspect to exist in his or her favor at the time of executing the release and that, if known by him or her, would have materially affected his or her settlement with the debtor or released party."*
+
+#### 10.6.3 New Jersey
+If you are a New Jersey resident, certain limitations and exclusions in Sections 3, 7, and 8 may not apply to you under the New Jersey Truth-in-Consumer Contract, Warranty and Notice Act (TCCWNA). In such cases, our liability is limited to the minimum extent permitted by New Jersey law.
+
+#### 10.6.4 Other US States
+To the extent that any US state law provides consumer protections that cannot be waived by contract, those protections shall apply notwithstanding anything to the contrary in these Terms. In all cases, Astra's aggregate liability remains capped as provided in Section 3.2.
+
+### 10.7 No Professional Liability Coverage for Users
+
+Astra does not carry professional liability (errors & omissions) insurance for the benefit of its users. If you rely on Astra's outputs for professional services you provide to your own clients (e.g., if you are an accountant or bookkeeper), you are responsible for maintaining your own professional liability insurance and for exercising independent professional judgement on all outputs.
+
+### 10.8 US Federal and State Regulatory Disclaimer
+
+Astra is not registered with, regulated by, or supervised by the Securities and Exchange Commission (SEC), Financial Industry Regulatory Authority (FINRA), Consumer Financial Protection Bureau (CFPB), Internal Revenue Service (IRS), or any state board of accountancy, state department of revenue, or state attorney general's office. Nothing in Astra's marketing, documentation, or outputs should be construed as an endorsement by any regulatory body.
+
+---
+
+## 11. Australia / New Zealand — Supplemental Terms
+
+### 11.1 Australian Consumer Law (ACL)
+If you are an Australian consumer, you may have rights under the Australian Consumer Law (Schedule 2 of the Competition and Consumer Act 2010) that cannot be excluded by contract. Nothing in these Terms purports to exclude, restrict, or modify any guarantee, right, or remedy conferred by the ACL that cannot be excluded. To the extent permitted, Astra's liability for breach of any non-excludable consumer guarantee is limited to re-supply of the service or payment of the cost of re-supply.
+
+### 11.2 New Zealand Consumer Guarantees Act
+If you are a New Zealand consumer acquiring the service for personal, domestic, or household use, the Consumer Guarantees Act 1993 applies and cannot be contracted out of. For business users, the Consumer Guarantees Act 1993 does not apply and you agree that Sections 2-4 of the CGA are contracted out of pursuant to Section 43 of the CGA.
+
+### 11.3 Tax Agent Services Act (Australia)
+Astra is not a registered tax agent or BAS agent under the Tax Agent Services Act 2009 (Cth). Astra does not prepare, lodge, or file BAS, income tax returns, or any other taxable document with the ATO on your behalf in a capacity that would require registration with the Tax Practitioners Board. All outputs are for your review and for lodgement by a registered tax agent.
+
+### 11.4 Governing Law
+For AU/NZ users, these Terms are governed by the laws of New Zealand. Disputes shall be resolved by arbitration in Auckland, New Zealand under the Arbitration Act 1996 (NZ).
+
+---
+
+## 12. United Kingdom / EU — Supplemental Terms
+
+### 12.1 Consumer Rights
+If you are a consumer in the UK or EU, nothing in these Terms affects your statutory rights under the Consumer Rights Act 2015 (UK) or EU Consumer Rights Directive 2011/83/EU. Unfair terms provisions apply.
+
+### 12.2 GDPR
+Data processing is governed by our Privacy Policy and complies with the UK GDPR and EU GDPR. You have the right to lodge a complaint with your local supervisory authority (e.g., the ICO in the UK).
+
+### 12.3 Not FCA-Regulated
+Astra is not authorised or regulated by the Financial Conduct Authority (FCA) or any EU financial regulator. Astra does not provide regulated financial advice, investment management, or payment services.
+
+### 12.4 MTD Disclaimer
+Astra's MTD (Making Tax Digital) VAT return generation is a draft tool. You must have a UK-registered accountant or VAT-registered agent review and submit returns through HMRC-approved channels. Astra does not guarantee HMRC acceptance.
+
+---
+
+## 13. Changes to Terms
+
+Astra may modify these Terms at any time. Material changes will be notified via email and/or in-app notification at least 30 days before taking effect. Continued use of the service after the effective date constitutes acceptance of the modified Terms. If you disagree with a change, your sole remedy is to stop using the service and close your account.
+
+## 14. Severability
+
+If any provision of these Terms is found to be unenforceable by a court or arbitrator, the remaining provisions shall continue in full force and effect. The unenforceable provision shall be modified to the minimum extent necessary to make it enforceable while preserving its original intent. If modification is not possible, the provision shall be severed.
+
+## 15. Entire Agreement
+
+These Terms, together with the Privacy Policy, AI Disclosure, and any feature-specific disclaimers presented within the service, constitute the entire agreement between you and Astra regarding your use of the service. They supersede all prior oral or written agreements, understandings, or representations.
+
+## 16. Survival
+
+Sections 2 (AI Disclaimer), 3 (Limitation of Liability), 5 (Feature-Specific Terms), 7 (Indemnification), 8 (Warranty Disclaimer), 9/10 (Dispute Resolution), and this Section 16 survive termination of your account.
+
+## 17. Force Majeure
+
+Astra shall not be liable for any failure or delay in performance due to circumstances beyond its reasonable control, including natural disasters, war, terrorism, pandemics, government actions, power failures, internet disruptions, or third-party service outages.
+
+## 18. Assignment
+
+Astra may assign these Terms in connection with a merger, acquisition, or sale of all or substantially all assets, with notice to you. You may not assign your rights under these Terms without Astra's written consent.
+
+## 19. Contact
 
 For legal inquiries: **legal@astra.ai**
 For privacy matters: **privacy@astra.ai**
 For security issues: **security@astra.ai**
+For US-specific legal matters: **us-legal@astra.ai**

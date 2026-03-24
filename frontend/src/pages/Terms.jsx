@@ -15,7 +15,7 @@ export default function Terms({ onBack }) {
 
       <div className="max-w-4xl mx-auto px-6 lg:px-16 py-16">
         <h1 className="text-4xl font-bold mb-2">Terms of Service</h1>
-        <p className="text-sm text-gray-400 mb-12">Last Updated: March 2026 &middot; Version 2026.03.2</p>
+        <p className="text-sm text-gray-400 mb-12">Last Updated: March 2026 &middot; Version 2026.03.3</p>
 
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-12 text-sm text-amber-800">
           <strong>Important:</strong> By creating an account, accessing any feature, or using any output from Astra, you agree to these Terms in their entirety. If you do not agree, do not use the service.
@@ -35,34 +35,30 @@ export default function Terms({ onBack }) {
             </p>
             <h3 className="font-semibold text-gray-900 mt-4 mb-2">2.2 No Guarantee of Accuracy</h3>
             <p>
-              While Astra's tax and payroll engines use deterministic logic derived from published legislation, tax and employment law is complex and subject to interpretation, amendment, and jurisdiction-specific exceptions. AI-generated categorisations and narratives are probabilistic and may contain errors, omissions, or hallucinations. <strong>You are solely responsible for verifying all outputs before use.</strong>
+              While Astra uses deterministic logic derived from published legislation for tax and payroll, the law is complex and subject to interpretation. AI outputs are probabilistic and may contain errors, omissions, or hallucinations. <strong>You are solely responsible for verifying all outputs before use.</strong>
             </p>
             <h3 className="font-semibold text-gray-900 mt-4 mb-2">2.3 Not a Substitute for Professional Advice</h3>
             <p>
-              Astra does not replace the need for a qualified accountant, registered tax agent, CPA, payroll specialist, solicitor, or auditor. For material financial decisions, tax filings, payroll processing, regulatory compliance, corporate formation, or legal matters, you must consult with appropriately licensed professionals in your jurisdiction.
+              Astra does not replace a qualified accountant, registered tax agent, CPA, enrolled agent, payroll specialist, solicitor, or auditor. You must consult appropriately licensed professionals in your jurisdiction.
             </p>
           </Section>
 
           <Section title="3. Limitation of Liability">
             <div className="bg-gray-50 rounded-xl p-4 text-xs text-gray-600 uppercase tracking-wide leading-relaxed mb-4">
-              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, ASTRA AND ITS OPERATORS, DIRECTORS, EMPLOYEES, AND AFFILIATES SHALL NOT BE LIABLE FOR ANY LOSSES, DAMAGES, PENALTIES, FINES, INTEREST, BACK-PAY OBLIGATIONS, OR COSTS ARISING FROM:
+              TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, ASTRA SHALL NOT BE LIABLE FOR ANY LOSSES, DAMAGES, PENALTIES, FINES, INTEREST, BACK-PAY OBLIGATIONS, OR COSTS ARISING FROM USE OF THE SERVICE.
             </div>
             <ul className="space-y-2 text-sm">
               {[
                 'Reliance on AI-generated categorisations, calculations, or recommendations',
                 'Tax filing errors, omissions, late lodgements, or rejection by a tax authority',
-                'Incorrect treaty application or withholding tax calculations',
-                'Payroll miscalculations including incorrect withholdings, superannuation, pension, 401(k), or leave entitlements',
+                'Payroll miscalculations including withholdings, super/pension/401(k), or leave',
                 'Forensic analysis findings (false positives or missed red flags)',
-                'Spend monitoring alerts (false positives or missed fraud indicators)',
-                'Financial health score inaccuracies or omissions',
-                'Company incorporation guidance that is incomplete, incorrect, or inapplicable',
-                'Any AI hallucination, misclassification, or erroneous output',
-                'Bank feed data that is incomplete, delayed, or incorrect',
-                'Receipt scanning, OCR, or expense categorisation errors',
-                'Regulatory or legislative changes not yet reflected in the system',
-                'System downtime, data loss, or service interruptions',
-                'Actions taken by third-party integrations connected through Astra',
+                'Spend monitoring alerts (false positives or missed fraud)',
+                'Financial health score inaccuracies',
+                'Company incorporation guidance',
+                'Any AI hallucination or erroneous output',
+                'Bank feed or receipt scanning errors',
+                'System downtime or third-party integration actions',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-gray-600">
                   <span className="text-red-400 mt-0.5">&#8226;</span> {item}
@@ -70,20 +66,18 @@ export default function Terms({ onBack }) {
               ))}
             </ul>
             <p className="mt-4 font-semibold text-sm">
-              Liability is capped at the fees paid by you in the twelve (12) months preceding the claim. No indirect, incidental, special, consequential, exemplary, or punitive damages.
+              Liability is capped at the fees paid in the twelve (12) months preceding the claim. No indirect, consequential, exemplary, or punitive damages.
             </p>
           </Section>
 
           <Section title="4. Your Responsibilities">
             <ul className="space-y-2">
               {[
-                'Review all AI-drafted transactions before approving them',
-                'Verify tax calculations against current legislation or with a tax professional',
-                'Verify payroll calculations, withholdings, and entitlements before processing pay runs',
-                'Not auto-approve AI outputs without human review',
+                'Review all AI-drafted outputs before approving or acting on them',
+                'Verify all tax and payroll calculations with qualified professionals',
                 'Maintain your own records independent of Astra',
                 'Reconcile bank feed data against official bank statements',
-                'Ensure your use complies with all applicable laws and regulations',
+                'Ensure your use complies with all applicable laws',
                 'Maintain engagement with qualified professionals for material matters',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-gray-600">
@@ -97,37 +91,32 @@ export default function Terms({ onBack }) {
             <div className="space-y-4">
               <FeatureTerms title="5.1 Forensic Module" items={[
                 'Outputs are investigative aids, not legal evidence.',
-                'Findings must be independently verified before use in any legal, regulatory, or employment context.',
+                'Findings must be independently verified before legal, regulatory, or employment action.',
                 'The absence of flags does not guarantee the absence of fraud.',
               ]} />
               <FeatureTerms title="5.2 Payroll Module" items={[
-                'You are solely responsible for verifying all pay calculations before processing.',
-                'Incorrect payroll may result in penalties, back-pay, or legal action. Astra accepts no liability.',
-                'Astra does not lodge payroll tax returns or super payments on your behalf unless you explicitly initiate lodgement.',
+                'You are solely responsible for verifying all calculations before processing.',
+                'Incorrect payroll may result in penalties or legal action. Astra accepts no liability.',
+                'Astra does not lodge payroll returns or make super/pension/tax deposits on your behalf.',
               ]} />
               <FeatureTerms title="5.3 Tax Filing Module" items={[
-                'Tax returns are drafts for professional review.',
-                'You must have a registered tax agent or CPA review before lodgement.',
+                'Tax returns are drafts for professional review before lodgement.',
                 'Astra does not guarantee acceptance by any tax authority.',
               ]} />
               <FeatureTerms title="5.4 Spend Monitoring" items={[
                 'Alerts do not confirm misconduct. Always investigate and follow employment law.',
-                'You must not take disciplinary or legal action based solely on automated alerts.',
-                'Astra accepts no liability for wrongful termination or defamation claims.',
+                'You must not take disciplinary action based solely on automated alerts.',
               ]} />
               <FeatureTerms title="5.5 Financial Health Score" items={[
                 'Not a credit score, credit rating, or business valuation.',
                 'Do not provide to lenders or investors without independent verification.',
-                'May not reflect all material risks or off-balance-sheet items.',
               ]} />
               <FeatureTerms title="5.6 Company Incorporation" items={[
                 'General guidance and templates only — not legal advice.',
                 'Astra does not register companies with any government authority.',
-                'Engage a qualified solicitor before forming any legal entity.',
               ]} />
-              <FeatureTerms title="5.7 Expense Management & Live Receipt" items={[
-                'AI-based receipt scanning and categorisation may contain errors.',
-                'You are responsible for reviewing all captured data before approving.',
+              <FeatureTerms title="5.7 Expense Management" items={[
+                'AI receipt scanning may contain errors. Review before approving.',
                 'Astra does not validate the legitimacy of expense claims.',
               ]} />
             </div>
@@ -135,39 +124,142 @@ export default function Terms({ onBack }) {
 
           <Section title="6. Data Ownership & Privacy">
             <p>
-              <strong>You own your data.</strong> All financial data, documents, and records remain your property. Data may be processed by third-party providers (Anthropic, Plaid, Basiq, TrueLayer, Stripe) under their respective terms. Data is not used for AI model training.
+              <strong>You own your data.</strong> All financial data, documents, and records remain your property. Data may be processed by third-party providers under their respective terms. Data is never used for AI model training. See our <a href="/privacy" className="text-indigo-600 underline">Privacy Policy</a> for full details.
             </p>
           </Section>
 
           <Section title="7. Disclaimer of Warranties">
             <div className="bg-gray-50 rounded-xl p-4 text-xs text-gray-600 uppercase tracking-wide leading-relaxed">
-              THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, COMPLETENESS, AND NON-INFRINGEMENT.
+              THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, AND NON-INFRINGEMENT.
             </div>
           </Section>
 
           <Section title="8. Indemnification">
             <p>
-              You agree to indemnify, defend, and hold harmless Astra, its operators, directors, employees, and affiliates from any claims, damages, losses, penalties, and expenses arising from your use of the service, including claims from your employees, contractors, clients, or counterparties.
+              You agree to indemnify and hold harmless Astra from any claims, damages, losses, and expenses arising from your use of the service, including claims from your employees, contractors, clients, or counterparties.
             </p>
           </Section>
 
           <Section title="9. Dispute Resolution">
+            <p className="mb-3">
+              <strong>General:</strong> These Terms are governed by the laws of New Zealand. Disputes resolved through binding arbitration under the Arbitration Act 1996 (NZ). Class action waiver applies to the maximum extent permitted by law.
+            </p>
             <p>
-              These Terms are governed by the laws of New South Wales, Australia. Disputes shall be resolved through binding arbitration. Class action waiver applies to the maximum extent permitted by law.
+              <strong>US Users:</strong> See Section 10 for US-specific dispute resolution including AAA arbitration.
             </p>
           </Section>
 
-          <Section title="10. Changes & Severability">
+          {/* US-SPECIFIC SECTION */}
+          <div className="border-2 border-blue-200 rounded-2xl p-6 bg-blue-50/30">
+            <Section title="10. United States — Supplemental Terms">
+              <div className="bg-blue-100 rounded-xl p-4 text-sm text-blue-800 mb-6">
+                <strong>US Residents:</strong> If you are located in the United States, these supplemental terms apply and override conflicting general provisions.
+              </div>
+
+              <h3 className="font-bold text-gray-900 mt-6 mb-3">10.1 Not a Licensed Professional Service</h3>
+              <p className="mb-3">
+                Astra is <strong>not</strong> a CPA, enrolled agent, registered tax preparer, licensed attorney, registered investment advisor, or any other licensed professional under US federal or state law. No professional relationship is created.
+              </p>
+              <p className="mb-1 font-semibold text-sm text-gray-800">Astra does not:</p>
+              <ul className="space-y-1.5 text-sm mb-4">
+                {[
+                  'Prepare tax returns within the meaning of IRC § 7701(a)(36)',
+                  'Provide "tax advice" under IRS Circular 230',
+                  'Represent users before the IRS or any state tax authority',
+                  'Provide investment advice under the Investment Advisers Act of 1940',
+                  'Practice law in any US jurisdiction',
+                  'File Forms W-2, 941, 940, 1099, or any payroll tax form on your behalf',
+                  'Make deposits to EFTPS or any state tax agency',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-gray-600">
+                    <span className="text-red-400 mt-0.5">&#10005;</span> {item}
+                  </li>
+                ))}
+              </ul>
+
+              <h3 className="font-bold text-gray-900 mt-6 mb-3">10.2 US Tax Disclaimer</h3>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-xs text-red-700 mb-4">
+                <strong>IRS Circular 230 Notice:</strong> Astra&apos;s outputs do not constitute a &ldquo;covered opinion&rdquo; or &ldquo;other written advice&rdquo; under Circular 230. You may not rely on Astra&apos;s outputs to avoid penalties under the Internal Revenue Code.
+              </div>
+
+              <h3 className="font-bold text-gray-900 mt-6 mb-3">10.3 US Dispute Resolution</h3>
+              <p className="mb-3">
+                Disputes governed by the Federal Arbitration Act (9 U.S.C. §§ 1-16). Binding individual arbitration via the American Arbitration Association (AAA). For claims under $10,000, Astra pays all AAA fees.
+              </p>
+              <p className="mb-3 font-semibold text-sm">
+                You waive the right to a jury trial and the right to participate in a class action.
+              </p>
+              <p className="text-sm text-gray-500 mb-4">
+                Opt-out: You may opt out of arbitration within 30 days of account creation by emailing legal@astra.ai. If you opt out, disputes go to state or federal courts in Wilmington, Delaware.
+              </p>
+
+              <h3 className="font-bold text-gray-900 mt-6 mb-3">10.4 California (CCPA/CPRA)</h3>
+              <p>
+                Astra does <strong>not sell or share</strong> your personal information. See our <a href="/privacy" className="text-indigo-600 underline">Privacy Policy</a> for full CCPA/CPRA disclosures including your right to know, delete, correct, and non-discrimination.
+              </p>
+
+              <h3 className="font-bold text-gray-900 mt-6 mb-3">10.5 State-Specific Provisions</h3>
+              <p className="text-sm text-gray-600">
+                <strong>California:</strong> § 1542 waiver applies. <strong>New Jersey:</strong> TCCWNA protections preserved. <strong>All states:</strong> Where mandatory consumer protections cannot be waived, those protections apply. Aggregate liability cap (Section 3.2) still applies.
+              </p>
+
+              <h3 className="font-bold text-gray-900 mt-6 mb-3">10.6 No E&O Coverage for Users</h3>
+              <p className="text-sm text-gray-600">
+                Astra does not carry professional liability insurance for your benefit. If you are an accountant or bookkeeper using Astra for client work, maintain your own E&O insurance and exercise independent professional judgement.
+              </p>
+            </Section>
+          </div>
+
+          {/* AU/NZ SECTION */}
+          <Section title="11. Australia & New Zealand — Supplemental Terms">
+            <FeatureTerms title="Australian Consumer Law" items={[
+              'Non-excludable consumer guarantees under the ACL are preserved.',
+              'Liability for breach of non-excludable guarantees limited to re-supply of the service.',
+            ]} />
+            <div className="mt-3">
+              <FeatureTerms title="New Zealand Consumer Guarantees Act" items={[
+                'CGA applies to personal/domestic/household consumers. Business users: CGA contracted out under Section 43.',
+              ]} />
+            </div>
+            <div className="mt-3">
+              <FeatureTerms title="Tax Agent Services Act (AU)" items={[
+                'Astra is not a registered tax agent or BAS agent under the Tax Agent Services Act 2009.',
+                'All outputs are for lodgement by a registered tax agent.',
+              ]} />
+            </div>
+          </Section>
+
+          {/* UK/EU SECTION */}
+          <Section title="12. United Kingdom & EU — Supplemental Terms">
+            <FeatureTerms title="Consumer Rights" items={[
+              'Statutory rights under Consumer Rights Act 2015 (UK) and EU Consumer Rights Directive are preserved.',
+              'Astra is not FCA-regulated and does not provide regulated financial advice.',
+              'MTD VAT return generation is a draft tool. Have a registered agent review before submission to HMRC.',
+            ]} />
+          </Section>
+
+          <Section title="13. General">
+            <p className="mb-3">
+              <strong>Changes:</strong> 30 days notice for material changes. Continued use = acceptance.
+            </p>
+            <p className="mb-3">
+              <strong>Severability:</strong> Unenforceable provisions are modified to minimum enforceable extent; remaining provisions continue.
+            </p>
+            <p className="mb-3">
+              <strong>Survival:</strong> Sections 2, 3, 5, 7, 8, 9/10, and this section survive termination.
+            </p>
             <p>
-              Astra may modify these Terms with 30 days notice. Continued use constitutes acceptance. If any provision is found unenforceable, the remaining provisions continue in full force.
+              <strong>Force Majeure:</strong> Astra is not liable for failures due to circumstances beyond reasonable control.
             </p>
           </Section>
 
-          <Section title="11. Contact">
+          <Section title="14. Contact">
             <p>
               Legal: <span className="text-indigo-600 font-medium">legal@astra.ai</span> &middot;
               Privacy: <span className="text-indigo-600 font-medium">privacy@astra.ai</span> &middot;
               Security: <span className="text-indigo-600 font-medium">security@astra.ai</span>
+              <br />
+              US-specific legal: <span className="text-indigo-600 font-medium">us-legal@astra.ai</span>
             </p>
           </Section>
         </div>
