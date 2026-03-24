@@ -7,6 +7,7 @@ const nav = [
   { path: '/', label: 'Dashboard', icon: '~' },
   { path: '/financial-health', label: 'Health Score', icon: '+' },
   { path: '/clients', label: 'Clients', icon: '@' },
+  { path: '/incorporate', label: 'Incorporate', icon: '>' },
   { path: '/review', label: 'Review Queue', icon: '>' },
   { path: '/banking', label: 'Bank Feeds', icon: '$' },
   { path: '/invoicing', label: 'Invoicing', icon: '#' },
