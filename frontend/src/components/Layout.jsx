@@ -40,6 +40,9 @@ const nav = [
   { path: '/tax-filing', label: 'Tax Filing', icon: '>' },
   { path: '/tax-agent', label: 'Tax Agent', icon: '?' },
   { path: '/compliance', label: 'Compliance', icon: '!' },
+  // Projects & Planning
+  { path: '/projects', label: 'Projects', icon: '#' },
+  { path: '/scenarios', label: 'Scenario Planning', icon: '?' },
   // Reports & Budgets
   { path: '/reports', label: 'Reports', icon: '=' },
   { path: '/budgets', label: 'Budgets', icon: '=' },
@@ -59,6 +62,7 @@ const nav = [
   { path: '/activity', label: 'Activity', icon: '~' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
   { path: '/agentic', label: 'Agentic AI', icon: '&' },
+  { path: '/help', label: 'Help Center', icon: '?' },
   { path: '/settings', label: 'Settings', icon: ':' },
 ];
 

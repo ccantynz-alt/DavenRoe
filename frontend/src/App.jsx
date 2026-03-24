@@ -57,6 +57,9 @@ import PurchaseOrders from './pages/PurchaseOrders';
 import CreditNotes from './pages/CreditNotes';
 import FixedAssets from './pages/FixedAssets';
 import Budgets from './pages/Budgets';
+import ProjectManagement from './pages/ProjectManagement';
+import ScenarioPlanning from './pages/ScenarioPlanning';
+import HelpCenter from './pages/HelpCenter';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -161,6 +164,9 @@ function AppRoutes() {
         <Route path="/credit-notes" element={<CreditNotes />} />
         <Route path="/fixed-assets" element={<FixedAssets />} />
         <Route path="/budgets" element={<Budgets />} />
+        <Route path="/projects" element={<ProjectManagement />} />
+        <Route path="/scenarios" element={<ScenarioPlanning />} />
+        <Route path="/help" element={<HelpCenter />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>
