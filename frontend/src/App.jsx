@@ -40,6 +40,8 @@ import Incorporation from './pages/Incorporation';
 import EmailScanner from './pages/EmailScanner';
 import TaxAgent from './pages/TaxAgent';
 import PeerReview from './pages/PeerReview';
+import SmartTools from './pages/SmartTools';
+import TimeTracker from './pages/TimeTracker';
 import NotFound from './pages/NotFound';
 
 function AppRoutes() {
@@ -129,6 +131,8 @@ function AppRoutes() {
         <Route path="/email-scanner" element={<EmailScanner />} />
         <Route path="/tax-agent" element={<TaxAgent />} />
         <Route path="/peer-review" element={<PeerReview />} />
+        <Route path="/smart-tools" element={<SmartTools />} />
+        <Route path="/time-tracker" element={<TimeTracker />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

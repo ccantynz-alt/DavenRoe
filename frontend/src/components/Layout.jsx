@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const nav = [
   { path: '/', label: 'Dashboard', icon: '~' },
+  { path: '/smart-tools', label: 'Smart Tools', icon: '*' },
   { path: '/financial-health', label: 'Health Score', icon: '+' },
   { path: '/clients', label: 'Clients', icon: '@' },
   { path: '/incorporate', label: 'Incorporate', icon: '>' },
@@ -12,6 +13,7 @@ const nav = [
   { path: '/peer-review', label: 'Peer Review', icon: '&' },
   { path: '/banking', label: 'Bank Feeds', icon: '$' },
   { path: '/invoicing', label: 'Invoicing', icon: '#' },
+  { path: '/time-tracker', label: 'Time Tracker', icon: ':' },
   { path: '/payroll', label: 'Payroll', icon: '$' },
   { path: '/documents', label: 'Documents', icon: '^' },
   { path: '/email-scanner', label: 'Email Scanner', icon: '@' },
