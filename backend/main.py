@@ -26,6 +26,7 @@ from app.api.routes import (
     peer_review,
     smart_tools,
     time_tracker,
+    live_receipt,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -131,6 +132,7 @@ app.include_router(tax_agent.router, prefix="/api/v1")
 app.include_router(peer_review.router, prefix="/api/v1")
 app.include_router(smart_tools.router, prefix="/api/v1")
 app.include_router(time_tracker.router, prefix="/api/v1")
+app.include_router(live_receipt.router, prefix="/api/v1")
 
 
 @app.get("/")

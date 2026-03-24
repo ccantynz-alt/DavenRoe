@@ -42,6 +42,7 @@ import TaxAgent from './pages/TaxAgent';
 import PeerReview from './pages/PeerReview';
 import SmartTools from './pages/SmartTools';
 import TimeTracker from './pages/TimeTracker';
+import LiveReceipt from './pages/LiveReceipt';
 import NotFound from './pages/NotFound';
 
 function AppRoutes() {
@@ -133,6 +134,8 @@ function AppRoutes() {
         <Route path="/peer-review" element={<PeerReview />} />
         <Route path="/smart-tools" element={<SmartTools />} />
         <Route path="/time-tracker" element={<TimeTracker />} />
+        <Route path="/live-receipt" element={<LiveReceipt />} />
+        <Route path="/live-receipt/:id" element={<LiveReceipt />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

@@ -12,6 +12,7 @@ const nav = [
   { path: '/review', label: 'Review Queue', icon: '>' },
   { path: '/peer-review', label: 'Peer Review', icon: '&' },
   { path: '/banking', label: 'Bank Feeds', icon: '$' },
+  { path: '/live-receipt', label: 'Live Receipt', icon: '!' },
   { path: '/invoicing', label: 'Invoicing', icon: '#' },
   { path: '/time-tracker', label: 'Time Tracker', icon: ':' },
   { path: '/payroll', label: 'Payroll', icon: '$' },
