@@ -14,7 +14,7 @@ const FEATURES = [
   { name: "Benford's Law Analysis", astra: true, xero: false, qbo: false, myob: false, freshbooks: false },
   { name: 'Multi-Jurisdiction Tax (4 countries)', astra: true, xero: false, qbo: false, myob: false, freshbooks: false },
   { name: 'Cross-Border Tax Treaties', astra: true, xero: false, qbo: false, myob: false, freshbooks: false },
-  { name: 'Native Multi-Jurisdiction Payroll', astra: true, xero: 'partial', qbo: false, myob: 'partial', freshbooks: false },
+  { name: 'Multi-Jurisdiction Payroll Calculation', astra: true, xero: 'partial', qbo: false, myob: 'partial', freshbooks: false },
   { name: 'Compliance Calendar (40+ deadlines)', astra: true, xero: false, qbo: false, myob: false, freshbooks: false },
   { name: 'Tax E-Filing (BAS/GST/VAT/Sales)', astra: true, xero: 'partial', qbo: 'partial', myob: 'partial', freshbooks: false },
   { name: 'Client Portal (built-in)', astra: true, xero: false, qbo: false, myob: false, freshbooks: true },

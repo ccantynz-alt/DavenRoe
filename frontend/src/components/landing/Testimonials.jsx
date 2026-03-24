@@ -75,7 +75,7 @@ export default function Testimonials() {
       />
 
       <div className="max-w-4xl mx-auto text-center relative">
-        <p className="text-[11px] font-medium tracking-[0.2em] text-indigo-400 uppercase mb-12">What Practitioners Say</p>
+        <p className="text-[11px] font-medium tracking-[0.2em] text-indigo-400 uppercase mb-12">What Practitioners Could Achieve</p>
 
         <div
           className="transition-all duration-300"
@@ -112,6 +112,8 @@ export default function Testimonials() {
             />
           ))}
         </div>
+
+        <p className="text-[10px] text-white/20 mt-8">Illustrative scenarios based on platform capabilities. Names and firms are representative examples.</p>
       </div>
     </section>
   );
