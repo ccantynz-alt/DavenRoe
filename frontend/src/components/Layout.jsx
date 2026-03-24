@@ -13,6 +13,7 @@ const nav = [
   { path: '/peer-review', label: 'Peer Review', icon: '&' },
   { path: '/banking', label: 'Bank Feeds', icon: '$' },
   { path: '/live-receipt', label: 'Live Receipt', icon: '!' },
+  { path: '/spend-monitor', label: 'Spend Monitor', icon: '!' },
   { path: '/invoicing', label: 'Invoicing', icon: '#' },
   { path: '/time-tracker', label: 'Time Tracker', icon: ':' },
   { path: '/payroll', label: 'Payroll', icon: '$' },

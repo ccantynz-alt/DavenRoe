@@ -28,6 +28,7 @@ from app.api.routes import (
     time_tracker,
     live_receipt,
     expense_accounts,
+    spend_monitor,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -135,6 +136,7 @@ app.include_router(smart_tools.router, prefix="/api/v1")
 app.include_router(time_tracker.router, prefix="/api/v1")
 app.include_router(live_receipt.router, prefix="/api/v1")
 app.include_router(expense_accounts.router, prefix="/api/v1")
+app.include_router(spend_monitor.router, prefix="/api/v1")
 
 
 @app.get("/")

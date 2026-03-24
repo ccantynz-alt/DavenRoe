@@ -43,6 +43,7 @@ import PeerReview from './pages/PeerReview';
 import SmartTools from './pages/SmartTools';
 import TimeTracker from './pages/TimeTracker';
 import LiveReceipt from './pages/LiveReceipt';
+import SpendMonitor from './pages/SpendMonitor';
 import NotFound from './pages/NotFound';
 
 function AppRoutes() {
@@ -136,6 +137,7 @@ function AppRoutes() {
         <Route path="/time-tracker" element={<TimeTracker />} />
         <Route path="/live-receipt" element={<LiveReceipt />} />
         <Route path="/live-receipt/:id" element={<LiveReceipt />} />
+        <Route path="/spend-monitor" element={<SpendMonitor />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>
