@@ -37,6 +37,9 @@ import Marketplace from './pages/Marketplace';
 import AIInsights from './pages/AIInsights';
 import FinancialHealthScore from './pages/FinancialHealthScore';
 import Incorporation from './pages/Incorporation';
+import EmailScanner from './pages/EmailScanner';
+import TaxAgent from './pages/TaxAgent';
+import PeerReview from './pages/PeerReview';
 import NotFound from './pages/NotFound';
 
 function AppRoutes() {
@@ -123,6 +126,9 @@ function AppRoutes() {
         <Route path="/ai-insights" element={<AIInsights />} />
         <Route path="/financial-health" element={<FinancialHealthScore />} />
         <Route path="/incorporate" element={<Incorporation />} />
+        <Route path="/email-scanner" element={<EmailScanner />} />
+        <Route path="/tax-agent" element={<TaxAgent />} />
+        <Route path="/peer-review" element={<PeerReview />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

@@ -21,6 +21,9 @@ from app.api.routes import (
     enterprise, payroll, tax_filing,
     financial_health,
     incorporation,
+    email_scanner,
+    tax_agent,
+    peer_review,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -121,6 +124,9 @@ app.include_router(payroll.router, prefix="/api/v1")
 app.include_router(tax_filing.router, prefix="/api/v1")
 app.include_router(financial_health.router, prefix="/api/v1")
 app.include_router(incorporation.router, prefix="/api/v1")
+app.include_router(email_scanner.router, prefix="/api/v1")
+app.include_router(tax_agent.router, prefix="/api/v1")
+app.include_router(peer_review.router, prefix="/api/v1")
 
 
 @app.get("/")
