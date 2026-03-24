@@ -5,6 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const nav = [
   { path: '/', label: 'Dashboard', icon: '~' },
+  { path: '/financial-health', label: 'Health Score', icon: '+' },
   { path: '/clients', label: 'Clients', icon: '@' },
   { path: '/review', label: 'Review Queue', icon: '>' },
   { path: '/banking', label: 'Bank Feeds', icon: '$' },

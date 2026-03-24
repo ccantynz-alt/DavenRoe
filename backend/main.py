@@ -19,6 +19,7 @@ from app.api.routes import (
     messaging, scheduling, integrations_hub,
     inventory, invoicing, marketplace, pdf_export,
     enterprise, payroll, tax_filing,
+    financial_health,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -117,6 +118,7 @@ app.include_router(pdf_export.router, prefix="/api/v1")
 app.include_router(enterprise.router, prefix="/api/v1")
 app.include_router(payroll.router, prefix="/api/v1")
 app.include_router(tax_filing.router, prefix="/api/v1")
+app.include_router(financial_health.router, prefix="/api/v1")
 
 
 @app.get("/")

@@ -140,7 +140,7 @@ Our gaps to close: mobile native app (PWA implemented), direct bank feed connect
 - **PWA** — Progressive Web App with service worker + offline support
 - **PDF Export** — HTML-based professional report generation
 
-## Frontend Routes (31 total)
+## Frontend Routes (32 total)
 
 | Route | Page | Status |
 |-------|------|--------|
@@ -162,6 +162,7 @@ Our gaps to close: mobile native app (PWA implemented), direct bank feed connect
 | `/integrations` | Integrations | Complete |
 | `/marketplace` | Marketplace | Complete |
 | `/ai-insights` | AI Command Center | Complete |
+| `/financial-health` | Financial Health Score | Complete |
 | `/enterprise` | Enterprise | Complete |
 | `/activity` | Activity Feed | Complete |
 | `/ask` | Ask Astra | Complete |
@@ -368,7 +369,7 @@ This is a standing directive. Every development session must evaluate whether ne
 | 4 | Project Management (tasks, budgets, profitability) | FreshBooks (drag-drop, Agile-friendly) | -100% | HIGH | P1 |
 | 5 | Mobile Native Experience | Xero/QBO (native iOS + Android apps) | -40% | HIGH | P1 |
 | 6 | Scenario Planning / What-If Modeling | None mature (users' #10 want) | Not built | HIGH | P1 |
-| 7 | Financial Health Score | None have it (users want it most) | Not built | HIGH | P1 |
+| 7 | Financial Health Score | None have it (users want it most) | BUILT (v1) | CLOSING | P1 |
 | 8 | Dimensional Reporting (multi-dimensional GL) | Sage Intacct (dynamic dimensions) | -50% | MEDIUM | P2 |
 | 9 | Proactive AI Alerts (variance, threshold, anomaly) | Sage Copilot (real-time variance) | -30% | MEDIUM | P2 |
 | 10 | Customer Support Infrastructure (KB, chat, phone) | All competitors have it | -80% | HIGH | P1 |
