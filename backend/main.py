@@ -29,6 +29,17 @@ from app.api.routes import (
     live_receipt,
     expense_accounts,
     spend_monitor,
+    bills,
+    suppliers,
+    chart_of_accounts,
+    journal_entries,
+    bank_reconciliation,
+    quotes,
+    recurring,
+    purchase_orders,
+    credit_notes,
+    fixed_assets,
+    budgets,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -137,6 +148,17 @@ app.include_router(time_tracker.router, prefix="/api/v1")
 app.include_router(live_receipt.router, prefix="/api/v1")
 app.include_router(expense_accounts.router, prefix="/api/v1")
 app.include_router(spend_monitor.router, prefix="/api/v1")
+app.include_router(bills.router, prefix="/api/v1")
+app.include_router(suppliers.router, prefix="/api/v1")
+app.include_router(chart_of_accounts.router, prefix="/api/v1")
+app.include_router(journal_entries.router, prefix="/api/v1")
+app.include_router(bank_reconciliation.router, prefix="/api/v1")
+app.include_router(quotes.router, prefix="/api/v1")
+app.include_router(recurring.router, prefix="/api/v1")
+app.include_router(purchase_orders.router, prefix="/api/v1")
+app.include_router(credit_notes.router, prefix="/api/v1")
+app.include_router(fixed_assets.router, prefix="/api/v1")
+app.include_router(budgets.router, prefix="/api/v1")
 
 
 @app.get("/")

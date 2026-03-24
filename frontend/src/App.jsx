@@ -46,6 +46,17 @@ import LiveReceipt from './pages/LiveReceipt';
 import SpendMonitor from './pages/SpendMonitor';
 import ConsentGate from './components/ConsentGate';
 import NotFound from './pages/NotFound';
+import Suppliers from './pages/Suppliers';
+import Bills from './pages/Bills';
+import ChartOfAccounts from './pages/ChartOfAccounts';
+import JournalEntries from './pages/JournalEntries';
+import BankReconciliation from './pages/BankReconciliation';
+import Quotes from './pages/Quotes';
+import RecurringTransactions from './pages/RecurringTransactions';
+import PurchaseOrders from './pages/PurchaseOrders';
+import CreditNotes from './pages/CreditNotes';
+import FixedAssets from './pages/FixedAssets';
+import Budgets from './pages/Budgets';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -139,6 +150,17 @@ function AppRoutes() {
         <Route path="/live-receipt" element={<LiveReceipt />} />
         <Route path="/live-receipt/:id" element={<LiveReceipt />} />
         <Route path="/spend-monitor" element={<ConsentGate feature="spend_monitor"><SpendMonitor /></ConsentGate>} />
+        <Route path="/suppliers" element={<Suppliers />} />
+        <Route path="/bills" element={<Bills />} />
+        <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
+        <Route path="/journal-entries" element={<JournalEntries />} />
+        <Route path="/bank-reconciliation" element={<BankReconciliation />} />
+        <Route path="/quotes" element={<Quotes />} />
+        <Route path="/recurring" element={<RecurringTransactions />} />
+        <Route path="/purchase-orders" element={<PurchaseOrders />} />
+        <Route path="/credit-notes" element={<CreditNotes />} />
+        <Route path="/fixed-assets" element={<FixedAssets />} />
+        <Route path="/budgets" element={<Budgets />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>
