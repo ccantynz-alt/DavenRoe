@@ -263,9 +263,11 @@ export default function SmartTools() {
               }`}>
                 <div className="prose prose-sm max-w-none">
                   {pnlResult.summary.split('\n\n').map((p, i) => (
-                    <p key={i} className="text-sm text-gray-700 mb-2" dangerouslySetInnerHTML={{
-                      __html: p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    }} />
+                    <p key={i} className="text-sm text-gray-700 mb-2">
+                      {p.split(/\*\*(.*?)\*\*/g).map((seg, j) =>
+                        j % 2 === 1 ? <strong key={j}>{seg}</strong> : seg
+                      )}
+                    </p>
                   ))}
                 </div>
                 {pnlResult.actionable_tips?.length > 0 && (
@@ -329,9 +331,11 @@ export default function SmartTools() {
               <div className="mt-6 p-5 rounded-xl bg-blue-50">
                 <div className="prose prose-sm max-w-none">
                   {bsResult.summary.split('\n\n').map((p, i) => (
-                    <p key={i} className="text-sm text-gray-700 mb-2" dangerouslySetInnerHTML={{
-                      __html: p.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    }} />
+                    <p key={i} className="text-sm text-gray-700 mb-2">
+                      {p.split(/\*\*(.*?)\*\*/g).map((seg, j) =>
+                        j % 2 === 1 ? <strong key={j}>{seg}</strong> : seg
+                      )}
+                    </p>
                   ))}
                 </div>
                 {bsResult.actionable_tips?.length > 0 && (
