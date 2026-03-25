@@ -7,6 +7,7 @@ import { GlobalFooterDisclaimer } from './LegalDisclaimer';
 const nav = [
   // Overview
   { path: '/', label: 'Dashboard', icon: '~' },
+  { path: '/practice', label: 'Practice Overview', icon: '~' },
   { path: '/smart-tools', label: 'Smart Tools', icon: '*' },
   { path: '/financial-health', label: 'Health Score', icon: '+' },
   // Sales & Revenue

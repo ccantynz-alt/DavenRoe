@@ -41,6 +41,8 @@ from app.api.routes import (
     fixed_assets,
     budgets,
     support,
+    projects,
+    scenarios,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -161,6 +163,8 @@ app.include_router(credit_notes.router, prefix="/api/v1")
 app.include_router(fixed_assets.router, prefix="/api/v1")
 app.include_router(budgets.router, prefix="/api/v1")
 app.include_router(support.router, prefix="/api/v1")
+app.include_router(projects.router, prefix="/api/v1")
+app.include_router(scenarios.router, prefix="/api/v1")
 
 
 @app.get("/")
