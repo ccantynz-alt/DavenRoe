@@ -60,6 +60,8 @@ import Budgets from './pages/Budgets';
 import ProjectManagement from './pages/ProjectManagement';
 import ScenarioPlanning from './pages/ScenarioPlanning';
 import HelpCenter from './pages/HelpCenter';
+import DataImport from './pages/DataImport';
+import Billing from './pages/Billing';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -167,6 +169,8 @@ function AppRoutes() {
         <Route path="/projects" element={<ProjectManagement />} />
         <Route path="/scenarios" element={<ScenarioPlanning />} />
         <Route path="/help" element={<HelpCenter />} />
+        <Route path="/import" element={<DataImport />} />
+        <Route path="/billing" element={<Billing />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

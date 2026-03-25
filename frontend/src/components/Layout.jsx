@@ -62,6 +62,8 @@ const nav = [
   { path: '/activity', label: 'Activity', icon: '~' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
   { path: '/agentic', label: 'Agentic AI', icon: '&' },
+  { path: '/import', label: 'Data Import', icon: '>' },
+  { path: '/billing', label: 'Billing', icon: '$' },
   { path: '/help', label: 'Help Center', icon: '?' },
   { path: '/settings', label: 'Settings', icon: ':' },
 ];
