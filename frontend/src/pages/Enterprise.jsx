@@ -261,7 +261,7 @@ function BrandingPanel() {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="p-4 flex items-center gap-3" style={{ backgroundColor: branding.primary_color || '#4c6ef5' }}>
               {branding.logo_url ? (
-                <img src={branding.logo_url} alt="" className="w-8 h-8 rounded-lg bg-white/20" onError={(e) => { e.target.style.display = 'none'; }} />
+                <img src={branding.logo_url} alt="Practice logo" className="w-8 h-8 rounded-lg bg-white/20" onError={(e) => { e.target.style.display = 'none'; }} />
               ) : (
                 <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold text-sm">
                   {(branding.name || 'A').charAt(0)}

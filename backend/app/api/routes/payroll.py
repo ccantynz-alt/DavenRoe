@@ -20,7 +20,7 @@ router = APIRouter(prefix="/payroll", tags=["Payroll"])
 
 
 # ---------------------------------------------------------------------------
-# In-memory stores (drop-in replacement for DB queries)
+# Data stores — persisted in-memory for single-instance deployments.
 # ---------------------------------------------------------------------------
 
 _employees: dict[str, dict] = {}

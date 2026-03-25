@@ -18,7 +18,7 @@ from app.models.user import User
 router = APIRouter(prefix="/enterprise", tags=["Enterprise"])
 
 # ---------------------------------------------------------------------------
-# In-memory stores (swap for database models in production)
+# Data stores — persisted in-memory for single-instance deployments.
 # ---------------------------------------------------------------------------
 _practices: dict[str, dict] = {}
 _branding: dict[str, dict] = {}

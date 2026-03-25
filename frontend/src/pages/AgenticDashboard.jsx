@@ -130,7 +130,7 @@ export default function AgenticDashboard() {
       const res = await fetch(`/api/v1/agentic/automate/${automationId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entity_id: 'demo' }),
+        body: JSON.stringify({ entity_id: localStorage.getItem('astra_active_entity') || 'default' }),
       });
       const data = await res.json();
       setAutomationResult(data);

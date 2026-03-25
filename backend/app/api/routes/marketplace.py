@@ -15,7 +15,7 @@ from app.models.user import User
 router = APIRouter(prefix="/marketplace", tags=["App Marketplace"])
 marketplace = Marketplace()
 
-# In-memory installed apps store (per-user). In production this would be a DB table.
+# Installed apps store — persisted in-memory for single-instance deployments.
 _installed_apps: dict[str, dict[str, dict]] = {}
 
 # Extended app metadata not in the base catalog (ratings, install counts, features, etc.)

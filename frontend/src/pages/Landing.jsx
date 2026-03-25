@@ -200,11 +200,11 @@ export default function Landing({ onLogin, onNavigate }) {
             <div>
               <h4 className="font-semibold text-xs uppercase tracking-[0.15em] text-gray-500 mb-4">Platform</h4>
               <ul className="space-y-2.5 text-sm text-gray-500">
-                <li><a href="#features" className="hover:text-white transition-colors">Bookkeeping</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Tax Engine</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Forensics</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Ask Astra</a></li>
-                <li><a href="#features" className="hover:text-white transition-colors">Bank Feeds</a></li>
+                <li><button onClick={() => onNavigate('invoicing')} className="hover:text-white transition-colors">Bookkeeping</button></li>
+                <li><button onClick={() => onNavigate('tax')} className="hover:text-white transition-colors">Tax Engine</button></li>
+                <li><button onClick={() => onNavigate('agentic')} className="hover:text-white transition-colors">Forensics</button></li>
+                <li><button onClick={() => onNavigate('ask')} className="hover:text-white transition-colors">Ask Astra</button></li>
+                <li><button onClick={() => onNavigate('banking')} className="hover:text-white transition-colors">Bank Feeds</button></li>
                 <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
               </ul>
             </div>

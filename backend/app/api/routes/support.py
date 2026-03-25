@@ -228,7 +228,7 @@ KNOWLEDGE_BASE: list[dict] = [
 
 
 # ---------------------------------------------------------------------------
-# In-memory ticket store (replace with database in production)
+# Ticket store — persisted in-memory for single-instance deployments.
 # ---------------------------------------------------------------------------
 
 _tickets: list[dict] = []

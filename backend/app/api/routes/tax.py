@@ -71,7 +71,7 @@ async def get_treaty(country_a: str, country_b: str, user: User = Depends(get_cu
     """Get treaty details between two countries."""
     treaty = treaties.get_treaty(country_a.upper(), country_b.upper())
     if not treaty:
-        return {"error": f"No treaty found between {country_a} and {country_b}"}
+        raise HTTPException(status_code=404, detail=f"No treaty found between {country_a} and {country_b}")
     return {
         "countries": f"{treaty.country_a}-{treaty.country_b}",
         "wht_dividends": str(treaty.wht_dividends),
