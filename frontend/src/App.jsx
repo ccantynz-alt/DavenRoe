@@ -63,6 +63,8 @@ import HelpCenter from './pages/HelpCenter';
 import DataImport from './pages/DataImport';
 import Billing from './pages/Billing';
 import PracticeDashboard from './pages/PracticeDashboard';
+import ForensicTools from './pages/ForensicTools';
+import TaxAdvisorToolkit from './pages/TaxAdvisor';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -171,6 +173,8 @@ function AppRoutes() {
         <Route path="/scenarios" element={<ScenarioPlanning />} />
         <Route path="/help" element={<HelpCenter />} />
         <Route path="/practice" element={<PracticeDashboard />} />
+        <Route path="/forensic-tools" element={<ForensicTools />} />
+        <Route path="/tax-advisor" element={<TaxAdvisorToolkit />} />
         <Route path="/import" element={<DataImport />} />
         <Route path="/billing" element={<Billing />} />
         <Route path="/settings" element={<Settings />} />

@@ -40,6 +40,8 @@ const nav = [
   { path: '/tax', label: 'Tax Engine', icon: '%' },
   { path: '/tax-filing', label: 'Tax Filing', icon: '>' },
   { path: '/tax-agent', label: 'Tax Agent', icon: '?' },
+  { path: '/tax-advisor', label: 'Tax Advisor Toolkit', icon: '%' },
+  { path: '/forensic-tools', label: 'Forensic Tools', icon: '!' },
   { path: '/compliance', label: 'Compliance', icon: '!' },
   // Projects & Planning
   { path: '/projects', label: 'Projects', icon: '#' },
