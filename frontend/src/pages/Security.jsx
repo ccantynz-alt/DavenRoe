@@ -58,9 +58,9 @@ const SECURITY_FEATURES = [
 ];
 
 const COMPLIANCE = [
-  { standard: 'SOC 2 Type II', status: 'Compliant', description: 'Annual audit of security, availability, and confidentiality controls' },
-  { standard: 'GDPR', status: 'Compliant', description: 'Full data subject rights, DPA available on request' },
-  { standard: 'Australian Privacy Act', status: 'Compliant', description: 'APPs compliance, Australian data residency available' },
+  { standard: 'SOC 2 Type II', status: 'In Progress', description: 'Security controls audit underway — expected completion Q3 2026' },
+  { standard: 'GDPR', status: 'Compliant', description: 'Full data subject rights implemented, DPA available on request' },
+  { standard: 'Australian Privacy Act', status: 'Compliant', description: 'APPs compliance, data handling follows Privacy Act 1988' },
   { standard: 'PCI DSS', status: 'Delegated to Stripe', description: 'Payment processing handled by PCI Level 1 certified Stripe' },
 ];
 

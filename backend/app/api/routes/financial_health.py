@@ -59,7 +59,7 @@ async def get_health_summary(
                 "grade": score["grade"],
                 "pillars": {k: v["score"] for k, v in score["pillars"].items()},
             })
-        except Exception:
+        except (ValueError, TypeError, KeyError):
             summaries.append({
                 "entity_id": str(entity.id),
                 "entity_name": entity.name,

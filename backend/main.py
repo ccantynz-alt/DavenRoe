@@ -8,6 +8,7 @@ import logging
 from collections import defaultdict
 
 from fastapi import FastAPI, Request, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -40,6 +41,9 @@ from app.api.routes import (
     credit_notes,
     fixed_assets,
     budgets,
+    support,
+    projects,
+    scenarios,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -88,7 +92,33 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         return response
 
 
+# Bot blocking middleware — blocks known scraper and competitor crawlers
+class BotBlockMiddleware(BaseHTTPMiddleware):
+    BLOCKED_BOTS = {
+        "semrushbot", "ahrefsbot", "mj12bot", "dotbot", "blexbot",
+        "dataforseobot", "petalbot", "bytespider", "gptbot", "ccbot",
+        "diffbot", "scrapy", "httrack", "perplexitybot",
+    }
+
+    async def dispatch(self, request: Request, call_next):
+        ua = (request.headers.get("user-agent") or "").lower()
+        for bot in self.BLOCKED_BOTS:
+            if bot in ua:
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": "Access denied"},
+                )
+        response = await call_next(request)
+        # Security headers on all responses
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        return response
+
+
 # Middleware stack (order matters — last added runs first)
+app.add_middleware(BotBlockMiddleware)
 app.add_middleware(RateLimitMiddleware, max_requests=settings.rate_limit_per_minute)
 
 # Legal compliance headers on every response
@@ -159,6 +189,9 @@ app.include_router(purchase_orders.router, prefix="/api/v1")
 app.include_router(credit_notes.router, prefix="/api/v1")
 app.include_router(fixed_assets.router, prefix="/api/v1")
 app.include_router(budgets.router, prefix="/api/v1")
+app.include_router(support.router, prefix="/api/v1")
+app.include_router(projects.router, prefix="/api/v1")
+app.include_router(scenarios.router, prefix="/api/v1")
 
 
 @app.get("/")

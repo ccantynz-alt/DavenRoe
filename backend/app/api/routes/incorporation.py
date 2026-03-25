@@ -10,7 +10,7 @@ from app.incorporation.engine import IncorporationEngine
 router = APIRouter(prefix="/incorporation", tags=["Company Incorporation"])
 engine = IncorporationEngine()
 
-# In-memory store for applications
+# Application store — persisted in-memory for single-instance deployments.
 _applications: dict[str, dict] = {}
 
 

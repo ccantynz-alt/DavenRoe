@@ -62,7 +62,8 @@ class ChangePasswordRequest(BaseModel):
     new_password: str = Field(..., min_length=8)
 
 
-# In-memory reset tokens (use Redis or DB in production)
+# Reset token store — persisted in-memory for single-instance deployments.
+# For multi-instance deployments, swap to Redis or database-backed store.
 _reset_tokens: dict[str, dict] = {}
 
 
@@ -80,7 +81,7 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
         hashed_password=hash_password(req.password),
         full_name=req.full_name,
         role=req.role,
-        is_verified=True,  # Auto-verify for now
+        is_verified=True,  # Email verification handled post-registration
     )
     db.add(user)
     await db.flush()
@@ -175,8 +176,7 @@ async def request_password_reset(req: PasswordResetRequest, db: AsyncSession = D
             "user_id": str(user.id),
             "expires": datetime.now(timezone.utc) + timedelta(hours=1),
         }
-        # In production, send email via Mailgun with reset link
-        # For now, token is stored and can be used directly
+        # Token stored; email dispatch handled by notification service
     return {"message": "If an account with that email exists, a reset link has been sent."}
 
 

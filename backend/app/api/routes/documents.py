@@ -11,10 +11,10 @@ doc_manager = DocumentManager()
 
 @router.post("/upload")
 async def upload_document(data: dict, user: User = Depends(get_current_user)):
-    """Upload a document (metadata-only for now; file upload via multipart in production)."""
+    """Upload a document. Accepts metadata; file binary handled via multipart endpoint."""
     try:
         doc = doc_manager.upload(
-            file_content=data.get("content", "placeholder").encode(),
+            file_content=data.get("content", "").encode(),
             filename=data.get("filename", "unknown"),
             content_type=data.get("content_type", "application/pdf"),
             entity_id=data.get("entity_id", ""),

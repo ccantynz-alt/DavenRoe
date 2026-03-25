@@ -1,0 +1,118 @@
+# Astra AI Accounting Platform
+# Public pages — allow search engines to index
+User-agent: Googlebot
+Allow: /
+Allow: /about
+Allow: /security
+Allow: /privacy
+Allow: /terms
+Allow: /contact
+Allow: /help
+Disallow: /api/
+Disallow: /admin
+Disallow: /clients
+Disallow: /review
+Disallow: /banking
+Disallow: /invoicing
+Disallow: /documents
+Disallow: /reports
+Disallow: /payroll
+Disallow: /tax
+Disallow: /tax-filing
+Disallow: /settings
+Disallow: /billing
+
+User-agent: Bingbot
+Allow: /
+Allow: /about
+Allow: /security
+Allow: /privacy
+Allow: /terms
+Allow: /contact
+Allow: /help
+Disallow: /api/
+Disallow: /admin
+
+# Block known competitor and scraping bots
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+# Block generic scrapers
+User-agent: Scrapy
+Disallow: /
+
+User-agent: HTTrack
+Disallow: /
+
+User-agent: wget
+Disallow: /
+
+User-agent: curl
+Disallow: /
+
+# Default: allow legitimate search engines only on public pages
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /clients
+Disallow: /review
+Disallow: /banking
+Disallow: /invoicing
+Disallow: /documents
+Disallow: /reports
+Disallow: /payroll
+Disallow: /tax
+Disallow: /tax-filing
+Disallow: /settings
+Disallow: /billing
+Disallow: /practice
+Disallow: /forensic-tools
+Disallow: /tax-advisor
+Disallow: /agentic
+Disallow: /projects
+Disallow: /scenarios
+
+Sitemap: https://astra.ai/sitemap.xml

@@ -7,6 +7,7 @@ import { GlobalFooterDisclaimer } from './LegalDisclaimer';
 const nav = [
   // Overview
   { path: '/', label: 'Dashboard', icon: '~' },
+  { path: '/practice', label: 'Practice Overview', icon: '~' },
   { path: '/smart-tools', label: 'Smart Tools', icon: '*' },
   { path: '/financial-health', label: 'Health Score', icon: '+' },
   // Sales & Revenue
@@ -39,6 +40,8 @@ const nav = [
   { path: '/tax', label: 'Tax Engine', icon: '%' },
   { path: '/tax-filing', label: 'Tax Filing', icon: '>' },
   { path: '/tax-agent', label: 'Tax Agent', icon: '?' },
+  { path: '/tax-advisor', label: 'Tax Advisor Toolkit', icon: '%' },
+  { path: '/forensic-tools', label: 'Forensic Tools', icon: '!' },
   { path: '/compliance', label: 'Compliance', icon: '!' },
   // Projects & Planning
   { path: '/projects', label: 'Projects', icon: '#' },
@@ -62,6 +65,9 @@ const nav = [
   { path: '/activity', label: 'Activity', icon: '~' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
   { path: '/agentic', label: 'Agentic AI', icon: '&' },
+  { path: '/import', label: 'Data Import', icon: '>' },
+  { path: '/billing', label: 'Billing', icon: '$' },
+  { path: '/admin', label: 'Admin Center', icon: '*' },
   { path: '/help', label: 'Help Center', icon: '?' },
   { path: '/settings', label: 'Settings', icon: ':' },
 ];

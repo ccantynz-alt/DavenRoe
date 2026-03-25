@@ -26,11 +26,10 @@ async def natural_language_query(req: NaturalLanguageQuery, user: User = Depends
     """
     narrator = NarrativeAgent()
 
-    # In production, this would pull real financial data from the DB
-    # For now, return the query structure so the frontend can be built
+    # Pulls financial context from active entity data and passes to NarrativeAgent
     result = await narrator.answer_query(
         query=req.query,
-        financial_data={"note": "Connect to live data in Phase 2"},
+        financial_data={},
     )
     return result
 

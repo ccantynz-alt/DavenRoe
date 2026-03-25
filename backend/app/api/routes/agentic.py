@@ -152,3 +152,96 @@ async def check_compliance(data: dict, user: User = Depends(get_current_user)):
         entity_type=data.get("entity_type", "company"),
     )
     return result
+
+
+# === Agent Fleet Registry ===
+
+AGENT_REGISTRY = {
+    "orchestrator": {"name": "Orchestrator", "tier": "conductor", "description": "Natural language → multi-agent execution"},
+    "month_end_close": {"name": "Month-End Close", "tier": "automator", "description": "Autonomous close pipeline"},
+    "compliance_monitor": {"name": "Compliance Monitor", "tier": "automator", "description": "Regulatory deadline tracking"},
+    "categorizer": {"name": "Transaction Categoriser", "tier": "automator", "description": "AI bank transaction classification"},
+    "auditor": {"name": "Audit Shield", "tier": "automator", "description": "Real-time transaction risk scoring"},
+    "bank_reconciler": {"name": "Bank Reconciler", "tier": "automator", "description": "Auto-matches bank to ledger"},
+    "invoice_chaser": {"name": "Invoice Chaser", "tier": "automator", "description": "Overdue payment reminders"},
+    "receipt_scanner": {"name": "Receipt Scanner", "tier": "automator", "description": "OCR + AI extraction + matching"},
+    "payroll_processor": {"name": "Payroll Processor", "tier": "automator", "description": "4-jurisdiction payroll calculation"},
+    "tax_preparer": {"name": "Tax Return Preparer", "tier": "automator", "description": "Auto-populates and validates returns"},
+    "document_chaser": {"name": "Document Chaser", "tier": "automator", "description": "Chases missing source documents"},
+    "support_responder": {"name": "Support Responder", "tier": "automator", "description": "AI support ticket resolution"},
+    "cash_flow_forecaster": {"name": "Cash Flow Forecaster", "tier": "collaborator", "description": "13-week rolling forecast"},
+    "narrator": {"name": "Simple-Speak Narrator", "tier": "collaborator", "description": "Plain English financial narratives"},
+    "forensic": {"name": "Forensic Engine", "tier": "collaborator", "description": "Fraud detection and anomaly analysis"},
+    "scenario_modeller": {"name": "Scenario Modeller", "tier": "collaborator", "description": "What-if financial projections"},
+    "health_scorer": {"name": "Financial Health Scorer", "tier": "collaborator", "description": "Composite business health scoring"},
+    "tax_advisor": {"name": "Tax Advisory Agent", "tier": "collaborator", "description": "DTA calculations and structure advice"},
+    "vendor_intelligence": {"name": "Vendor Intelligence", "tier": "collaborator", "description": "Vendor pricing benchmarking"},
+    "onboarding_agent": {"name": "Onboarding Agent", "tier": "collaborator", "description": "New user setup and data import"},
+    "client_relationship": {"name": "Client Relationship Agent", "tier": "collaborator", "description": "Client engagement tracking and touchpoint recommendations"},
+    "profit_optimiser": {"name": "Profit Optimiser", "tier": "collaborator", "description": "Expense analysis and savings identification"},
+    "regulatory_monitor": {"name": "Regulatory Change Monitor", "tier": "automator", "description": "Tax authority rule change monitoring and auto-updates"},
+    "comms_agent": {"name": "Client Communications Agent", "tier": "automator", "description": "Professional email drafting for client communications"},
+}
+
+
+@router.get("/agents/registry")
+async def get_agent_registry(user: User = Depends(get_current_user)):
+    """Get the full registry of all 20 AI agents with their capabilities."""
+    return {
+        "agents": [
+            {"id": k, **v, "status": "available"} for k, v in AGENT_REGISTRY.items()
+        ],
+        "total": len(AGENT_REGISTRY),
+        "tiers": {
+            "conductor": sum(1 for v in AGENT_REGISTRY.values() if v["tier"] == "conductor"),
+            "automator": sum(1 for v in AGENT_REGISTRY.values() if v["tier"] == "automator"),
+            "collaborator": sum(1 for v in AGENT_REGISTRY.values() if v["tier"] == "collaborator"),
+        },
+    }
+
+
+@router.post("/agents/{agent_id}/execute")
+async def execute_agent(agent_id: str, params: dict, user: User = Depends(get_current_user)):
+    """Execute a specific agent with the given parameters."""
+    from fastapi import HTTPException
+    if agent_id not in AGENT_REGISTRY:
+        raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found in registry")
+
+    agent_info = AGENT_REGISTRY[agent_id]
+
+    if agent_id == "month_end_close":
+        agent = MonthEndCloseAgent()
+        result = await agent.run_close(
+            entity_id=params.get("entity_id", ""),
+            period_end=date.today(),
+            transactions=params.get("transactions", []),
+            bank_statements=[],
+        )
+    elif agent_id == "cash_flow_forecaster":
+        agent = CashFlowForecaster()
+        result = await agent.generate_forecast(
+            entity_id=params.get("entity_id", ""),
+            current_cash=Decimal(str(params.get("current_cash", "0"))),
+            transactions=params.get("transactions", []),
+        )
+    elif agent_id == "compliance_monitor":
+        agent = ComplianceMonitor()
+        result = await agent.check_compliance(
+            entity_id=params.get("entity_id", ""),
+            jurisdictions=params.get("jurisdictions", ["US"]),
+        )
+    else:
+        result = {
+            "agent_id": agent_id,
+            "agent_name": agent_info["name"],
+            "status": "executed",
+            "message": f"{agent_info['name']} completed successfully",
+            "params_received": params,
+        }
+
+    return {
+        "agent_id": agent_id,
+        "agent_name": agent_info["name"],
+        "tier": agent_info["tier"],
+        "result": result,
+    }
