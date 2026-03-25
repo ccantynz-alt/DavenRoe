@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '../components/Toast';
+import ProprietaryNotice from '../components/ProprietaryNotice';
 
 const TREATIES = {
   'AU-NZ': { dividends: 15, interest: 10, royalties: 5, services: 0, source: 'AU-NZ DTA 2009' },
@@ -467,6 +468,7 @@ export default function TaxAdvisorToolkit() {
           })()}
         </div>
       )}
+      <ProprietaryNotice />
     </div>
   );
 }

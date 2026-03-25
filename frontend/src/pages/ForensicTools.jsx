@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '../components/Toast';
+import ProprietaryNotice from '../components/ProprietaryNotice';
 
 // ─── Demo Data ──────────────────────────────────────────────────────────────────
 
@@ -542,6 +543,7 @@ export default function ForensicTools() {
         {activeTab === 'journals' && <JournalEntryTester toast={toast} />}
         {activeTab === 'cashflow' && <CashFlowAnomalyDetector toast={toast} />}
       </div>
+      <ProprietaryNotice />
     </div>
   );
 }

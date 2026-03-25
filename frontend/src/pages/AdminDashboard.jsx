@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '../components/Toast';
+import ProprietaryNotice from '../components/ProprietaryNotice';
 
 const TABS = ['Overview', 'Support', 'Users', 'System', 'Agents', 'Operations Log'];
 
@@ -539,6 +540,7 @@ export default function AdminDashboard() {
 
       {/* Tab Content */}
       {tabContent[activeTab]?.()}
+      <ProprietaryNotice />
     </div>
   );
 }
