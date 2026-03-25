@@ -67,6 +67,7 @@ const nav = [
   { path: '/agentic', label: 'Agentic AI', icon: '&' },
   { path: '/import', label: 'Data Import', icon: '>' },
   { path: '/billing', label: 'Billing', icon: '$' },
+  { path: '/admin', label: 'Admin Center', icon: '*' },
   { path: '/help', label: 'Help Center', icon: '?' },
   { path: '/settings', label: 'Settings', icon: ':' },
 ];
