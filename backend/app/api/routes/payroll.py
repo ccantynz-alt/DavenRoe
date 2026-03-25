@@ -111,6 +111,8 @@ def _seed_demo_data() -> None:
             "base_salary": 78000,
             "hourly_rate": None,
             "superannuation_rate": 0,
+            "state": "CA",
+            "retirement_rate": 6.0,
             "leave_balances": {"annual": 55.0, "sick": 28.0},
             "bank_details": {"routing": "021000021", "account": "483920174", "name": "Maria Gonzalez"},
             "jurisdiction": "US",
@@ -159,6 +161,8 @@ def _seed_demo_data() -> None:
             "base_salary": None,
             "hourly_rate": 120.00,
             "superannuation_rate": 0,
+            "state": "NY",
+            "retirement_rate": None,
             "leave_balances": {},
             "bank_details": {"routing": "021000021", "account": "928371046", "name": "Alex Rivera LLC"},
             "jurisdiction": "US",
@@ -228,6 +232,8 @@ class EmployeeCreate(BaseModel):
     hourly_rate: float | None = None
     tax_file_number: str | None = None
     superannuation_rate: float = 11.5
+    state: str | None = None  # US state code (e.g., "CA", "NY")
+    retirement_rate: float | None = None  # 401(k) contribution % (e.g., 6.0)
     leave_balances: dict | None = None
     bank_details: dict | None = None
     jurisdiction: str = "AU"
@@ -241,6 +247,8 @@ class EmployeeUpdate(BaseModel):
     base_salary: float | None = None
     hourly_rate: float | None = None
     superannuation_rate: float | None = None
+    state: str | None = None
+    retirement_rate: float | None = None
     bank_details: dict | None = None
     jurisdiction: str | None = None
     is_active: bool | None = None
@@ -310,6 +318,8 @@ async def create_employee(
         "hourly_rate": data.hourly_rate,
         "tax_file_number": data.tax_file_number,
         "superannuation_rate": data.superannuation_rate,
+        "state": data.state,
+        "retirement_rate": data.retirement_rate,
         "leave_balances": data.leave_balances or {},
         "bank_details": data.bank_details or {},
         "jurisdiction": data.jurisdiction,
@@ -465,6 +475,8 @@ async def process_pay_run(
             gross_period=period_gross,
             frequency=freq,
             super_rate=emp.get("superannuation_rate"),
+            state=emp.get("state"),
+            retirement_rate=emp.get("retirement_rate"),
         )
 
         # Accrue leave
@@ -625,6 +637,13 @@ async def request_leave(
 # ---------------------------------------------------------------------------
 # Summary endpoint
 # ---------------------------------------------------------------------------
+
+@router.get("/us-states")
+async def list_us_states(user: User = Depends(get_current_user)):
+    """List all US states with their income tax type and rate."""
+    from app.payroll.state_taxes import get_all_states
+    return {"states": get_all_states()}
+
 
 @router.get("/summary")
 async def payroll_summary(user: User = Depends(get_current_user)):

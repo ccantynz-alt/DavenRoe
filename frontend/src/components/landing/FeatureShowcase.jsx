@@ -14,10 +14,10 @@ const WORKFLOW = [
 ];
 
 const JURISDICTIONS = [
-  { code: 'AU', name: 'Australia', flag: '🇦🇺', taxes: ['GST', 'Company Tax', 'PAYG', 'FBT', 'STP'] },
-  { code: 'US', name: 'United States', flag: '🇺🇸', taxes: ['Federal Income', 'State Tax', 'Sales Tax', '941 Payroll', 'Sec 179'] },
+  { code: 'AU', name: 'Australia', flag: '🇦🇺', taxes: ['GST', 'Company Tax', 'PAYG', 'FBT', 'Super'] },
+  { code: 'US', name: 'United States', flag: '🇺🇸', taxes: ['Federal Income', 'State Tax', 'Sales Tax', 'FICA', 'Sec 179'] },
   { code: 'NZ', name: 'New Zealand', flag: '🇳🇿', taxes: ['GST', 'Income Tax', 'PAYE', 'Provisional', 'RWT'] },
-  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', taxes: ['VAT', 'Corporation Tax', 'PAYE RTI', 'MTD', 'Self Assessment'] },
+  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', taxes: ['VAT', 'Corporation Tax', 'PAYE', 'NI', 'MTD'] },
 ];
 
 export default function FeatureShowcase() {
@@ -194,10 +194,10 @@ export default function FeatureShowcase() {
               <BentoCard accent="amber">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 mb-4">
                   <div className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-                  <span className="text-[11px] font-medium text-amber-300">Included Free</span>
+                  <span className="text-[11px] font-medium text-amber-300">Included</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Native Payroll</h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-3">Multi-jurisdiction payroll with STP, PAYE, super, and leave management. No add-on fees.</p>
+                <p className="text-white/50 text-sm leading-relaxed mb-3">Tax withholding across AU, NZ, UK, and US with super, KiwiSaver, pension, and leave accrual. No add-on fees.</p>
                 <div className="flex gap-2">
                   {['PAYG', 'PAYE', 'KiwiSaver', 'Pension'].map(tag => (
                     <span key={tag} className="px-2 py-1 bg-white/[0.04] rounded text-[10px] text-white/40 border border-white/[0.06]">{tag}</span>

@@ -281,32 +281,71 @@ def calculate_gb(
 def calculate_us(
     gross_period: Decimal,
     frequency: PayFrequency,
+    state: str | None = None,
+    retirement_rate: Decimal | None = None,
     deductions: dict[str, Decimal] | None = None,
     allowances: dict[str, Decimal] | None = None,
 ) -> PayCalculation:
-    """US Federal income tax + FICA (Social Security + Medicare)."""
+    """US Federal income tax + State income tax + FICA + optional 401(k).
+
+    Args:
+        state: Two-letter state code (e.g., "CA", "NY", "TX"). None = federal only.
+        retirement_rate: 401(k) contribution rate as decimal (e.g., 0.06 for 6%).
+            Pre-tax traditional 401(k) reduces taxable income.
+    """
+    from app.payroll.state_taxes import calculate_state_tax
+
     annual_gross = _annualise(gross_period, frequency)
-    taxable = max(annual_gross - US_STANDARD_DEDUCTION, Decimal("0"))
+
+    # 401(k) pre-tax contribution (reduces taxable income for federal & state)
+    ret_rate = retirement_rate or Decimal("0")
+    annual_401k = (annual_gross * ret_rate).quantize(TWO, ROUND_HALF_UP)
+    # 2024 limit: $23,500
+    annual_401k = min(annual_401k, Decimal("23500"))
+    period_401k = _de_annualise(annual_401k, frequency)
+
+    taxable_gross = annual_gross - annual_401k
+
+    # Federal income tax (on taxable income after 401k + standard deduction)
+    taxable = max(taxable_gross - US_STANDARD_DEDUCTION, Decimal("0"))
     annual_fed = _calc_progressive_tax(taxable, US_TAX_BRACKETS)
 
-    # FICA — Social Security
+    # State income tax
+    annual_state = Decimal("0")
+    state_code = (state or "").upper().strip()
+    if state_code:
+        annual_state = calculate_state_tax(state_code, taxable_gross)
+
+    # FICA — Social Security (on gross, not reduced by 401k)
     ss_wages = min(annual_gross, US_SOCIAL_SECURITY_CAP)
     ss = (ss_wages * US_SOCIAL_SECURITY_RATE).quantize(TWO)
 
-    # FICA — Medicare
+    # FICA — Medicare (on gross, not reduced by 401k)
     mc = (annual_gross * US_MEDICARE_RATE).quantize(TWO)
     if annual_gross > US_MEDICARE_ADDITIONAL_THRESHOLD:
         mc += ((annual_gross - US_MEDICARE_ADDITIONAL_THRESHOLD) * US_MEDICARE_ADDITIONAL_RATE).quantize(TWO)
 
-    annual_tax_total = annual_fed + ss + mc
+    annual_tax_total = annual_fed + annual_state + ss + mc
     period_tax = _de_annualise(annual_tax_total, frequency)
 
-    # No mandatory employer super in US — return 0 (employers may offer 401k match separately)
-    period_super = Decimal("0")
+    # 401(k) is not a tax but a deduction — track separately
+    period_super = period_401k
 
     ded = sum((deductions or {}).values())
     alw = sum((allowances or {}).values())
-    net = gross_period + Decimal(str(alw)) - period_tax - Decimal(str(ded))
+    net = gross_period + Decimal(str(alw)) - period_tax - period_401k - Decimal(str(ded))
+
+    breakdown = {
+        "federal_tax": _de_annualise(annual_fed, frequency),
+        "social_security": _de_annualise(ss, frequency),
+        "medicare": _de_annualise(mc, frequency),
+    }
+    if state_code:
+        breakdown["state_tax"] = _de_annualise(annual_state, frequency)
+        breakdown["state"] = state_code
+    if annual_401k > 0:
+        breakdown["401k_contribution"] = period_401k
+        breakdown["401k_rate"] = str(ret_rate)
 
     return PayCalculation(
         gross_pay=gross_period.quantize(TWO),
@@ -315,11 +354,7 @@ def calculate_us(
         net_pay=net.quantize(TWO),
         deductions_total=Decimal(str(ded)).quantize(TWO),
         allowances_total=Decimal(str(alw)).quantize(TWO),
-        breakdown={
-            "federal_tax": _de_annualise(annual_fed, frequency),
-            "social_security": _de_annualise(ss, frequency),
-            "medicare": _de_annualise(mc, frequency),
-        },
+        breakdown=breakdown,
     )
 
 
@@ -340,10 +375,18 @@ def calculate_pay(
     gross_period: float | Decimal,
     frequency: str,
     super_rate: float | None = None,
+    state: str | None = None,
+    retirement_rate: float | None = None,
     deductions: dict[str, float] | None = None,
     allowances: dict[str, float] | None = None,
 ) -> PayCalculation:
-    """Entry point — calculate pay for any supported jurisdiction."""
+    """Entry point — calculate pay for any supported jurisdiction.
+
+    Args:
+        jurisdiction: AU, NZ, GB, or US
+        state: US state code (e.g., "CA", "NY"). Only used for US jurisdiction.
+        retirement_rate: 401(k) percentage (e.g., 6 for 6%). Only used for US.
+    """
     jur = Jurisdiction(jurisdiction.upper())
     freq = PayFrequency(frequency.lower())
     gp = Decimal(str(gross_period))
@@ -365,6 +408,13 @@ def calculate_pay(
         }.get(jur)
         if sr_key:
             kwargs[sr_key] = Decimal(str(super_rate)) / 100
+
+    # US-specific: state tax and 401(k)
+    if jur == Jurisdiction.US:
+        if state:
+            kwargs["state"] = state
+        if retirement_rate is not None:
+            kwargs["retirement_rate"] = Decimal(str(retirement_rate)) / 100
 
     return _CALCULATORS[jur](**kwargs)
 

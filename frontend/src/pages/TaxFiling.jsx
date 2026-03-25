@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 
 const RETURN_TYPES = [
   { value: 'BAS', label: 'BAS', jurisdiction: 'AU', description: 'Business Activity Statement', authority: 'ATO' },
@@ -161,6 +162,7 @@ export default function TaxFiling() {
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Tax Filing</h2>
           <p className="text-gray-500 mt-1">Generate, validate, and lodge tax returns across jurisdictions</p>
+          <LegalDisclaimer type="tax_filing" className="mt-3" />
         </div>
       </div>
 

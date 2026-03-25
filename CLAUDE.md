@@ -1,5 +1,40 @@
 # Ledger.AI (Astra) - Development Standards
 
+## Autonomous Development Directive (Non-Negotiable)
+
+### Self-Driving Development — Do NOT Wait for Instructions
+
+Claude is a **self-directing development agent**, not a passive assistant. The user should NEVER need to ask "what's next?" or "what should we build?" Claude must:
+
+1. **Auto-assess on every session start.** Read the Competitive Scorecard below. Identify the highest-priority AT RISK item that is not yet in progress. Start building it. No prompting required.
+2. **Chain tasks automatically.** When you finish a feature, immediately move to the next highest-priority item. Do not stop and ask "what now?" — the scorecard tells you what now.
+3. **Report, don't ask.** Tell the user what you're building and why ("Starting Time Tracking module — P1 gap, FreshBooks has this on all plans, we have nothing"). Don't ask permission to start P0/P1 work.
+4. **Fix on sight, build on plan.** If you encounter a bug or quality issue while building, fix it immediately (per Zero-Tolerance Policy). Then resume the planned work.
+5. **Prioritize ruthlessly.** Follow this priority order at all times:
+   - **P0 first** — Existential gaps (integration ecosystem, partner program)
+   - **P1 second** — Competitive gaps (time tracking, project mgmt, financial health score, scenario planning, mobile, support)
+   - **P2 third** — Moat deepening (dimensional reporting, proactive alerts, collaboration, document chasing)
+   - **Polish/maintenance last** — Only when no P0/P1/P2 gaps remain
+6. **Announce intent, then execute.** At the start of each session, output a 2-3 line status: what was last completed, what you're building now, and why it's the priority. Then start coding.
+7. **Never idle.** If the user gives a vague prompt like "keep going" or "what's next" or even just opens a session, treat it as "continue executing the build plan." The scorecard IS the backlog.
+8. **Update the scorecard.** When you complete a feature that closes a gap, update the Competitive Scorecard in this file — move items from AT RISK to DOMINANT, adjust percentages, and add any new gaps discovered.
+
+### Session Start Protocol
+
+Every new session, Claude must:
+```
+1. Read CLAUDE.md → Check Competitive Scorecard
+2. Identify highest-priority uncompleted AT RISK item
+3. Output: "Building [Feature] — [Priority] — [Why this is next]"
+4. Begin implementation immediately
+```
+
+> **The user hired an autonomous agent, not a chatbot. Act like one.**
+> If there's a gap in the scorecard, you should already be closing it.
+> The only acceptable idle state is: all items are DOMINANT.
+
+---
+
 ## Zero-Tolerance Frontend Policy
 
 This is a live, customer-facing product competing against Xero, QuickBooks, MYOB, Sage, and FreshBooks. First impressions are everything — visitors decide in 30 seconds.
@@ -105,7 +140,7 @@ Our gaps to close: mobile native app (PWA implemented), direct bank feed connect
 - **PWA** — Progressive Web App with service worker + offline support
 - **PDF Export** — HTML-based professional report generation
 
-## Frontend Routes (31 total)
+## Frontend Routes (32 total)
 
 | Route | Page | Status |
 |-------|------|--------|
@@ -127,6 +162,7 @@ Our gaps to close: mobile native app (PWA implemented), direct bank feed connect
 | `/integrations` | Integrations | Complete |
 | `/marketplace` | Marketplace | Complete |
 | `/ai-insights` | AI Command Center | Complete |
+| `/financial-health` | Financial Health Score | Complete |
 | `/enterprise` | Enterprise | Complete |
 | `/activity` | Activity Feed | Complete |
 | `/ask` | Ask Astra | Complete |
@@ -293,3 +329,187 @@ All work happens on feature branches prefixed with `claude/`.
 8. **Real-Time Collaboration** — Google Docs-level multi-user financial editing.
 9. **Vertical Specializations** — Construction, healthcare, nonprofit, e-commerce modules.
 10. **Embedded Finance** — Banking, lending, insurance within the platform.
+
+---
+
+## Competitive Dominance Mandate (Non-Negotiable)
+
+### The 50-70% Rule
+
+> **Astra must be 50-70% more advanced than the BEST competitor in every capability category.**
+> If we are not past that threshold, we MUST add features, modify architecture, design new products,
+> or expand existing ones until we are. No exceptions. No "good enough." Share of wallet demands dominance.
+
+This is a standing directive. Every development session must evaluate whether new work maintains or extends our lead. If a competitor closes a gap, we must respond immediately by leapfrogging — not matching.
+
+### Current Competitive Scorecard (Updated March 2026)
+
+#### DOMINANT (50-70%+ Ahead) — Protect & Extend
+
+| # | Capability | Best Competitor | Astra Advantage | Status |
+|---|-----------|----------------|----------------|--------|
+| 1 | Forensic Intelligence (Benford's, Ghost Vendor, Money Trail) | None have it | +100% | DOMINANT |
+| 2 | Multi-Agent AI Architecture | Sage Copilot (Intacct only, $10K+/yr) | +70% | DOMINANT |
+| 3 | Cross-Border Tax Treaty Engine (6 DTAs) | None have it | +100% | DOMINANT |
+| 4 | Multi-Jurisdiction Single Subscription (AU/NZ/UK/US) | None offer this | +100% | DOMINANT |
+| 5 | Compliance Calendar (40+ deadlines, 4 jurisdictions) | None have it | +100% | DOMINANT |
+| 6 | AI Review Queue + Confidence Scoring | None have it | +100% | DOMINANT |
+| 7 | Native 4-Country Payroll (included, not add-on) | Xero (AU/NZ only, add-on pricing) | +60% | DOMINANT |
+| 8 | Autonomous Month-End Close (4.2s average) | Sage Copilot (partial, $10K+/yr gate) | +50% | DOMINANT |
+| 9 | Client Portal (built-in, scoped access) | QBO (none), Xero (basic) | +60% | DOMINANT |
+| 10 | Specialist Toolkits (12 specializations, 90+ automations) | None at this depth | +80% | DOMINANT |
+
+#### AT RISK (Below 50% Advantage) — Must Improve Immediately
+
+| # | Capability | Best Competitor | Their Advantage | Gap | Priority |
+|---|-----------|----------------|----------------|-----|----------|
+| 1 | Integration Ecosystem | Xero (1,000+ apps) vs Astra (22) | -98% | CRITICAL | P0 |
+| 2 | Accountant Partner Program | Xero (200K+), QBO (500K+ ProAdvisors) | -99% | CRITICAL | P0 |
+| 3 | Time Tracking (billable hours, timers, Chrome ext) | FreshBooks (all plans, built-in) | -100% | HIGH | P1 |
+| 4 | Project Management (tasks, budgets, profitability) | FreshBooks (drag-drop, Agile-friendly) | -100% | HIGH | P1 |
+| 5 | Mobile Native Experience | Xero/QBO (native iOS + Android apps) | -40% | HIGH | P1 |
+| 6 | Scenario Planning / What-If Modeling | None mature (users' #10 want) | Not built | HIGH | P1 |
+| 7 | Financial Health Score | None have it (users want it most) | BUILT (v1) | CLOSING | P1 |
+| 8 | Dimensional Reporting (multi-dimensional GL) | Sage Intacct (dynamic dimensions) | -50% | MEDIUM | P2 |
+| 9 | Proactive AI Alerts (variance, threshold, anomaly) | Sage Copilot (real-time variance) | -30% | MEDIUM | P2 |
+| 10 | Customer Support Infrastructure (KB, chat, phone) | All competitors have it | -80% | HIGH | P1 |
+| 11 | Real-Time Multi-User Collaboration | None have it (opportunity) | Not built | MEDIUM | P2 |
+| 12 | Intelligent Document Chasing | None have it (opportunity) | Not built | MEDIUM | P2 |
+
+#### OVERALL POSITION: ~55% ahead on UNIQUE FEATURES, ~80% behind on ECOSYSTEM & REACH
+
+### Enforcement Rules
+
+1. **Before building any new feature**, check this scorecard. If an "AT RISK" item exists at P0/P1, it takes priority over nice-to-haves.
+2. **If a competitor announces a feature that closes one of our DOMINANT gaps**, immediately escalate. Design a response that leapfrogs their announcement, not just matches it.
+3. **Every sprint must move at least one AT RISK item toward DOMINANT.** No sprint should be 100% maintenance or polish if gaps remain.
+4. **Integration count must increase by 10+ per quarter** until we reach 200+. The ecosystem gap is existential.
+5. **No feature is "done" at MVP.** If the best competitor has a more polished version, iterate until ours is demonstrably better.
+6. **Track competitor releases weekly.** Sage Copilot, Xero's AI, QBO Intuit Assist, MYOB AI BAS — all are shipping AI features now. Our lead shrinks every month we don't extend it.
+
+### What Must Be Built to Hit 50-70% Dominance Everywhere
+
+#### P0 — Existential Gaps (Build NOW)
+
+1. **Integration Platform & Open API**
+   - Public REST API with OAuth2 for third-party developers
+   - Webhook system for real-time event notifications
+   - Integration SDK/templates so partners can build connectors fast
+   - Target: 50 integrations by Q2 2026, 200+ by Q4 2026
+   - *Why*: Xero's 1,000+ app marketplace is their #1 moat. Without an ecosystem, accountants won't switch.
+
+2. **Accountant Partner Program ("Astra Certified")**
+   - Free practice management tier for accountants
+   - Certification course + badge + directory listing
+   - Revenue share on client referrals
+   - Bulk client migration tools (import from Xero/QBO/MYOB)
+   - Target: 1,000 certified accountants by Q4 2026
+   - *Why*: Accountants control 50-200 clients each. Win the accountant, win the book.
+
+#### P1 — Competitive Gaps (Build This Quarter)
+
+3. **Time Tracking Module**
+   - Start/stop timers, manual entry, Chrome extension
+   - Billable vs non-billable classification
+   - Auto-attach billable time to invoices
+   - Team timesheets with approval workflow
+   - Project time budgets with burn-down tracking
+   - *Why*: FreshBooks includes this on ALL plans. Service businesses (our target) need it.
+
+4. **Project Management Module**
+   - Project creation with budgets, milestones, due dates
+   - Task assignment to team members
+   - Project profitability reports (revenue vs cost vs time)
+   - Drag-and-drop Kanban + list views
+   - Link projects to invoices, expenses, time entries
+   - *Why*: FreshBooks offers this. QBO has job costing. We have nothing for project-based businesses.
+
+5. **Financial Health Score**
+   - Composite score (0-100) based on: liquidity, profitability, efficiency, growth, risk
+   - Trend tracking over time with AI-generated improvement recommendations
+   - Benchmark against industry averages
+   - Shareable score card for loan applications and investor meetings
+   - *Why*: No competitor has this. It's the single most requested "wish" feature across all platforms.
+
+6. **Scenario Planning Engine**
+   - "What if I hire 2 people?" / "What if revenue drops 20%?" / "What if I open a new location?"
+   - Monte Carlo simulation for probability ranges
+   - Side-by-side scenario comparison with visual charts
+   - AI-narrated impact summary in plain English
+   - *Why*: #10 most wanted feature. Zero competitors offer it. Massive differentiation for advisory firms.
+
+7. **Mobile App Enhancement (React Native or Capacitor)**
+   - Push notifications for approvals, payment received, compliance deadlines
+   - Receipt capture with instant OCR + categorization
+   - Invoice creation and sending on mobile
+   - Dashboard and cash flow view
+   - Offline mode with sync
+   - *Why*: Xero and QBO have native apps rated 4.5+. PWA is not enough for "mobile-first" users.
+
+8. **Help Center & Support Infrastructure**
+   - Searchable knowledge base with 200+ articles
+   - In-app contextual help tooltips
+   - AI-powered support chatbot (Astra answers support questions too)
+   - Community forum for accountants and users
+   - *Why*: "Poor support" is the #1 complaint about EVERY competitor. This is a capture opportunity.
+
+#### P2 — Competitive Moat Deepening (Next Quarter)
+
+9. **Dimensional Reporting Engine**
+   - User-defined dimensions (department, location, project, cost center, fund)
+   - Slice any report by any combination of dimensions
+   - Dynamic pivot tables with drill-down
+   - *Why*: Sage Intacct's #1 selling point. We need this for mid-market capture.
+
+10. **Proactive AI Alerts System**
+    - "You're approaching the VAT registration threshold — 3 months at current trajectory"
+    - "Cash flow will go negative in 22 days unless Invoice #1847 is collected"
+    - "Unusual spike in travel expenses this month — 340% above 6-month average"
+    - "Payroll tax deposit due in 5 days — estimated amount: $14,200"
+    - *Why*: Sage Copilot does basic variance. We must do predictive + prescriptive.
+
+11. **Intelligent Document Chasing**
+    - AI auto-emails clients for missing receipts, invoices, bank statements
+    - Escalation sequences (polite → firm → urgent) with tone AI
+    - Dashboard showing chase status per client
+    - *Why*: Accountants spend 40% of time chasing documents. Automate this entirely.
+
+12. **Real-Time Multi-User Collaboration**
+    - Google Docs-style simultaneous editing on financial data
+    - Presence indicators, cursor tracking, inline comments
+    - @mention team members on specific transactions
+    - *Why*: No competitor has this. Future-proofs for remote advisory teams.
+
+13. **Cash Flow Timing Optimizer**
+    - AI recommends: "Delay this supplier payment by 7 days, accelerate these 3 invoices"
+    - Models optimal payment/collection schedule to maximize cash position
+    - Auto-generates payment schedule with one-click execution
+    - *Why*: "Cash flow visibility" is the #3 user want. Go beyond visibility to optimization.
+
+14. **Vendor Intelligence**
+    - Benchmark vendor pricing against anonymized platform averages
+    - "You're paying 23% more than similar businesses for office supplies"
+    - Contract renewal alerts with negotiation data points
+    - *Why*: Unique feature. Turns Astra from accounting tool into business intelligence platform.
+
+### Competitive Threat Watch List
+
+| Competitor | Threat | Our Response | Urgency |
+|-----------|--------|-------------|---------|
+| Sage Copilot | AI close automation at scale (150K+ users) | Extend our agentic AI to handle MORE than close — full autonomous accounting | HIGH |
+| Xero "Just Ask Xero" | NLP expanding from read-only to action-capable | Our Ask Astra already acts. Stay 2 generations ahead. | MEDIUM |
+| QBO Intuit Assist | $16B R&D budget backing AI development | Feature velocity. Ship faster than they can. Our advantage is agility. | HIGH |
+| MYOB AI BAS | AI-powered BAS preparation (beta, free to users) | Our tax filing already does this + 3 more jurisdictions. Extend with AI audit. | LOW |
+| FreshBooks + Kick | "Self-driving bookkeeping" partnership | Our agentic AI is already more capable. Monitor for feature parity. | LOW |
+
+### Share of Wallet Strategy
+
+> **Goal: Capture 100% of a practice's financial software spend in ONE subscription.**
+>
+> Competitors fragment spend: QBO ($90) + Gusto payroll ($125) + Dext documents ($30) + Fathom reporting ($50) + Chaser debt collection ($40) + Float cash flow ($49) = **$384/month across 6 vendors.**
+>
+> Astra Practice tier ($149/month) replaces ALL of them. That's our share-of-wallet pitch:
+> **"One platform. One subscription. One login. Everything."**
+>
+> Every feature we DON'T have is a reason for a customer to keep a competing subscription.
+> Every gap in this scorecard is leaked revenue. Close the gaps. Capture the wallet.

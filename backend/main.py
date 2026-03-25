@@ -19,6 +19,27 @@ from app.api.routes import (
     messaging, scheduling, integrations_hub,
     inventory, invoicing, marketplace, pdf_export,
     enterprise, payroll, tax_filing,
+    financial_health,
+    incorporation,
+    email_scanner,
+    tax_agent,
+    peer_review,
+    smart_tools,
+    time_tracker,
+    live_receipt,
+    expense_accounts,
+    spend_monitor,
+    bills,
+    suppliers,
+    chart_of_accounts,
+    journal_entries,
+    bank_reconciliation,
+    quotes,
+    recurring,
+    purchase_orders,
+    credit_notes,
+    fixed_assets,
+    budgets,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -117,6 +138,27 @@ app.include_router(pdf_export.router, prefix="/api/v1")
 app.include_router(enterprise.router, prefix="/api/v1")
 app.include_router(payroll.router, prefix="/api/v1")
 app.include_router(tax_filing.router, prefix="/api/v1")
+app.include_router(financial_health.router, prefix="/api/v1")
+app.include_router(incorporation.router, prefix="/api/v1")
+app.include_router(email_scanner.router, prefix="/api/v1")
+app.include_router(tax_agent.router, prefix="/api/v1")
+app.include_router(peer_review.router, prefix="/api/v1")
+app.include_router(smart_tools.router, prefix="/api/v1")
+app.include_router(time_tracker.router, prefix="/api/v1")
+app.include_router(live_receipt.router, prefix="/api/v1")
+app.include_router(expense_accounts.router, prefix="/api/v1")
+app.include_router(spend_monitor.router, prefix="/api/v1")
+app.include_router(bills.router, prefix="/api/v1")
+app.include_router(suppliers.router, prefix="/api/v1")
+app.include_router(chart_of_accounts.router, prefix="/api/v1")
+app.include_router(journal_entries.router, prefix="/api/v1")
+app.include_router(bank_reconciliation.router, prefix="/api/v1")
+app.include_router(quotes.router, prefix="/api/v1")
+app.include_router(recurring.router, prefix="/api/v1")
+app.include_router(purchase_orders.router, prefix="/api/v1")
+app.include_router(credit_notes.router, prefix="/api/v1")
+app.include_router(fixed_assets.router, prefix="/api/v1")
+app.include_router(budgets.router, prefix="/api/v1")
 
 
 @app.get("/")

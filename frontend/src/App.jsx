@@ -35,7 +35,31 @@ import Payroll from './pages/Payroll';
 import TaxFiling from './pages/TaxFiling';
 import Marketplace from './pages/Marketplace';
 import AIInsights from './pages/AIInsights';
+import FinancialHealthScore from './pages/FinancialHealthScore';
+import Incorporation from './pages/Incorporation';
+import EmailScanner from './pages/EmailScanner';
+import TaxAgent from './pages/TaxAgent';
+import PeerReview from './pages/PeerReview';
+import SmartTools from './pages/SmartTools';
+import TimeTracker from './pages/TimeTracker';
+import LiveReceipt from './pages/LiveReceipt';
+import SpendMonitor from './pages/SpendMonitor';
+import ConsentGate from './components/ConsentGate';
 import NotFound from './pages/NotFound';
+import Suppliers from './pages/Suppliers';
+import Bills from './pages/Bills';
+import ChartOfAccounts from './pages/ChartOfAccounts';
+import JournalEntries from './pages/JournalEntries';
+import BankReconciliation from './pages/BankReconciliation';
+import Quotes from './pages/Quotes';
+import RecurringTransactions from './pages/RecurringTransactions';
+import PurchaseOrders from './pages/PurchaseOrders';
+import CreditNotes from './pages/CreditNotes';
+import FixedAssets from './pages/FixedAssets';
+import Budgets from './pages/Budgets';
+import ProjectManagement from './pages/ProjectManagement';
+import ScenarioPlanning from './pages/ScenarioPlanning';
+import HelpCenter from './pages/HelpCenter';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -115,10 +139,34 @@ function AppRoutes() {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/enterprise" element={<Enterprise />} />
         <Route path="/activity" element={<ActivityFeed />} />
-        <Route path="/payroll" element={<Payroll />} />
-        <Route path="/tax-filing" element={<TaxFiling />} />
+        <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
+        <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/ai-insights" element={<AIInsights />} />
+        <Route path="/financial-health" element={<ConsentGate feature="financial_health"><FinancialHealthScore /></ConsentGate>} />
+        <Route path="/incorporate" element={<ConsentGate feature="incorporation"><Incorporation /></ConsentGate>} />
+        <Route path="/email-scanner" element={<EmailScanner />} />
+        <Route path="/tax-agent" element={<TaxAgent />} />
+        <Route path="/peer-review" element={<PeerReview />} />
+        <Route path="/smart-tools" element={<SmartTools />} />
+        <Route path="/time-tracker" element={<TimeTracker />} />
+        <Route path="/live-receipt" element={<LiveReceipt />} />
+        <Route path="/live-receipt/:id" element={<LiveReceipt />} />
+        <Route path="/spend-monitor" element={<ConsentGate feature="spend_monitor"><SpendMonitor /></ConsentGate>} />
+        <Route path="/suppliers" element={<Suppliers />} />
+        <Route path="/bills" element={<Bills />} />
+        <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
+        <Route path="/journal-entries" element={<JournalEntries />} />
+        <Route path="/bank-reconciliation" element={<BankReconciliation />} />
+        <Route path="/quotes" element={<Quotes />} />
+        <Route path="/recurring" element={<RecurringTransactions />} />
+        <Route path="/purchase-orders" element={<PurchaseOrders />} />
+        <Route path="/credit-notes" element={<CreditNotes />} />
+        <Route path="/fixed-assets" element={<FixedAssets />} />
+        <Route path="/budgets" element={<Budgets />} />
+        <Route path="/projects" element={<ProjectManagement />} />
+        <Route path="/scenarios" element={<ScenarioPlanning />} />
+        <Route path="/help" element={<HelpCenter />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

@@ -2,21 +2,57 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { useAuth } from '../contexts/AuthContext';
+import { GlobalFooterDisclaimer } from './LegalDisclaimer';
 
 const nav = [
+  // Overview
   { path: '/', label: 'Dashboard', icon: '~' },
+  { path: '/smart-tools', label: 'Smart Tools', icon: '*' },
+  { path: '/financial-health', label: 'Health Score', icon: '+' },
+  // Sales & Revenue
   { path: '/clients', label: 'Clients', icon: '@' },
-  { path: '/review', label: 'Review Queue', icon: '>' },
-  { path: '/banking', label: 'Bank Feeds', icon: '$' },
+  { path: '/quotes', label: 'Quotes', icon: '"' },
   { path: '/invoicing', label: 'Invoicing', icon: '#' },
+  { path: '/credit-notes', label: 'Credit Notes', icon: '-' },
+  // Purchases & Expenses
+  { path: '/suppliers', label: 'Suppliers', icon: '&' },
+  { path: '/bills', label: 'Bills', icon: '$' },
+  { path: '/purchase-orders', label: 'Purchase Orders', icon: '>' },
+  { path: '/live-receipt', label: 'Live Receipt', icon: '!' },
+  { path: '/spend-monitor', label: 'Spend Monitor', icon: '!' },
+  // Banking
+  { path: '/banking', label: 'Bank Feeds', icon: '$' },
+  { path: '/bank-reconciliation', label: 'Bank Reconciliation', icon: '=' },
+  { path: '/recurring', label: 'Recurring', icon: '@' },
+  // Accounting
+  { path: '/chart-of-accounts', label: 'Chart of Accounts', icon: '#' },
+  { path: '/journal-entries', label: 'Journal Entries', icon: '+' },
+  { path: '/review', label: 'Review Queue', icon: '>' },
+  { path: '/peer-review', label: 'Peer Review', icon: '&' },
+  // Assets & Inventory
+  { path: '/fixed-assets', label: 'Fixed Assets', icon: '{' },
+  { path: '/inventory', label: 'Inventory', icon: '{' },
+  // Employment
   { path: '/payroll', label: 'Payroll', icon: '$' },
-  { path: '/documents', label: 'Documents', icon: '^' },
-  { path: '/reports', label: 'Reports', icon: '=' },
+  { path: '/time-tracker', label: 'Time Tracker', icon: ':' },
+  // Tax & Compliance
   { path: '/tax', label: 'Tax Engine', icon: '%' },
   { path: '/tax-filing', label: 'Tax Filing', icon: '>' },
+  { path: '/tax-agent', label: 'Tax Agent', icon: '?' },
   { path: '/compliance', label: 'Compliance', icon: '!' },
+  // Projects & Planning
+  { path: '/projects', label: 'Projects', icon: '#' },
+  { path: '/scenarios', label: 'Scenario Planning', icon: '?' },
+  // Reports & Budgets
+  { path: '/reports', label: 'Reports', icon: '=' },
+  { path: '/budgets', label: 'Budgets', icon: '=' },
+  // Documents
+  { path: '/documents', label: 'Documents', icon: '^' },
+  { path: '/email-scanner', label: 'Email Scanner', icon: '@' },
+  // Business
+  { path: '/incorporate', label: 'Incorporate', icon: '>' },
   { path: '/portal', label: 'Client Portal', icon: '@' },
-  { path: '/inventory', label: 'Inventory', icon: '{' },
+  // Platform
   { path: '/specialists', label: 'Specialist Tools', icon: '*' },
   { path: '/toolkit', label: 'Toolkit', icon: '+' },
   { path: '/integrations', label: 'Integrations', icon: '<' },
@@ -26,6 +62,7 @@ const nav = [
   { path: '/activity', label: 'Activity', icon: '~' },
   { path: '/ask', label: 'Ask Astra', icon: '?' },
   { path: '/agentic', label: 'Agentic AI', icon: '&' },
+  { path: '/help', label: 'Help Center', icon: '?' },
   { path: '/settings', label: 'Settings', icon: ':' },
 ];
 
@@ -131,6 +168,7 @@ export default function Layout({ children }) {
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto bg-gray-50">
           {children}
+          <GlobalFooterDisclaimer />
         </main>
       </div>
     </div>

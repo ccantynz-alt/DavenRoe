@@ -54,4 +54,12 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings() -> Settings:
-    return Settings()
+    s = Settings()
+    if s.secret_key == "change-me-in-production":
+        import warnings
+        warnings.warn(
+            "SECRET_KEY is still the default value. "
+            "Set a strong SECRET_KEY environment variable before deploying to production.",
+            stacklevel=2,
+        )
+    return s

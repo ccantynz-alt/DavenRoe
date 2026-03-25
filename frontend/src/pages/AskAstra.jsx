@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { askAstra } from '../services/api';
+import LegalDisclaimer from '../components/LegalDisclaimer';
 
 export default function AskAstra() {
   const [query, setQuery] = useState('');
@@ -39,6 +40,7 @@ export default function AskAstra() {
       <div className="mb-6">
         <h2 className="text-3xl font-bold">Ask Astra</h2>
         <p className="text-gray-500 mt-1">Ask anything about your finances in plain English</p>
+        <LegalDisclaimer type="ai" className="mt-3" />
       </div>
 
       {/* Suggestions */}
