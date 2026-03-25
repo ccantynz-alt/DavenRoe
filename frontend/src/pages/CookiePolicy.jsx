@@ -1,151 +1,282 @@
-export default function CookiePolicy() {
+export default function CookiePolicy({ onBack }) {
   return (
-    <div className="max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Cookie &amp; Tracking Policy</h1>
-      <p className="text-sm text-gray-400 mb-8">Last Updated: March 2026 | Version 2026.03.1</p>
-
-      <div className="space-y-8">
-        <section className="bg-white border rounded-xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">1. What Are Cookies</h2>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            Cookies are small text files stored on your device when you visit a website. They help the site remember your preferences, keep you logged in, and understand how you use the service. Some cookies are essential for the platform to function; others help us improve the experience.
-          </p>
-        </section>
-
-        <section className="bg-white border rounded-xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">2. Cookies We Use</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-xs text-gray-500 border-b">
-                  <th className="pb-2 font-medium">Cookie</th>
-                  <th className="pb-2 font-medium">Type</th>
-                  <th className="pb-2 font-medium">Purpose</th>
-                  <th className="pb-2 font-medium">Duration</th>
-                  <th className="pb-2 font-medium">Required</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600">
-                <tr className="border-b">
-                  <td className="py-2 font-mono text-xs">astra_token</td>
-                  <td className="py-2">Essential</td>
-                  <td className="py-2">Authentication session — keeps you logged in</td>
-                  <td className="py-2">60 minutes</td>
-                  <td className="py-2 text-green-600 font-medium">Yes</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 font-mono text-xs">astra_onboarded</td>
-                  <td className="py-2">Essential</td>
-                  <td className="py-2">Tracks whether you completed onboarding</td>
-                  <td className="py-2">Persistent</td>
-                  <td className="py-2 text-green-600 font-medium">Yes</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 font-mono text-xs">astra_active_entity</td>
-                  <td className="py-2">Functional</td>
-                  <td className="py-2">Remembers your currently selected client entity</td>
-                  <td className="py-2">Persistent</td>
-                  <td className="py-2 text-amber-600 font-medium">Recommended</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 font-mono text-xs">astra_consent_*</td>
-                  <td className="py-2">Essential</td>
-                  <td className="py-2">Records your acceptance of disclaimers and consent gates</td>
-                  <td className="py-2">Persistent</td>
-                  <td className="py-2 text-green-600 font-medium">Yes</td>
-                </tr>
-              </tbody>
-            </table>
+    <div className="bg-white text-gray-900 min-h-screen">
+      <nav className="flex items-center justify-between px-6 lg:px-16 py-6 border-b border-gray-100">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <span className="text-white font-bold text-lg">A</span>
           </div>
-        </section>
+          <span className="text-xl font-semibold tracking-tight">Astra</span>
+        </div>
+        <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+          &larr; Back to homepage
+        </button>
+      </nav>
 
-        <section className="bg-white border rounded-xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">3. Third-Party Cookies</h2>
-          <p className="text-sm text-gray-600 leading-relaxed mb-4">
-            The following third-party services may set cookies when you use specific features of Astra:
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left text-xs text-gray-500 border-b">
-                  <th className="pb-2 font-medium">Service</th>
-                  <th className="pb-2 font-medium">Purpose</th>
-                  <th className="pb-2 font-medium">When Active</th>
-                  <th className="pb-2 font-medium">Their Policy</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-600">
-                <tr className="border-b">
-                  <td className="py-2 font-medium">Stripe</td>
-                  <td className="py-2">Payment processing and fraud prevention</td>
-                  <td className="py-2">When making a payment or managing billing</td>
-                  <td className="py-2 text-blue-600">stripe.com/privacy</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 font-medium">Plaid</td>
-                  <td className="py-2">Bank account connection (US/Canada)</td>
-                  <td className="py-2">When connecting a bank feed</td>
-                  <td className="py-2 text-blue-600">plaid.com/legal</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 font-medium">Basiq</td>
-                  <td className="py-2">Bank account connection (AU/NZ)</td>
-                  <td className="py-2">When connecting a bank feed</td>
-                  <td className="py-2 text-blue-600">basiq.io/privacy</td>
-                </tr>
-                <tr className="border-b">
-                  <td className="py-2 font-medium">TrueLayer</td>
-                  <td className="py-2">Bank account connection (UK/EU)</td>
-                  <td className="py-2">When connecting a bank feed</td>
-                  <td className="py-2 text-blue-600">truelayer.com/privacy</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
+      <div className="max-w-4xl mx-auto px-6 lg:px-16 py-16">
+        <h1 className="text-4xl font-bold mb-2">Cookie &amp; Tracking Policy</h1>
+        <p className="text-sm text-gray-400 mb-12">Last Updated: March 2026 &middot; Version 2026.03.1</p>
 
-        <section className="bg-red-50 border border-red-200 rounded-xl p-6">
-          <h2 className="text-lg font-bold text-red-900 mb-3">4. What We Do NOT Do</h2>
-          <ul className="space-y-2 text-sm text-red-800">
-            <li className="flex items-start gap-2"><span className="text-red-500 font-bold mt-0.5">&#10005;</span> We do NOT use advertising cookies or tracking pixels</li>
-            <li className="flex items-start gap-2"><span className="text-red-500 font-bold mt-0.5">&#10005;</span> We do NOT sell your browsing data to third parties</li>
-            <li className="flex items-start gap-2"><span className="text-red-500 font-bold mt-0.5">&#10005;</span> We do NOT use cross-site tracking or retargeting</li>
-            <li className="flex items-start gap-2"><span className="text-red-500 font-bold mt-0.5">&#10005;</span> We do NOT use Google Analytics, Facebook Pixel, or similar ad-tech tools</li>
-            <li className="flex items-start gap-2"><span className="text-red-500 font-bold mt-0.5">&#10005;</span> We do NOT share cookie data with any entity not listed above</li>
-          </ul>
-        </section>
+        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-12 text-sm text-indigo-800">
+          <strong>Summary:</strong> Astra uses only essential and functional cookies to operate the platform. We do <strong>not</strong> use advertising cookies, cross-site tracking, or sell your data to third parties. You can manage optional cookies at any time through your browser settings.
+        </div>
 
-        <section className="bg-white border rounded-xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">5. Managing Cookies</h2>
-          <p className="text-sm text-gray-600 leading-relaxed mb-3">
-            You can manage cookies through your browser settings. Note that disabling essential cookies (like the authentication token) will prevent you from logging in to Astra.
-          </p>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            Most browsers allow you to: view what cookies are stored, delete specific cookies or all cookies, block cookies from specific sites, and block all third-party cookies. Refer to your browser's help documentation for instructions.
-          </p>
-        </section>
+        <div className="space-y-10">
+          <Section title="1. What Are Cookies">
+            <p>
+              Cookies are small text files stored on your device when you visit a website. They help the site remember your preferences, keep you logged in, and understand how you use the service. Some cookies are essential for the platform to function; others help us improve the experience. This policy explains which cookies Astra uses, why we use them, and how you can control them.
+            </p>
+          </Section>
 
-        <section className="bg-white border rounded-xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">6. GDPR &amp; CCPA Compliance</h2>
-          <p className="text-sm text-gray-600 leading-relaxed mb-3">
-            Under the EU General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA), you have the right to know what data is collected, request deletion, and opt out of non-essential tracking.
-          </p>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            Since Astra uses only essential and functional cookies (no advertising or analytics tracking), explicit cookie consent is not required under GDPR's "strictly necessary" exemption. However, we provide full transparency through this policy. If you have questions or wish to exercise your rights, contact <span className="font-medium text-gray-800">privacy@astra.ai</span>.
-          </p>
-        </section>
+          <Section title="2. Cookies We Use">
+            <h3 className="font-semibold text-gray-900 mt-4 mb-3">2.1 Essential Cookies (Strictly Necessary)</h3>
+            <p className="mb-3 text-sm">
+              These cookies are required for Astra to function. They cannot be disabled without breaking core platform functionality.
+            </p>
+            <div className="space-y-2 mb-6">
+              <CookieRow
+                name="astra_token"
+                purpose="Authentication session token. Keeps you logged in securely."
+                duration="60 minutes (refreshed on activity)"
+                type="Essential"
+              />
+              <CookieRow
+                name="astra_onboarded"
+                purpose="Tracks whether you have completed the onboarding flow."
+                duration="Persistent"
+                type="Essential"
+              />
+              <CookieRow
+                name="astra_csrf"
+                purpose="Cross-site request forgery protection token."
+                duration="Session"
+                type="Essential"
+              />
+              <CookieRow
+                name="astra_consent_*"
+                purpose="Records your acceptance of disclaimers and consent gates (e.g., forensic module, AI features)."
+                duration="Persistent"
+                type="Essential"
+              />
+            </div>
 
-        <section className="bg-white border rounded-xl p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-3">7. Changes to This Policy</h2>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            We may update this Cookie Policy from time to time to reflect changes in our practices or for regulatory reasons. We will post the updated policy on this page with a revised "Last Updated" date. Continued use of Astra after changes constitutes acceptance of the updated policy.
-          </p>
-        </section>
+            <h3 className="font-semibold text-gray-900 mt-6 mb-3">2.2 Functional Cookies (Preferences)</h3>
+            <p className="mb-3 text-sm">
+              These cookies remember your preferences and settings to provide a better experience. They do not track you across other websites.
+            </p>
+            <div className="space-y-2 mb-6">
+              <CookieRow
+                name="astra_active_entity"
+                purpose="Remembers your currently selected client entity for multi-entity users."
+                duration="Persistent"
+                type="Functional"
+              />
+              <CookieRow
+                name="astra_theme"
+                purpose="Stores your display preference (light/dark mode)."
+                duration="1 year"
+                type="Functional"
+              />
+              <CookieRow
+                name="astra_locale"
+                purpose="Stores your preferred language and date/number format."
+                duration="1 year"
+                type="Functional"
+              />
+              <CookieRow
+                name="astra_sidebar"
+                purpose="Remembers sidebar collapse/expand state."
+                duration="1 year"
+                type="Functional"
+              />
+            </div>
 
-        <div className="text-center text-xs text-gray-400 py-4">
-          Questions? Contact <span className="font-medium">privacy@astra.ai</span>
+            <h3 className="font-semibold text-gray-900 mt-6 mb-3">2.3 Analytics Cookies (Optional)</h3>
+            <p className="mb-3 text-sm">
+              These cookies help us understand how users interact with Astra so we can improve the platform. They are <strong>optional</strong> and can be disabled.
+            </p>
+            <div className="space-y-2">
+              <CookieRow
+                name="astra_analytics"
+                purpose="Anonymous usage analytics (page views, feature usage, performance metrics). No personal data is collected."
+                duration="30 days"
+                type="Optional"
+              />
+            </div>
+          </Section>
+
+          <Section title="3. Third-Party Cookies">
+            <p className="mb-4">
+              The following third-party services may set their own cookies when you use specific features of Astra. These cookies are governed by the respective third party&apos;s privacy and cookie policies.
+            </p>
+            <div className="space-y-3">
+              <ThirdPartyCookie
+                provider="Stripe"
+                purpose="Payment processing and fraud prevention. Cookies are set when you enter payment information or manage billing."
+                policyUrl="https://stripe.com/privacy"
+              />
+              <ThirdPartyCookie
+                provider="Plaid (US/Canada)"
+                purpose="Bank account connection. Cookies are set during the bank connection flow only."
+                policyUrl="https://plaid.com/legal"
+              />
+              <ThirdPartyCookie
+                provider="Basiq (Australia/New Zealand)"
+                purpose="Bank account connection. Cookies are set during the bank connection flow only."
+                policyUrl="https://basiq.io/privacy"
+              />
+              <ThirdPartyCookie
+                provider="TrueLayer (UK/EU)"
+                purpose="Bank account connection. Cookies are set during the bank connection flow only."
+                policyUrl="https://truelayer.com/privacy"
+              />
+            </div>
+          </Section>
+
+          <Section title="4. What We Do NOT Do">
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-800">
+              <ul className="space-y-2">
+                {[
+                  'We do NOT use advertising cookies or tracking pixels',
+                  'We do NOT sell your browsing data to third parties',
+                  'We do NOT use cross-site tracking or retargeting',
+                  'We do NOT use Google Analytics, Facebook Pixel, or similar ad-tech tools',
+                  'We do NOT share cookie data with any entity not listed in Section 3',
+                  'We do NOT participate in advertising networks or data exchanges',
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold mt-0.5">&#10005;</span> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Section>
+
+          <Section title="5. Managing Cookies">
+            <p className="mb-4">
+              You can control cookies through your browser settings. Here is how to manage cookies in common browsers:
+            </p>
+            <ul className="space-y-2 text-sm">
+              {[
+                'Chrome: Settings > Privacy and Security > Cookies and other site data',
+                'Firefox: Settings > Privacy & Security > Cookies and Site Data',
+                'Safari: Preferences > Privacy > Manage Website Data',
+                'Edge: Settings > Privacy, search, and services > Cookies and site permissions',
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-gray-600">
+                  <span className="text-indigo-500 mt-0.5">&#8226;</span> {item}
+                </li>
+              ))}
+            </ul>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4 text-sm text-amber-800">
+              <strong>Note:</strong> Disabling essential cookies (such as the authentication token) will prevent you from logging in to Astra. Disabling functional cookies may result in a degraded experience (e.g., preferences not being remembered between sessions).
+            </div>
+          </Section>
+
+          <Section title="6. GDPR Compliance (EU/UK Users)">
+            <p className="mb-3">
+              Under the General Data Protection Regulation (GDPR) and the UK Data Protection Act 2018, you have the following rights regarding cookies and tracking:
+            </p>
+            <ul className="space-y-2 text-sm">
+              {[
+                'Right to be informed about what cookies are used and why (this policy)',
+                'Right to consent — optional cookies are not set without your consent',
+                'Right to withdraw consent at any time by clearing cookies or adjusting browser settings',
+                'Right to access — you can request a full list of data collected via cookies',
+                'Right to erasure — you can request deletion of all cookie-related data',
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-gray-600">
+                  <span className="text-indigo-500 mt-0.5">&#8226;</span> {item}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-sm">
+              Astra&apos;s legal basis for essential cookies is <strong>legitimate interest</strong> (platform operation). Since Astra uses only essential and functional cookies with no advertising or analytics tracking by default, explicit cookie consent is not required under GDPR&apos;s &ldquo;strictly necessary&rdquo; exemption. We provide full transparency through this policy.
+            </p>
+          </Section>
+
+          <Section title="7. CCPA/CPRA Compliance (California Users)">
+            <p className="mb-3">
+              Under the California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA):
+            </p>
+            <ul className="space-y-2 text-sm">
+              {[
+                'Astra does not sell your personal information, including cookie data',
+                'Astra does not share your personal information for cross-context behavioural advertising',
+                'You have the right to know what personal information is collected via cookies',
+                'You have the right to delete personal information collected via cookies',
+                'You have the right to opt out of the sale or sharing of personal information (not applicable — we do not sell or share)',
+                'You will not be discriminated against for exercising your privacy rights',
+              ].map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-gray-600">
+                  <span className="text-indigo-500 mt-0.5">&#8226;</span> {item}
+                </li>
+              ))}
+            </ul>
+          </Section>
+
+          <Section title="8. Do Not Track">
+            <p>
+              Astra respects the &ldquo;Do Not Track&rdquo; (DNT) browser signal. When DNT is enabled, optional analytics cookies will not be set. Essential and functional cookies will continue to operate as they are required for platform functionality.
+            </p>
+          </Section>
+
+          <Section title="9. Changes to This Policy">
+            <p>
+              We may update this Cookie Policy from time to time to reflect changes in technology, legislation, or our business practices. Material changes will be communicated via email or in-app notification at least 30 days before taking effect. The &ldquo;Last Updated&rdquo; date at the top of this page indicates when the policy was last revised.
+            </p>
+          </Section>
+
+          <Section title="10. Contact">
+            <p>
+              Cookie enquiries: <span className="text-indigo-600 font-medium">privacy@astra.ai</span> &middot;
+              GDPR/DPO requests: <span className="text-indigo-600 font-medium">dpo@astra.ai</span> &middot;
+              General legal: <span className="text-indigo-600 font-medium">legal@astra.ai</span>
+            </p>
+          </Section>
         </div>
       </div>
+    </div>
+  );
+}
+
+function Section({ title, children }) {
+  return (
+    <div>
+      <h2 className="text-xl font-bold text-gray-900 mb-4">{title}</h2>
+      <div className="text-gray-600 leading-relaxed">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function CookieRow({ name, purpose, duration, type }) {
+  const typeColors = {
+    Essential: 'bg-red-100 text-red-700',
+    Functional: 'bg-blue-100 text-blue-700',
+    Optional: 'bg-gray-100 text-gray-700',
+  };
+  return (
+    <div className="bg-gray-50 rounded-lg p-3">
+      <div className="flex items-center justify-between mb-1">
+        <code className="text-sm font-mono text-indigo-600">{name}</code>
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeColors[type]}`}>{type}</span>
+      </div>
+      <p className="text-xs text-gray-600 mb-1">{purpose}</p>
+      <p className="text-xs text-gray-400">Duration: {duration}</p>
+    </div>
+  );
+}
+
+function ThirdPartyCookie({ provider, purpose, policyUrl }) {
+  return (
+    <div className="bg-gray-50 rounded-lg p-3">
+      <h4 className="font-semibold text-sm text-gray-800 mb-1">{provider}</h4>
+      <p className="text-xs text-gray-600 mb-1">{purpose}</p>
+      <a href={policyUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 underline">
+        View their privacy policy
+      </a>
     </div>
   );
 }
