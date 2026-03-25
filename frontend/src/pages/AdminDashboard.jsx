@@ -46,7 +46,17 @@ const AGENTS = [
   { name: 'Anomaly Detector', status: 'active', tasks: 98, avgTime: '3.1s' },
   { name: 'Tax Withholding Calculator', status: 'active', tasks: 31, avgTime: '0.6s' },
   { name: 'Document Chaser', status: 'idle', tasks: 8, avgTime: '0.9s' },
-  { name: 'Forensic Auditor', status: 'error', tasks: 0, avgTime: '—' },
+  { name: 'Forensic Auditor', status: 'active', tasks: 4, avgTime: '8.4s' },
+  { name: 'Client Relationship Agent', status: 'active', tasks: 15, avgTime: '1.3s' },
+  { name: 'Profit Optimiser', status: 'active', tasks: 7, avgTime: '4.2s' },
+  { name: 'Regulatory Change Monitor', status: 'active', tasks: 3, avgTime: '2.1s' },
+  { name: 'Client Communications Agent', status: 'active', tasks: 11, avgTime: '2.8s' },
+  { name: 'Scenario Modeller', status: 'idle', tasks: 3, avgTime: '5.2s' },
+  { name: 'Health Scorer', status: 'active', tasks: 8, avgTime: '3.6s' },
+  { name: 'Tax Advisory Agent', status: 'idle', tasks: 4, avgTime: '2.3s' },
+  { name: 'Payroll Processor', status: 'idle', tasks: 0, avgTime: '7.1s' },
+  { name: 'Vendor Intelligence', status: 'idle', tasks: 0, avgTime: '4.5s' },
+  { name: 'Onboarding Agent', status: 'active', tasks: 2, avgTime: '12.3s' },
 ];
 
 const OPS_LOG = [

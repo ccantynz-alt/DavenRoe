@@ -177,6 +177,10 @@ AGENT_REGISTRY = {
     "tax_advisor": {"name": "Tax Advisory Agent", "tier": "collaborator", "description": "DTA calculations and structure advice"},
     "vendor_intelligence": {"name": "Vendor Intelligence", "tier": "collaborator", "description": "Vendor pricing benchmarking"},
     "onboarding_agent": {"name": "Onboarding Agent", "tier": "collaborator", "description": "New user setup and data import"},
+    "client_relationship": {"name": "Client Relationship Agent", "tier": "collaborator", "description": "Client engagement tracking and touchpoint recommendations"},
+    "profit_optimiser": {"name": "Profit Optimiser", "tier": "collaborator", "description": "Expense analysis and savings identification"},
+    "regulatory_monitor": {"name": "Regulatory Change Monitor", "tier": "automator", "description": "Tax authority rule change monitoring and auto-updates"},
+    "comms_agent": {"name": "Client Communications Agent", "tier": "automator", "description": "Professional email drafting for client communications"},
 }
 
 

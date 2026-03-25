@@ -184,6 +184,43 @@ const AGENTS = [
     icon: '>>',
     tasksToday: 2,
   },
+  // Tier 4: Strategic — deep intelligence that creates unfair competitive advantage
+  {
+    id: 'client_relationship',
+    name: 'Client Relationship Agent',
+    tier: 'collaborator',
+    description: 'Tracks client engagement, flags "going cold" clients, suggests touchpoints, drafts catch-up emails. Knows when you last spoke to every client.',
+    status: 'available',
+    icon: '♥',
+    tasksToday: 15,
+  },
+  {
+    id: 'profit_optimiser',
+    name: 'Profit Optimiser',
+    tier: 'collaborator',
+    description: 'Continuously analyses expenses for savings: unused subscriptions, overpriced vendors, tax deduction opportunities, cash timing improvements.',
+    status: 'available',
+    icon: '↑↑',
+    tasksToday: 7,
+  },
+  {
+    id: 'regulatory_monitor',
+    name: 'Regulatory Change Monitor',
+    tier: 'automator',
+    description: 'Watches ATO, IRD, HMRC, IRS for rule changes. Auto-updates tax tables, alerts affected clients, and adjusts compliance calendar.',
+    status: 'available',
+    icon: '⚡',
+    tasksToday: 3,
+  },
+  {
+    id: 'comms_agent',
+    name: 'Client Communications Agent',
+    tier: 'automator',
+    description: 'Drafts professional client emails: year-end summaries, tax reminders, fee proposals, meeting follow-ups. Matches your tone and style.',
+    status: 'available',
+    icon: '✉',
+    tasksToday: 11,
+  },
 ];
 
 const AUTOMATIONS = [

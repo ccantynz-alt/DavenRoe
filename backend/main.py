@@ -8,6 +8,7 @@ import logging
 from collections import defaultdict
 
 from fastapi import FastAPI, Request, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
@@ -91,7 +92,33 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         return response
 
 
+# Bot blocking middleware — blocks known scraper and competitor crawlers
+class BotBlockMiddleware(BaseHTTPMiddleware):
+    BLOCKED_BOTS = {
+        "semrushbot", "ahrefsbot", "mj12bot", "dotbot", "blexbot",
+        "dataforseobot", "petalbot", "bytespider", "gptbot", "ccbot",
+        "diffbot", "scrapy", "httrack", "perplexitybot",
+    }
+
+    async def dispatch(self, request: Request, call_next):
+        ua = (request.headers.get("user-agent") or "").lower()
+        for bot in self.BLOCKED_BOTS:
+            if bot in ua:
+                return JSONResponse(
+                    status_code=403,
+                    content={"detail": "Access denied"},
+                )
+        response = await call_next(request)
+        # Security headers on all responses
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        return response
+
+
 # Middleware stack (order matters — last added runs first)
+app.add_middleware(BotBlockMiddleware)
 app.add_middleware(RateLimitMiddleware, max_requests=settings.rate_limit_per_minute)
 
 # Legal compliance headers on every response
