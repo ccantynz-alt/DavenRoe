@@ -1,0 +1,24 @@
+# Astra AI Accounting Platform
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /security
+Allow: /privacy
+Allow: /terms
+Allow: /contact
+
+# Disallow authenticated app routes from indexing
+Disallow: /clients
+Disallow: /review
+Disallow: /banking
+Disallow: /invoicing
+Disallow: /documents
+Disallow: /reports
+Disallow: /payroll
+Disallow: /tax
+Disallow: /tax-filing
+Disallow: /settings
+Disallow: /billing
+Disallow: /api/
+
+Sitemap: https://astra.ai/sitemap.xml
