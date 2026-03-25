@@ -15,13 +15,13 @@ const TEAM_VALUES = [
   },
   {
     title: 'Security as Foundation',
-    description: '256-bit encryption, immutable audit trails, SOC 2 compliance, and entity-level data isolation aren\'t features we bolted on. They\'re the foundation everything else is built on.',
+    description: '256-bit encryption, immutable audit trails, and entity-level data isolation aren\'t features we bolted on. They\'re the foundation everything else is built on.',
   },
 ];
 
 const MILESTONES = [
   { year: '2024', event: 'Founded with a mission to eliminate manual data entry for accounting firms' },
-  { year: '2024', event: 'Core AI categorisation engine achieves 94.7% accuracy in beta testing' },
+  { year: '2024', event: 'Core AI categorisation engine launched with 95%+ accuracy target' },
   { year: '2025', event: 'Multi-jurisdiction tax engine launches covering AU, US, NZ & UK' },
   { year: '2025', event: 'Forensic intelligence suite with Benford\'s Law analysis goes live' },
   { year: '2025', event: 'Six bilateral Double Tax Agreement engines deployed' },
@@ -125,8 +125,8 @@ export default function About({ onBack }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
               { value: '4', label: 'Jurisdictions' },
-              { value: '8', label: 'AI Agents' },
-              { value: '94.7%', label: 'Categorisation Accuracy' },
+              { value: '24', label: 'AI Agents' },
+              { value: '95%+', label: 'Categorisation Target' },
               { value: '21,000+', label: 'Bank Institutions' },
             ].map((stat, i) => (
               <FadeIn key={i} delay={i * 100}>
