@@ -92,34 +92,34 @@ export default function Landing({ onLogin, onNavigate }) {
               }}
             >
               <span className="inline-block px-4 py-1.5 rounded-full bg-white/[0.06] backdrop-blur-sm text-white/70 text-xs font-medium tracking-wide border border-white/[0.08] mb-8">
-                Autonomous Accounting for the Modern Practice
+                Launching Q2 2026 — Register for Early Access
               </span>
             </div>
 
             <h1
-              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold text-white leading-[1.05] mb-6 tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(30px)',
                 transition: 'all 1s ease-out 0.4s',
               }}
             >
-              Precision.<br />
-              Intelligence.<br />
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">Trust.</span>
+              Your entire practice.<br />
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">One AI platform.</span><br />
+              Zero add-ons.
             </h1>
 
             <p
-              className="text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed mb-10"
+              className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-10"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(20px)',
                 transition: 'all 0.8s ease-out 0.7s',
               }}
             >
-              AI-powered bookkeeping, multi-jurisdiction tax compliance,
-              and forensic anomaly detection — all in one platform
-              built for accounting professionals.
+              Bookkeeping, tax filing, payroll, invoicing, and forensic fraud detection
+              across AU, NZ, UK &amp; US — with 24 AI agents that do the work while you
+              review and approve. Replaces 6 separate tools for $49/month.
             </p>
 
             <div
