@@ -69,6 +69,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AIDisclosure from './pages/AIDisclosure';
 import AcceptableUse from './pages/AcceptableUse';
 import CookiePolicy from './pages/CookiePolicy';
+import TaxRulingsAgent from './pages/TaxRulingsAgent';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -179,6 +180,7 @@ function AppRoutes() {
         <Route path="/practice" element={<PracticeDashboard />} />
         <Route path="/forensic-tools" element={<ForensicTools />} />
         <Route path="/tax-advisor" element={<TaxAdvisorToolkit />} />
+        <Route path="/tax-rulings" element={<TaxRulingsAgent />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/import" element={<DataImport />} />
         <Route path="/billing" element={<Billing />} />
