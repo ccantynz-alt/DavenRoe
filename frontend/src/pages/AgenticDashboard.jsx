@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ProprietaryNotice from '../components/ProprietaryNotice';
 
 const AGENTS = [
   // Tier 1: Conductor
@@ -643,6 +644,7 @@ function TierRow({ tier, description, agents, color }) {
           </span>
         ))}
       </div>
+      <ProprietaryNotice />
     </div>
   );
 }

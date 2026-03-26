@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '../components/Toast';
+import ProprietaryNotice from '../components/ProprietaryNotice';
 
 const PRESETS = [
   { id: 'hire', label: 'Hire new employees', icon: '👤', fields: ['num_hires', 'avg_salary', 'start_month'] },
@@ -426,6 +427,7 @@ export default function ScenarioPlanning() {
           </div>
         </div>
       )}
+      <ProprietaryNotice />
     </div>
   );
 }

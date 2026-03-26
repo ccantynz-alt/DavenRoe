@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import ProprietaryNotice from '../components/ProprietaryNotice';
 import LegalDisclaimer from '../components/LegalDisclaimer';
 
 const PILLAR_CONFIG = {
@@ -386,6 +387,7 @@ export default function FinancialHealthScore() {
           this level of continuous financial wellness monitoring.
         </p>
       </div>
+      <ProprietaryNotice />
     </div>
   );
 }

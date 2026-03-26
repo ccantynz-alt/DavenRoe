@@ -63,6 +63,18 @@ app = FastAPI(
 )
 
 
+@app.on_event("startup")
+async def startup():
+    """Create database tables on startup if they don't exist."""
+    try:
+        import app.models  # noqa: F401 — ensure all models are registered with Base
+        from app.core.database import create_tables
+        await create_tables()
+        logger.info("Database tables verified/created")
+    except Exception as e:
+        logger.warning(f"Database not available — running in demo mode: {e}")
+
+
 # Rate limiting middleware
 class RateLimitMiddleware(BaseHTTPMiddleware):
     def __init__(self, app, max_requests: int = 60, window: int = 60):
