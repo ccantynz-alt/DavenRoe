@@ -3,7 +3,7 @@
 Exposes the deterministic tax engine via REST endpoints.
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth.dependencies import get_current_user
 from app.models.user import User

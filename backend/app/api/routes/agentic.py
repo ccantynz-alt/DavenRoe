@@ -10,7 +10,7 @@ Next-generation autonomous accounting endpoints:
 from datetime import date
 from decimal import Decimal
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.agents.cash_flow_forecaster import CashFlowForecaster
 from app.agents.compliance_monitor import ComplianceMonitor
@@ -203,7 +203,6 @@ async def get_agent_registry(user: User = Depends(get_current_user)):
 @router.post("/agents/{agent_id}/execute")
 async def execute_agent(agent_id: str, params: dict, user: User = Depends(get_current_user)):
     """Execute a specific agent with the given parameters."""
-    from fastapi import HTTPException
     if agent_id not in AGENT_REGISTRY:
         raise HTTPException(status_code=404, detail=f"Agent '{agent_id}' not found in registry")
 
