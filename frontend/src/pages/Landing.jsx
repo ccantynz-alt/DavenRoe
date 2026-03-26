@@ -134,10 +134,10 @@ export default function Landing({ onLogin, onNavigate }) {
                 onClick={onLogin}
                 className="px-8 py-4 bg-indigo-600 text-white rounded-xl text-lg font-semibold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30"
               >
-                Start Free Trial
+                Register for Early Access
               </button>
               <a
-                href="#features"
+                href="#register"
                 className="px-8 py-4 bg-white/[0.06] backdrop-blur-sm text-white rounded-xl text-lg font-semibold hover:bg-white/[0.12] transition-all border border-white/[0.08]"
               >
                 See How It Works
@@ -148,7 +148,7 @@ export default function Landing({ onLogin, onNavigate }) {
               className="text-sm text-white/30 mt-8"
               style={{ opacity: loaded ? 1 : 0, transition: 'opacity 1s ease-out 1.2s' }}
             >
-              Trusted by forward-thinking firms across Australia, US, NZ & UK
+              Launching Q2 2026 — AI-powered accounting for firms across Australia, US, NZ &amp; UK
             </p>
           </div>
         </div>
