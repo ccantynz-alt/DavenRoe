@@ -31,13 +31,31 @@ import FAQ from '../components/landing/FAQ';
  */
 export default function Landing({ onLogin, onNavigate }) {
   const [loaded, setLoaded] = useState(false);
+  const [email, setEmail] = useState('');
+  const [registered, setRegistered] = useState(false);
 
   useEffect(() => {
     requestAnimationFrame(() => setLoaded(true));
   }, []);
 
+  const handleRegisterInterest = (e) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) return;
+    setRegistered(true);
+    setEmail('');
+  };
+
   return (
     <div className="bg-white text-gray-900 min-h-screen">
+      {/* ============================================================
+          PRE-LAUNCH BANNER
+          ============================================================ */}
+      <div className="bg-indigo-600 text-white text-center py-2.5 px-4 text-sm">
+        <span className="font-medium">Coming Q2 2026</span>
+        <span className="mx-2 text-indigo-300">|</span>
+        <span className="text-indigo-100">Astra is currently in private beta. Register your interest below to get early access.</span>
+      </div>
+
       {/* ============================================================
           1. HERO — Dark gradient mesh with live AI demo
           ============================================================ */}
@@ -178,6 +196,68 @@ export default function Landing({ onLogin, onNavigate }) {
           ============================================================ */}
       <div id="faq">
         <FAQ />
+      </div>
+
+      {/* ============================================================
+          13. REGISTER INTEREST — Pre-launch email capture
+          ============================================================ */}
+      <section className="py-24 px-6 lg:px-16 bg-gradient-to-br from-indigo-600 to-purple-700" id="register">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Be First in Line</h2>
+          <p className="text-lg text-indigo-200 mb-8">
+            Astra launches Q2 2026. Register your interest for early access, founding member pricing, and a free data migration from your current platform.
+          </p>
+          {registered ? (
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+              <div className="text-4xl mb-3">&#10003;</div>
+              <h3 className="text-xl font-bold text-white mb-2">You're on the list</h3>
+              <p className="text-indigo-200">We'll be in touch with early access details. Check your inbox for a confirmation.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleRegisterInterest} className="max-w-lg mx-auto">
+              <div className="flex gap-3">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="you@yourfirm.com"
+                  required
+                  className="flex-1 px-5 py-3.5 rounded-xl bg-white/10 backdrop-blur-sm text-white placeholder-indigo-300 border border-white/20 focus:border-white/40 focus:outline-none text-sm"
+                />
+                <button
+                  type="submit"
+                  className="px-8 py-3.5 bg-white text-indigo-700 rounded-xl font-semibold text-sm hover:bg-indigo-50 transition-colors shrink-0"
+                >
+                  Register Interest
+                </button>
+              </div>
+              <p className="text-xs text-indigo-300 mt-3">No spam. No credit card required. Unsubscribe anytime.</p>
+            </form>
+          )}
+          <div className="mt-10 grid grid-cols-3 gap-6 text-center">
+            <div>
+              <p className="text-2xl font-bold text-white">$49</p>
+              <p className="text-xs text-indigo-300">Founding member price<br />(normally $149)</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-white">Free</p>
+              <p className="text-xs text-indigo-300">Data migration from<br />Xero, QBO, or MYOB</p>
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-white">90 days</p>
+              <p className="text-xs text-indigo-300">Extended trial for<br />early registrants</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================
+          14. LEGAL DISCLAIMER BANNER
+          ============================================================ */}
+      <div className="bg-gray-100 border-t border-b py-4 px-6 lg:px-16">
+        <p className="text-[11px] text-gray-500 text-center max-w-4xl mx-auto leading-relaxed">
+          Astra is an AI-assisted accounting software tool currently in development. It is not a registered accounting firm, tax agent, licensed financial advisor, or legal practice. All features shown on this page represent planned functionality and may change before launch. No output from Astra constitutes professional advice. By registering your interest, you agree to receive product updates via email. You can unsubscribe at any time. See our <button onClick={() => onNavigate('terms')} className="underline hover:text-gray-700">Terms of Service</button>, <button onClick={() => onNavigate('privacy')} className="underline hover:text-gray-700">Privacy Policy</button>, and <a href="/ai-disclosure" className="underline hover:text-gray-700">AI Disclosure</a> for full details. Contact: <span className="font-medium">hello@astra.ai</span>
+        </p>
       </div>
 
       {/* ============================================================
