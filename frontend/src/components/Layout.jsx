@@ -42,6 +42,7 @@ const nav = [
   { path: '/tax-filing', label: 'Tax Filing', icon: '>' },
   { path: '/tax-agent', label: 'Tax Agent', icon: '?' },
   { path: '/tax-advisor', label: 'Tax Advisor Toolkit', icon: '%' },
+  { path: '/tax-rulings', label: 'Tax Rulings Agent', icon: '?' },
   { path: '/forensic-tools', label: 'Forensic Tools', icon: '!' },
   { path: '/compliance', label: 'Compliance', icon: '!' },
   // Projects & Planning
