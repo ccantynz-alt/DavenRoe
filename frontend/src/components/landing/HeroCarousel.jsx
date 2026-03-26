@@ -127,9 +127,6 @@ export default function HeroCarousel({ children }) {
         background: 'radial-gradient(ellipse at 50% 50%, transparent 0%, rgba(8,9,13,0.4) 70%, rgba(8,9,13,0.8) 100%)',
       }} />
 
-      {/* Bottom fade to white */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent z-10" />
-
       {/* Content */}
       <div className="relative z-10 min-h-screen flex flex-col">
         {children}
@@ -181,7 +178,7 @@ export default function HeroCarousel({ children }) {
         </div>
 
         {/* Scroll indicator */}
-        <div className="pb-12 flex justify-center">
+        <div className="pb-6 flex justify-center">
           <div className="flex flex-col items-center gap-2">
             <div className="w-5 h-8 rounded-full border border-white/20 flex justify-center pt-1.5">
               <div className="w-1 h-2 bg-white/40 rounded-full animate-bounce" />
