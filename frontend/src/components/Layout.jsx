@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { useAuth } from '../contexts/AuthContext';
 import { GlobalFooterDisclaimer } from './LegalDisclaimer';
+import HelpWidget from './HelpWidget';
 
 const nav = [
   // Overview
@@ -176,6 +177,7 @@ export default function Layout({ children }) {
           {children}
           <GlobalFooterDisclaimer />
         </main>
+        <HelpWidget />
       </div>
     </div>
   );
