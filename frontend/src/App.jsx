@@ -184,7 +184,6 @@ function AppRoutes() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/import" element={<DataImport />} />
         <Route path="/billing" element={<Billing />} />
-        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/ai-disclosure" element={<AIDisclosure />} />
         <Route path="/acceptable-use" element={<AcceptableUse />} />
         <Route path="/cookies" element={<CookiePolicy />} />

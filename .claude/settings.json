@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /home/user/Ledger.Ai-/frontend && npm run build --silent 2>&1 | tail -5; if [ ${PIPESTATUS[0]} -ne 0 ]; then echo '{\"systemMessage\": \"BUILD FAILED — fix errors before pushing\"}'; else echo '{\"systemMessage\": \"Build passed\"}'; fi",
+            "timeout": 120,
+            "statusMessage": "Running build check..."
+          }
+        ]
+      }
+    ]
+  }
+}

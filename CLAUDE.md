@@ -35,6 +35,42 @@ Every new session, Claude must:
 
 ---
 
+## Mandatory Audit Protocol (Non-Negotiable)
+
+Surface-level checks are NOT acceptable. "File exists" is not the same as "code works." Every audit must be production-grade.
+
+### Audit Levels
+
+**After ANY code change — run Level 2 minimum:**
+
+| Level | When | What To Do | Command |
+|-------|------|------------|---------|
+| **Level 1** | Quick check | Build frontend, verify no compile errors | `npm run build` |
+| **Level 2** | After adding/modifying a feature | Test every import actually resolves. Check every new file's imports point to real modules with correct export names. Verify the build. | Import test + build |
+| **Level 3** | Before any deployment or push | FULL PRODUCTION CRAWL: Import every single backend module. Check every frontend page. Check every nav link has a matching route. Check every route file's imports exist. Check requirements.txt has every dependency. | Full crawl |
+| **Level 4** | Before launch / major release | Everything in Level 3 + check env vars documented, DB schema matches models, auth flow works end-to-end, all API endpoints return proper responses, no hardcoded secrets, no unverified marketing claims | Full deployment audit |
+
+### Rules:
+1. **Never say "build passes" as proof something works.** Vite bundles frontend — it does NOT catch Python backend errors.
+2. **Never say "file exists" as proof an import works.** The file might exist but export the wrong name, or import something that doesn't exist.
+3. **After building ANY backend route**, actually try to import it: `from app.api.routes.new_route import router`
+4. **After adding ANY dependency**, check it's in BOTH `requirements.txt` (Vercel root) AND `backend/requirements.txt` (local dev).
+5. **After ANY session that touches 3+ files**, run a Level 3 crawl before pushing.
+6. **Every push to production** requires a Level 3 crawl. No exceptions.
+
+### Deployment Strategy — Blue-Green
+
+**Production** is sacred. Never push untested code to production.
+
+- `main` branch = production (what customers see)
+- `claude/*` branches = development (where Claude works)
+- All development happens on `claude/*` branches
+- Merge to `main` ONLY after Level 3 crawl passes
+- Vercel preview deployments on `claude/*` branches for testing
+- Production deployment on `main` only
+
+---
+
 ## Zero-Tolerance Frontend Policy
 
 This is a live, customer-facing product competing against Xero, QuickBooks, MYOB, Sage, and FreshBooks. First impressions are everything — visitors decide in 30 seconds.
