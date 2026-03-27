@@ -3,92 +3,92 @@ import api from '../services/api';
 
 const AuthContext = createContext(null);
 
+// Admin user — works without backend
+const ADMIN_EMAIL = 'admin@astra.ai';
+const ADMIN_PASSWORD = 'Astra2026!';
+const ADMIN_USER = {
+  id: 'admin-001',
+  email: ADMIN_EMAIL,
+  full_name: 'Craig Canty',
+  role: 'partner',
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('astra_token');
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      api.get('/auth/me')
-        .then(res => setUser(res.data))
-        .catch(() => {
-          localStorage.removeItem('astra_token');
-          delete api.defaults.headers.common['Authorization'];
-        })
-        .finally(() => setLoading(false));
-    } else {
+    if (!token) {
       setLoading(false);
+      return;
     }
+
+    // Admin token — no backend needed
+    if (token === 'admin-local-token') {
+      setUser(ADMIN_USER);
+      setLoading(false);
+      return;
+    }
+
+    // Real token — verify with backend
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    api.get('/auth/me')
+      .then(res => setUser(res.data))
+      .catch(() => {
+        localStorage.removeItem('astra_token');
+        localStorage.removeItem('astra_onboarded');
+        delete api.defaults.headers.common['Authorization'];
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const login = async (email, password) => {
-    // Try backend first
-    try {
-      const res = await api.post('/auth/login', { email, password });
-      const { access_token, user: userData } = res.data;
-      localStorage.setItem('astra_token', access_token);
+    // Admin login — works without backend
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      localStorage.setItem('astra_token', 'admin-local-token');
       localStorage.setItem('astra_onboarded', 'true');
-      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      setUser(userData);
-      return userData;
-    } catch {
-      // Fallback: admin login when backend is unavailable
-      if (email === 'admin@astra.ai' && password === 'Astra2026!') {
-        const adminUser = {
-          id: 'admin-001',
-          email: 'admin@astra.ai',
-          full_name: 'Craig Canty',
-          role: 'partner',
-        };
-        localStorage.setItem('astra_token', 'admin-local-token');
-        localStorage.setItem('astra_onboarded', 'true');
-        setUser(adminUser);
-        return adminUser;
-      }
-      throw new Error('Invalid email or password');
+      setUser(ADMIN_USER);
+      return ADMIN_USER;
     }
+
+    // Real login via backend
+    const res = await api.post('/auth/login', { email, password });
+    const { access_token, user: userData } = res.data;
+    localStorage.setItem('astra_token', access_token);
+    localStorage.setItem('astra_onboarded', 'true');
+    api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+    setUser(userData);
+    return userData;
   };
 
   const register = async (email, password, full_name, role = 'bookkeeper') => {
-    try {
-      const res = await api.post('/auth/register', { email, password, full_name, role });
-      const { access_token, user: userData } = res.data;
-      localStorage.setItem('astra_token', access_token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      setUser(userData);
-      return userData;
-    } catch (err) {
-      // If backend is down, offer demo mode
-      if (err.response?.status === 500 || !err.response) {
-        throw new Error('Backend unavailable. Use "Enter Demo Mode" below to preview the dashboard.');
-      }
-      throw err;
+    // Admin login works on register form too
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      localStorage.setItem('astra_token', 'admin-local-token');
+      localStorage.setItem('astra_onboarded', 'true');
+      setUser(ADMIN_USER);
+      return ADMIN_USER;
     }
-  };
 
-  const loginDemo = () => {
-    const demoUser = {
-      id: 'demo-user',
-      email: 'demo@astra.ai',
-      full_name: 'Demo User',
-      role: 'partner',
-    };
-    localStorage.setItem('astra_token', 'demo-token');
+    const res = await api.post('/auth/register', { email, password, full_name, role });
+    const { access_token, user: userData } = res.data;
+    localStorage.setItem('astra_token', access_token);
     localStorage.setItem('astra_onboarded', 'true');
-    setUser(demoUser);
-    return demoUser;
+    api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+    setUser(userData);
+    return userData;
   };
 
   const logout = () => {
     localStorage.removeItem('astra_token');
+    localStorage.removeItem('astra_onboarded');
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, loginDemo }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

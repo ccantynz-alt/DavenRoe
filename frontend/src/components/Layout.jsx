@@ -5,76 +5,122 @@ import { useAuth } from '../contexts/AuthContext';
 import { GlobalFooterDisclaimer } from './LegalDisclaimer';
 import HelpWidget from './HelpWidget';
 
-const nav = [
-  // Overview
-  { path: '/', label: 'Dashboard', icon: '~' },
-  { path: '/practice', label: 'Practice Overview', icon: '~' },
-  { path: '/smart-tools', label: 'Smart Tools', icon: '*' },
-  { path: '/financial-health', label: 'Health Score', icon: '+' },
-  // Sales & Revenue
-  { path: '/clients', label: 'Clients', icon: '@' },
-  { path: '/quotes', label: 'Quotes', icon: '"' },
-  { path: '/invoicing', label: 'Invoicing', icon: '#' },
-  { path: '/credit-notes', label: 'Credit Notes', icon: '-' },
-  // Purchases & Expenses
-  { path: '/suppliers', label: 'Suppliers', icon: '&' },
-  { path: '/bills', label: 'Bills', icon: '$' },
-  { path: '/purchase-orders', label: 'Purchase Orders', icon: '>' },
-  { path: '/live-receipt', label: 'Live Receipt', icon: '!' },
-  { path: '/spend-monitor', label: 'Spend Monitor', icon: '!' },
-  // Banking
-  { path: '/banking', label: 'Bank Feeds', icon: '$' },
-  { path: '/bank-reconciliation', label: 'Bank Reconciliation', icon: '=' },
-  { path: '/recurring', label: 'Recurring', icon: '@' },
-  // Accounting
-  { path: '/chart-of-accounts', label: 'Chart of Accounts', icon: '#' },
-  { path: '/journal-entries', label: 'Journal Entries', icon: '+' },
-  { path: '/review', label: 'Review Queue', icon: '>' },
-  { path: '/peer-review', label: 'Peer Review', icon: '&' },
-  // Assets & Inventory
-  { path: '/fixed-assets', label: 'Fixed Assets', icon: '{' },
-  { path: '/inventory', label: 'Inventory', icon: '{' },
-  // Employment
-  { path: '/payroll', label: 'Payroll', icon: '$' },
-  { path: '/time-tracker', label: 'Time Tracker', icon: ':' },
-  // Tax & Compliance
-  { path: '/tax', label: 'Tax Engine', icon: '%' },
-  { path: '/tax-filing', label: 'Tax Filing', icon: '>' },
-  { path: '/tax-agent', label: 'Tax Agent', icon: '?' },
-  { path: '/tax-advisor', label: 'Tax Advisor Toolkit', icon: '%' },
-  { path: '/tax-rulings', label: 'Tax Rulings Agent', icon: '?' },
-  { path: '/forensic-tools', label: 'Forensic Tools', icon: '!' },
-  { path: '/compliance', label: 'Compliance', icon: '!' },
-  // Projects & Planning
-  { path: '/projects', label: 'Projects', icon: '#' },
-  { path: '/scenarios', label: 'Scenario Planning', icon: '?' },
-  // Reports & Budgets
-  { path: '/reports', label: 'Reports', icon: '=' },
-  { path: '/budgets', label: 'Budgets', icon: '=' },
-  // Documents
-  { path: '/documents', label: 'Documents', icon: '^' },
-  { path: '/email-scanner', label: 'Email Scanner', icon: '@' },
-  // Business
-  { path: '/incorporate', label: 'Incorporate', icon: '>' },
-  { path: '/portal', label: 'Client Portal', icon: '@' },
-  // Platform
-  { path: '/specialists', label: 'Specialist Tools', icon: '*' },
-  { path: '/toolkit', label: 'Toolkit', icon: '+' },
-  { path: '/integrations', label: 'Integrations', icon: '<' },
-  { path: '/marketplace', label: 'Marketplace', icon: '#' },
-  { path: '/partners', label: 'Partner Program', icon: '&' },
-  { path: '/case-studies', label: 'Case Studies', icon: '=' },
-  { path: '/ai-insights', label: 'AI Insights', icon: '?' },
-  { path: '/enterprise', label: 'Enterprise', icon: '*' },
-  { path: '/activity', label: 'Activity', icon: '~' },
-  { path: '/ask', label: 'Ask Astra', icon: '?' },
-  { path: '/agentic', label: 'Agentic AI', icon: '&' },
-  { path: '/import', label: 'Data Import', icon: '>' },
-  { path: '/billing', label: 'Billing', icon: '$' },
-  { path: '/admin', label: 'Admin Center', icon: '*' },
-  { path: '/partners', label: 'Partner Program', icon: '&' },
-  { path: '/help', label: 'Help Center', icon: '?' },
-  { path: '/settings', label: 'Settings', icon: ':' },
+const navSections = [
+  {
+    label: 'Overview',
+    items: [
+      { path: '/', label: 'Dashboard' },
+      { path: '/practice', label: 'Practice Overview' },
+      { path: '/financial-health', label: 'Health Score' },
+    ],
+  },
+  {
+    label: 'Sales',
+    items: [
+      { path: '/clients', label: 'Clients' },
+      { path: '/quotes', label: 'Quotes' },
+      { path: '/invoicing', label: 'Invoicing' },
+      { path: '/credit-notes', label: 'Credit Notes' },
+    ],
+  },
+  {
+    label: 'Purchases',
+    items: [
+      { path: '/suppliers', label: 'Suppliers' },
+      { path: '/bills', label: 'Bills' },
+      { path: '/purchase-orders', label: 'Purchase Orders' },
+      { path: '/live-receipt', label: 'Live Receipt' },
+      { path: '/spend-monitor', label: 'Spend Monitor' },
+    ],
+  },
+  {
+    label: 'Banking',
+    items: [
+      { path: '/banking', label: 'Bank Feeds' },
+      { path: '/bank-reconciliation', label: 'Reconciliation' },
+      { path: '/recurring', label: 'Recurring' },
+    ],
+  },
+  {
+    label: 'Accounting',
+    items: [
+      { path: '/chart-of-accounts', label: 'Chart of Accounts' },
+      { path: '/journal-entries', label: 'Journal Entries' },
+      { path: '/review', label: 'Review Queue' },
+      { path: '/peer-review', label: 'Peer Review' },
+      { path: '/fixed-assets', label: 'Fixed Assets' },
+      { path: '/inventory', label: 'Inventory' },
+      { path: '/budgets', label: 'Budgets' },
+    ],
+  },
+  {
+    label: 'Payroll & HR',
+    items: [
+      { path: '/payroll', label: 'Payroll' },
+      { path: '/time-tracker', label: 'Time Tracker' },
+    ],
+  },
+  {
+    label: 'Tax & Compliance',
+    items: [
+      { path: '/tax', label: 'Tax Engine' },
+      { path: '/tax-filing', label: 'Tax Filing' },
+      { path: '/tax-rulings', label: 'Tax Rulings Agent' },
+      { path: '/tax-advisor', label: 'Tax Advisor Toolkit' },
+      { path: '/tax-agent', label: 'Tax Agent' },
+      { path: '/compliance', label: 'Compliance Calendar' },
+    ],
+  },
+  {
+    label: 'Reports & Planning',
+    items: [
+      { path: '/reports', label: 'Reports' },
+      { path: '/projects', label: 'Projects' },
+      { path: '/scenarios', label: 'Scenario Planning' },
+    ],
+  },
+  {
+    label: 'AI & Intelligence',
+    items: [
+      { path: '/ask', label: 'Ask Astra' },
+      { path: '/agentic', label: 'AI Agents' },
+      { path: '/ai-insights', label: 'AI Insights' },
+      { path: '/forensic-tools', label: 'Forensic Tools' },
+      { path: '/smart-tools', label: 'Smart Tools' },
+      { path: '/specialists', label: 'Specialist Tools' },
+      { path: '/toolkit', label: 'Toolkit' },
+    ],
+  },
+  {
+    label: 'Documents',
+    items: [
+      { path: '/documents', label: 'Documents' },
+      { path: '/email-scanner', label: 'Email Scanner' },
+    ],
+  },
+  {
+    label: 'Platform',
+    items: [
+      { path: '/marketplace', label: 'Marketplace' },
+      { path: '/integrations', label: 'Integrations' },
+      { path: '/partners', label: 'Partner Program' },
+      { path: '/portal', label: 'Client Portal' },
+      { path: '/case-studies', label: 'Case Studies' },
+      { path: '/incorporate', label: 'Incorporate' },
+      { path: '/enterprise', label: 'Enterprise' },
+      { path: '/import', label: 'Data Import' },
+    ],
+  },
+  {
+    label: 'Admin',
+    items: [
+      { path: '/admin', label: 'Command Center' },
+      { path: '/activity', label: 'Activity Feed' },
+      { path: '/billing', label: 'Billing' },
+      { path: '/settings', label: 'Settings' },
+      { path: '/help', label: 'Help Center' },
+    ],
+  },
 ];
 
 const roleLabels = {
@@ -84,6 +130,45 @@ const roleLabels = {
   bookkeeper: 'Bookkeeper',
   client: 'Client',
 };
+
+function NavSection({ section, pathname, onNavigate }) {
+  const isActive = section.items.some(item => item.path === pathname);
+  const [open, setOpen] = useState(isActive);
+
+  return (
+    <div className="mb-1">
+      <button
+        onClick={() => setOpen(!open)}
+        className={clsx(
+          'w-full flex items-center justify-between px-3 py-1.5 text-[10px] uppercase tracking-wider font-semibold rounded transition-colors',
+          isActive ? 'text-indigo-400' : 'text-gray-500 hover:text-gray-300'
+        )}
+      >
+        {section.label}
+        <span className="text-[8px]">{open ? '▼' : '▶'}</span>
+      </button>
+      {open && (
+        <div className="mt-0.5 space-y-0.5">
+          {section.items.map(item => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={onNavigate}
+              className={clsx(
+                'block px-3 py-1.5 rounded-lg text-sm transition-colors',
+                pathname === item.path
+                  ? 'bg-indigo-700 text-white font-medium'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+              )}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Layout({ children }) {
   const { pathname } = useLocation();
@@ -99,63 +184,42 @@ export default function Layout({ children }) {
 
       {/* Sidebar */}
       <aside className={clsx(
-        'w-64 bg-gray-900 text-white flex flex-col z-50 transition-transform duration-200',
+        'w-56 bg-gray-900 text-white flex flex-col z-50 transition-transform duration-200',
         'fixed inset-y-0 left-0 lg:relative lg:translate-x-0',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       )}>
-        <div className="p-6 border-b border-gray-800 flex items-center justify-between">
+        <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Astra</h1>
-            <p className="text-xs text-gray-400 mt-1">Autonomous Accounting</p>
+            <h1 className="text-xl font-bold tracking-tight">Astra</h1>
+            <p className="text-[10px] text-gray-500">Autonomous Accounting</p>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-white text-xl">
-            x
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-white">
+            ✕
           </button>
         </div>
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {nav.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={() => setSidebarOpen(false)}
-              className={clsx(
-                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                pathname === item.path
-                  ? 'bg-indigo-700 text-white'
-                  : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-              )}
-            >
-              <span className="text-lg font-mono w-5 text-center">{item.icon}</span>
-              {item.label}
-            </Link>
+
+        <nav className="flex-1 p-3 overflow-y-auto">
+          {navSections.map(section => (
+            <NavSection
+              key={section.label}
+              section={section}
+              pathname={pathname}
+              onNavigate={() => setSidebarOpen(false)}
+            />
           ))}
         </nav>
 
-        {/* Forensic Add-on */}
-        <div className="px-4 pb-2">
-          <p className="text-[10px] uppercase tracking-wider text-gray-600 mb-2 px-3">Add-ons</p>
-          <a
-            href={`${window.location.protocol}//${window.location.hostname}:3001`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-pink-400 hover:bg-gray-800 transition-colors"
-          >
-            <span className="text-lg font-mono w-5 text-center">!</span>
-            Forensic / M&A
-          </a>
-        </div>
-
         {/* User Info */}
         {user && (
-          <div className="p-4 border-t border-gray-800">
+          <div className="p-3 border-t border-gray-800">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <p className="text-sm font-medium truncate">{user.full_name}</p>
-                <p className="text-xs text-gray-400">{roleLabels[user.role] || user.role}</p>
+                <p className="text-xs font-medium truncate">{user.full_name}</p>
+                <p className="text-[10px] text-gray-500">{roleLabels[user.role] || user.role}</p>
               </div>
               <button
                 onClick={logout}
-                className="text-xs text-gray-500 hover:text-white transition-colors px-2 py-1 shrink-0"
+                className="text-[10px] text-gray-500 hover:text-white transition-colors px-2 py-1 shrink-0"
               >
                 Logout
               </button>

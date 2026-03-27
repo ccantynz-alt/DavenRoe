@@ -6,6 +6,7 @@ even when PostgreSQL is not yet configured.
 """
 
 import logging
+import re
 import ssl
 from sqlalchemy.orm import DeclarativeBase
 
@@ -18,6 +19,31 @@ _engine = None
 _async_session = None
 
 
+def _clean_neon_url(url: str) -> str:
+    """Clean a Neon connection string for use with asyncpg.
+
+    Handles:
+    - Converting postgresql:// to postgresql+asyncpg://
+    - Removing sslmode parameter (asyncpg uses ssl context instead)
+    - Removing any other query params asyncpg doesn't understand
+    """
+    # Auto-convert driver prefix
+    if url.startswith("postgresql://") and "+asyncpg" not in url:
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        logger.info("Auto-converted connection string to asyncpg format")
+
+    # Strip sslmode from query string (all variations)
+    url = re.sub(r'[?&]sslmode=[^&]*', '', url)
+
+    # Clean up orphaned ? or & at end of URL
+    url = url.rstrip('?').rstrip('&')
+
+    # If we removed the first param, fix ?& to just ?
+    url = url.replace('?&', '?')
+
+    return url
+
+
 def _init_db():
     """Initialize the database engine on first use."""
     global _engine, _async_session
@@ -27,24 +53,18 @@ def _init_db():
         settings = get_settings()
         db_url = settings.database_url
 
-        # Auto-fix common Neon connection string issues:
-        # Neon gives you postgresql:// but asyncpg needs postgresql+asyncpg://
-        if db_url.startswith("postgresql://") and "+asyncpg" not in db_url:
-            db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-            logger.info("Auto-converted connection string to asyncpg format")
-
-        # Neon requires SSL for all connections
+        # Neon-specific handling
         connect_args = {}
-        if "neon" in db_url or "neon.tech" in db_url:
+        is_neon = "neon" in db_url or "neon.tech" in db_url
+
+        if is_neon:
+            db_url = _clean_neon_url(db_url)
             ssl_context = ssl.create_default_context()
             connect_args["ssl"] = ssl_context
-            # Remove sslmode from URL — asyncpg doesn't accept it as a keyword
-            # when an SSL context is already provided via connect_args
-            if "?sslmode=" in db_url:
-                db_url = db_url.split("?sslmode=")[0]
-            elif "&sslmode=" in db_url:
-                db_url = db_url.replace("&sslmode=require", "")
-            logger.info("Neon detected — SSL enabled")
+            logger.info("Neon detected — SSL enabled, URL cleaned")
+        elif db_url.startswith("postgresql://") and "+asyncpg" not in db_url:
+            db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            logger.info("Auto-converted connection string to asyncpg format")
 
         _engine = create_async_engine(
             db_url,
