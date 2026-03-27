@@ -147,19 +147,6 @@ export default function Login() {
           </div>
         </div>
 
-        {/* Demo Mode — bypass login when backend is unavailable */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <button
-            onClick={() => loginDemo()}
-            className="w-full px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
-          >
-            Enter Demo Mode
-          </button>
-          <p className="text-center text-[10px] text-gray-400 mt-2">
-            Preview the full dashboard with sample data. No account needed.
-          </p>
-        </div>
-
         <p className="text-center text-xs text-gray-400 mt-6">
           Protected by 256-bit encryption. Your data never leaves our secure infrastructure.
         </p>
