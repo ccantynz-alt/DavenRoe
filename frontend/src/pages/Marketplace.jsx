@@ -2,31 +2,100 @@ import { useState } from 'react';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
 
-const CATEGORIES = ['All', 'CRM', 'E-commerce', 'Payments', 'Productivity', 'Tax Authority', 'HR', 'Banking', 'Industry'];
+const CATEGORIES = [
+  'All', 'CRM', 'E-Commerce', 'Payments', 'Productivity', 'Tax', 'HR & Payroll',
+  'Banking', 'Document Management', 'Expense Management', 'Reporting & BI',
+  'Legal & Compliance', 'Communication', 'Inventory', 'Real Estate', 'Construction'
+];
 
 const APPS = [
+  // CRM (5)
+  { id: 'hubspot', name: 'HubSpot', category: 'CRM', description: 'Two-way sync for contacts, companies, deals, and invoices with HubSpot CRM', rating: 4.6, installs: '8K+', icon: 'HS' },
   { id: 'salesforce', name: 'Salesforce', category: 'CRM', description: 'Sync contacts, deals, and invoices with Salesforce CRM', rating: 4.7, installs: '12K+', icon: 'SF' },
-  { id: 'hubspot', name: 'HubSpot', category: 'CRM', description: 'Two-way sync for contacts, companies, and deals', rating: 4.6, installs: '8K+', icon: 'HS' },
-  { id: 'pipedrive', name: 'Pipedrive', category: 'CRM', description: 'Pipeline management integrated with invoicing', rating: 4.4, installs: '3K+', icon: 'PD' },
-  { id: 'shopify', name: 'Shopify', category: 'E-commerce', description: 'Auto-import orders, refunds, and payouts from Shopify', rating: 4.8, installs: '25K+', icon: 'SH' },
-  { id: 'woocommerce', name: 'WooCommerce', category: 'E-commerce', description: 'Sync WooCommerce orders and inventory with Astra', rating: 4.3, installs: '6K+', icon: 'WC' },
-  { id: 'square', name: 'Square', category: 'E-commerce', description: 'Import Square POS transactions and inventory', rating: 4.5, installs: '9K+', icon: 'SQ' },
-  { id: 'paypal', name: 'PayPal', category: 'Payments', description: 'Auto-reconcile PayPal transactions and fees', rating: 4.4, installs: '18K+', icon: 'PP' },
-  { id: 'gocardless', name: 'GoCardless', category: 'Payments', description: 'Direct debit collection and reconciliation', rating: 4.5, installs: '5K+', icon: 'GC' },
-  { id: 'wise', name: 'Wise', category: 'Payments', description: 'Multi-currency transfers with real-time FX rates', rating: 4.7, installs: '7K+', icon: 'WI' },
-  { id: 'stripe', name: 'Stripe', category: 'Payments', description: 'Payment processing, subscriptions, and invoicing', rating: 4.9, installs: '30K+', icon: 'ST', installed: true },
-  { id: 'slack', name: 'Slack', category: 'Productivity', description: 'Get notifications and run commands from Slack', rating: 4.6, installs: '14K+', icon: 'SL' },
-  { id: 'teams', name: 'Microsoft Teams', category: 'Productivity', description: 'Meeting scheduling, notifications, and document sharing', rating: 4.3, installs: '10K+', icon: 'MT' },
-  { id: 'google', name: 'Google Workspace', category: 'Productivity', description: 'Google Drive, Sheets, and Calendar integration', rating: 4.5, installs: '20K+', icon: 'GW' },
-  { id: 'ato', name: 'ATO Portal', category: 'Tax Authority', description: 'Lodge BAS, IAS, and tax returns directly to the ATO', rating: 4.2, installs: '15K+', icon: 'AT' },
-  { id: 'ird', name: 'IRD myIR', category: 'Tax Authority', description: 'Lodge GST and income tax returns to IRD', rating: 4.1, installs: '4K+', icon: 'IR' },
-  { id: 'hmrc', name: 'HMRC MTD', category: 'Tax Authority', description: 'Making Tax Digital compliant VAT submissions', rating: 4.3, installs: '8K+', icon: 'HM' },
-  { id: 'bamboohr', name: 'BambooHR', category: 'HR', description: 'Employee data sync, leave management, and onboarding', rating: 4.5, installs: '6K+', icon: 'BB' },
-  { id: 'employment-hero', name: 'Employment Hero', category: 'HR', description: 'Payroll, HR, and benefits management for AU/NZ', rating: 4.4, installs: '4K+', icon: 'EH' },
-  { id: 'plaid', name: 'Plaid', category: 'Banking', description: 'Bank account connection for US, CA, and EU', rating: 4.7, installs: '22K+', icon: 'PL', installed: true },
-  { id: 'basiq', name: 'Basiq', category: 'Banking', description: 'Open banking for Australia and New Zealand', rating: 4.3, installs: '3K+', icon: 'BQ', installed: true },
-  { id: 'lightspeed', name: 'Lightspeed POS', category: 'Industry', description: 'Point of sale integration for retail and hospitality', rating: 4.4, installs: '5K+', icon: 'LS' },
-  { id: 'deputy', name: 'Deputy', category: 'Industry', description: 'Staff scheduling and timesheet integration', rating: 4.3, installs: '3K+', icon: 'DP' },
+  { id: 'pipedrive', name: 'Pipedrive', category: 'CRM', description: 'Pipeline management integrated with invoicing and contact sync', rating: 4.4, installs: '3K+', icon: 'PD' },
+  { id: 'zoho-crm', name: 'Zoho CRM', category: 'CRM', description: 'Sync leads, contacts, and deals between Astra and Zoho CRM', rating: 4.3, installs: '5K+', icon: 'ZC' },
+  { id: 'monday-crm', name: 'Monday CRM', category: 'CRM', description: 'Connect Monday.com CRM boards with client and invoice data', rating: 4.4, installs: '2K+', icon: 'MC' },
+
+  // E-Commerce (6)
+  { id: 'shopify', name: 'Shopify', category: 'E-Commerce', description: 'Auto-import orders, refunds, and payouts from Shopify stores', rating: 4.8, installs: '25K+', icon: 'SH' },
+  { id: 'woocommerce', name: 'WooCommerce', category: 'E-Commerce', description: 'Sync WooCommerce orders, products, and inventory with Astra', rating: 4.3, installs: '6K+', icon: 'WC' },
+  { id: 'bigcommerce', name: 'BigCommerce', category: 'E-Commerce', description: 'Import orders, customers, and product catalog from BigCommerce', rating: 4.4, installs: '4K+', icon: 'BC' },
+  { id: 'amazon-seller', name: 'Amazon Seller', category: 'E-Commerce', description: 'Reconcile Amazon Seller Central orders, fees, and FBA transactions', rating: 4.5, installs: '11K+', icon: 'AZ' },
+  { id: 'ebay', name: 'eBay', category: 'E-Commerce', description: 'Import eBay sales, fees, and PayPal payouts automatically', rating: 4.2, installs: '7K+', icon: 'EB' },
+  { id: 'etsy', name: 'Etsy', category: 'E-Commerce', description: 'Sync Etsy shop orders, fees, and deposit reconciliation', rating: 4.4, installs: '5K+', icon: 'ET' },
+
+  // Payments (6)
+  { id: 'stripe', name: 'Stripe', category: 'Payments', description: 'Payment processing, subscriptions, and invoice reconciliation', rating: 4.9, installs: '30K+', icon: 'ST', installed: true },
+  { id: 'paypal', name: 'PayPal', category: 'Payments', description: 'Auto-reconcile PayPal transactions, fees, and currency conversions', rating: 4.4, installs: '18K+', icon: 'PP' },
+  { id: 'square', name: 'Square', category: 'Payments', description: 'Import Square POS transactions, tips, and inventory data', rating: 4.5, installs: '9K+', icon: 'SQ' },
+  { id: 'gocardless', name: 'GoCardless', category: 'Payments', description: 'Direct debit collection and automatic reconciliation', rating: 4.5, installs: '5K+', icon: 'GC' },
+  { id: 'wise', name: 'Wise', category: 'Payments', description: 'Multi-currency transfers with real-time exchange rates and fee tracking', rating: 4.7, installs: '7K+', icon: 'WI' },
+  { id: 'afterpay', name: 'Afterpay', category: 'Payments', description: 'Track buy-now-pay-later settlements and merchant fees', rating: 4.3, installs: '4K+', icon: 'AP' },
+
+  // Productivity (6)
+  { id: 'google', name: 'Google Workspace', category: 'Productivity', description: 'Google Drive, Sheets, Gmail, and Calendar integration', rating: 4.5, installs: '20K+', icon: 'GW' },
+  { id: 'microsoft-365', name: 'Microsoft 365', category: 'Productivity', description: 'OneDrive, Excel, Outlook, and Teams document sharing', rating: 4.4, installs: '15K+', icon: 'MS' },
+  { id: 'slack', name: 'Slack', category: 'Productivity', description: 'Get real-time notifications and run accounting commands from Slack', rating: 4.6, installs: '14K+', icon: 'SL' },
+  { id: 'notion', name: 'Notion', category: 'Productivity', description: 'Embed financial dashboards and sync client databases with Notion', rating: 4.5, installs: '3K+', icon: 'NO' },
+  { id: 'asana', name: 'Asana', category: 'Productivity', description: 'Link Asana projects to client engagements and billing milestones', rating: 4.4, installs: '4K+', icon: 'AS' },
+  { id: 'trello', name: 'Trello', category: 'Productivity', description: 'Sync Trello boards with workflow tasks and client deadlines', rating: 4.3, installs: '6K+', icon: 'TR' },
+
+  // Tax (4)
+  { id: 'taxcalc', name: 'TaxCalc', category: 'Tax', description: 'UK self-assessment and corporation tax return preparation and filing', rating: 4.3, installs: '6K+', icon: 'TC' },
+  { id: 'wolters-kluwer', name: 'Wolters Kluwer', category: 'Tax', description: 'CCH tax compliance suite integration for multi-jurisdiction filing', rating: 4.5, installs: '8K+', icon: 'WK' },
+  { id: 'thomson-reuters', name: 'Thomson Reuters', category: 'Tax', description: 'ONESOURCE and UltraTax CS integration for tax preparation workflows', rating: 4.6, installs: '10K+', icon: 'TR' },
+  { id: 'tax-warehouse', name: 'Tax Warehouse', category: 'Tax', description: 'AU/NZ tax return lodgement and ATO/IRD portal integration', rating: 4.2, installs: '3K+', icon: 'TW' },
+
+  // HR & Payroll (4)
+  { id: 'employment-hero', name: 'Employment Hero', category: 'HR & Payroll', description: 'Payroll, HR, benefits, and onboarding management for AU/NZ', rating: 4.4, installs: '4K+', icon: 'EH' },
+  { id: 'bamboohr', name: 'BambooHR', category: 'HR & Payroll', description: 'Employee data sync, leave management, and onboarding workflows', rating: 4.5, installs: '6K+', icon: 'BB' },
+  { id: 'gusto', name: 'Gusto', category: 'HR & Payroll', description: 'US payroll processing, benefits administration, and tax filing', rating: 4.6, installs: '9K+', icon: 'GU' },
+  { id: 'deputy', name: 'Deputy', category: 'HR & Payroll', description: 'Staff scheduling, timesheets, and attendance tracking integration', rating: 4.3, installs: '3K+', icon: 'DP' },
+
+  // Banking (3)
+  { id: 'plaid', name: 'Plaid', category: 'Banking', description: 'Bank account connections for US, Canada, and Europe', rating: 4.7, installs: '22K+', icon: 'PL', installed: true },
+  { id: 'basiq', name: 'Basiq', category: 'Banking', description: 'Open banking data feeds for Australia and New Zealand', rating: 4.3, installs: '3K+', icon: 'BQ', installed: true },
+  { id: 'truelayer', name: 'TrueLayer', category: 'Banking', description: 'Open banking connections for UK and EU bank accounts', rating: 4.5, installs: '5K+', icon: 'TL', installed: true },
+
+  // Document Management (5)
+  { id: 'dext', name: 'Dext (Receipt Bank)', category: 'Document Management', description: 'Automated receipt and invoice data extraction with AI categorization', rating: 4.7, installs: '18K+', icon: 'DX' },
+  { id: 'autoentry', name: 'AutoEntry', category: 'Document Management', description: 'Automated data entry from receipts, invoices, and bank statements', rating: 4.4, installs: '7K+', icon: 'AE' },
+  { id: 'hubdoc', name: 'Hubdoc', category: 'Document Management', description: 'Fetch, store, and publish financial documents automatically', rating: 4.3, installs: '10K+', icon: 'HD' },
+  { id: 'google-drive', name: 'Google Drive', category: 'Document Management', description: 'Store and organize financial documents in Google Drive folders', rating: 4.5, installs: '15K+', icon: 'GD' },
+  { id: 'dropbox', name: 'Dropbox', category: 'Document Management', description: 'Sync receipts, invoices, and reports to Dropbox Business', rating: 4.4, installs: '8K+', icon: 'DB' },
+
+  // Expense Management (3)
+  { id: 'expensify', name: 'Expensify', category: 'Expense Management', description: 'Employee expense reports, receipt scanning, and policy enforcement', rating: 4.5, installs: '12K+', icon: 'EX' },
+  { id: 'sap-concur', name: 'SAP Concur', category: 'Expense Management', description: 'Enterprise travel and expense management with approval workflows', rating: 4.3, installs: '6K+', icon: 'SC' },
+  { id: 'pleo', name: 'Pleo', category: 'Expense Management', description: 'Smart company cards with real-time expense tracking and auto-categorization', rating: 4.6, installs: '4K+', icon: 'PL' },
+
+  // Reporting & BI (4)
+  { id: 'power-bi', name: 'Power BI', category: 'Reporting & BI', description: 'Push financial data to Microsoft Power BI for advanced dashboards', rating: 4.6, installs: '8K+', icon: 'PB' },
+  { id: 'tableau', name: 'Tableau', category: 'Reporting & BI', description: 'Visualize accounting data with Tableau interactive dashboards', rating: 4.5, installs: '5K+', icon: 'TB' },
+  { id: 'fathom', name: 'Fathom', category: 'Reporting & BI', description: 'Management reporting, KPI tracking, and financial analysis', rating: 4.7, installs: '9K+', icon: 'FA' },
+  { id: 'spotlight', name: 'Spotlight Reporting', category: 'Reporting & BI', description: 'Cash flow forecasting, 3-way financial models, and board reports', rating: 4.4, installs: '4K+', icon: 'SR' },
+
+  // Legal & Compliance (3)
+  { id: 'practice-ignition', name: 'Ignition', category: 'Legal & Compliance', description: 'Client engagement letters, proposals, and automated billing agreements', rating: 4.5, installs: '6K+', icon: 'IG' },
+  { id: 'goproposal', name: 'GoProposal', category: 'Legal & Compliance', description: 'Standardized pricing, proposals, and engagement letters for accounting firms', rating: 4.4, installs: '3K+', icon: 'GP' },
+  { id: 'karbon', name: 'Karbon', category: 'Legal & Compliance', description: 'Practice management, workflow automation, and team collaboration', rating: 4.6, installs: '5K+', icon: 'KA' },
+
+  // Communication (3)
+  { id: 'mailchimp', name: 'Mailchimp', category: 'Communication', description: 'Email marketing campaigns synced with client and invoice data', rating: 4.4, installs: '7K+', icon: 'MC' },
+  { id: 'sendgrid', name: 'SendGrid', category: 'Communication', description: 'Transactional email delivery for invoices, reminders, and notifications', rating: 4.5, installs: '6K+', icon: 'SG' },
+  { id: 'twilio', name: 'Twilio', category: 'Communication', description: 'SMS notifications for payment reminders, approvals, and alerts', rating: 4.3, installs: '4K+', icon: 'TW' },
+
+  // Inventory (2)
+  { id: 'cin7', name: 'Cin7', category: 'Inventory', description: 'Multi-channel inventory management with warehouse and POS integration', rating: 4.4, installs: '5K+', icon: 'C7' },
+  { id: 'tradegecko', name: 'QuickBooks Commerce', category: 'Inventory', description: 'Order and inventory management for wholesale and e-commerce', rating: 4.2, installs: '3K+', icon: 'QC' },
+
+  // Real Estate (2)
+  { id: 'propertyme', name: 'PropertyMe', category: 'Real Estate', description: 'Property management trust accounting, rent rolls, and owner statements', rating: 4.5, installs: '4K+', icon: 'PM' },
+  { id: 'buildium', name: 'Buildium', category: 'Real Estate', description: 'Residential property management with tenant billing and maintenance tracking', rating: 4.3, installs: '3K+', icon: 'BU' },
+
+  // Construction (2)
+  { id: 'procore', name: 'Procore', category: 'Construction', description: 'Construction project financials, change orders, and subcontractor payments', rating: 4.6, installs: '6K+', icon: 'PC' },
+  { id: 'buildertrend', name: 'Buildertrend', category: 'Construction', description: 'Residential construction budgeting, estimates, and purchase orders', rating: 4.4, installs: '4K+', icon: 'BT' },
 ];
 
 export default function Marketplace() {

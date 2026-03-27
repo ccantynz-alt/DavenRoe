@@ -70,6 +70,8 @@ import AIDisclosure from './pages/AIDisclosure';
 import AcceptableUse from './pages/AcceptableUse';
 import CookiePolicy from './pages/CookiePolicy';
 import TaxRulingsAgent from './pages/TaxRulingsAgent';
+import CaseStudies from './pages/CaseStudies';
+import PartnerProgram from './pages/PartnerProgram';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -181,6 +183,8 @@ function AppRoutes() {
         <Route path="/forensic-tools" element={<ForensicTools />} />
         <Route path="/tax-advisor" element={<TaxAdvisorToolkit />} />
         <Route path="/tax-rulings" element={<TaxRulingsAgent />} />
+        <Route path="/case-studies" element={<CaseStudies />} />
+        <Route path="/partners" element={<PartnerProgram />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/import" element={<DataImport />} />
         <Route path="/billing" element={<Billing />} />

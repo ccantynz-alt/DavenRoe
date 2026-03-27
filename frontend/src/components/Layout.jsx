@@ -62,6 +62,8 @@ const nav = [
   { path: '/toolkit', label: 'Toolkit', icon: '+' },
   { path: '/integrations', label: 'Integrations', icon: '<' },
   { path: '/marketplace', label: 'Marketplace', icon: '#' },
+  { path: '/partners', label: 'Partner Program', icon: '&' },
+  { path: '/case-studies', label: 'Case Studies', icon: '=' },
   { path: '/ai-insights', label: 'AI Insights', icon: '?' },
   { path: '/enterprise', label: 'Enterprise', icon: '*' },
   { path: '/activity', label: 'Activity', icon: '~' },
@@ -70,6 +72,7 @@ const nav = [
   { path: '/import', label: 'Data Import', icon: '>' },
   { path: '/billing', label: 'Billing', icon: '$' },
   { path: '/admin', label: 'Admin Center', icon: '*' },
+  { path: '/partners', label: 'Partner Program', icon: '&' },
   { path: '/help', label: 'Help Center', icon: '?' },
   { path: '/settings', label: 'Settings', icon: ':' },
 ];
