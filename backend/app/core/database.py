@@ -38,6 +38,12 @@ def _init_db():
         if "neon" in db_url or "neon.tech" in db_url:
             ssl_context = ssl.create_default_context()
             connect_args["ssl"] = ssl_context
+            # Remove sslmode from URL — asyncpg doesn't accept it as a keyword
+            # when an SSL context is already provided via connect_args
+            if "?sslmode=" in db_url:
+                db_url = db_url.split("?sslmode=")[0]
+            elif "&sslmode=" in db_url:
+                db_url = db_url.replace("&sslmode=require", "")
             logger.info("Neon detected — SSL enabled")
 
         _engine = create_async_engine(
