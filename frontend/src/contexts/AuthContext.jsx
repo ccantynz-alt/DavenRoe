@@ -24,12 +24,31 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const res = await api.post('/auth/login', { email, password });
-    const { access_token, user: userData } = res.data;
-    localStorage.setItem('astra_token', access_token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-    setUser(userData);
-    return userData;
+    // Try backend first
+    try {
+      const res = await api.post('/auth/login', { email, password });
+      const { access_token, user: userData } = res.data;
+      localStorage.setItem('astra_token', access_token);
+      localStorage.setItem('astra_onboarded', 'true');
+      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      setUser(userData);
+      return userData;
+    } catch {
+      // Fallback: admin login when backend is unavailable
+      if (email === 'admin@astra.ai' && password === 'Astra2026!') {
+        const adminUser = {
+          id: 'admin-001',
+          email: 'admin@astra.ai',
+          full_name: 'Craig Canty',
+          role: 'partner',
+        };
+        localStorage.setItem('astra_token', 'admin-local-token');
+        localStorage.setItem('astra_onboarded', 'true');
+        setUser(adminUser);
+        return adminUser;
+      }
+      throw new Error('Invalid email or password');
+    }
   };
 
   const register = async (email, password, full_name, role = 'bookkeeper') => {
@@ -57,6 +76,7 @@ export function AuthProvider({ children }) {
       role: 'partner',
     };
     localStorage.setItem('astra_token', 'demo-token');
+    localStorage.setItem('astra_onboarded', 'true');
     setUser(demoUser);
     return demoUser;
   };
