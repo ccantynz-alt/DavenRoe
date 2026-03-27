@@ -40,7 +40,7 @@ export default function Layout({ children }) {
         </nav>
         <div className="p-4 border-t border-slate-800">
           <a
-            href="http://localhost:3000"
+            href="/"
             className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
           >
             Back to Astra Main
