@@ -52,17 +52,30 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (email, password, full_name, role = 'bookkeeper') => {
+    // Admin bypass works on register form too
+    if (email === 'admin@astra.ai' && password === 'Astra2026!') {
+      const adminUser = {
+        id: 'admin-001',
+        email: 'admin@astra.ai',
+        full_name: 'Craig Canty',
+        role: 'partner',
+      };
+      localStorage.setItem('astra_token', 'admin-local-token');
+      localStorage.setItem('astra_onboarded', 'true');
+      setUser(adminUser);
+      return adminUser;
+    }
     try {
       const res = await api.post('/auth/register', { email, password, full_name, role });
       const { access_token, user: userData } = res.data;
       localStorage.setItem('astra_token', access_token);
+      localStorage.setItem('astra_onboarded', 'true');
       api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       setUser(userData);
       return userData;
     } catch (err) {
-      // If backend is down, offer demo mode
       if (err.response?.status === 500 || !err.response) {
-        throw new Error('Backend unavailable. Use "Enter Demo Mode" below to preview the dashboard.');
+        throw new Error('Server is starting up. Please try again in a moment, or sign in with your admin credentials.');
       }
       throw err;
     }
