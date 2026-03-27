@@ -33,12 +33,32 @@ export function AuthProvider({ children }) {
   };
 
   const register = async (email, password, full_name, role = 'bookkeeper') => {
-    const res = await api.post('/auth/register', { email, password, full_name, role });
-    const { access_token, user: userData } = res.data;
-    localStorage.setItem('astra_token', access_token);
-    api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-    setUser(userData);
-    return userData;
+    try {
+      const res = await api.post('/auth/register', { email, password, full_name, role });
+      const { access_token, user: userData } = res.data;
+      localStorage.setItem('astra_token', access_token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      setUser(userData);
+      return userData;
+    } catch (err) {
+      // If backend is down, offer demo mode
+      if (err.response?.status === 500 || !err.response) {
+        throw new Error('Backend unavailable. Use "Enter Demo Mode" below to preview the dashboard.');
+      }
+      throw err;
+    }
+  };
+
+  const loginDemo = () => {
+    const demoUser = {
+      id: 'demo-user',
+      email: 'demo@astra.ai',
+      full_name: 'Demo User',
+      role: 'partner',
+    };
+    localStorage.setItem('astra_token', 'demo-token');
+    setUser(demoUser);
+    return demoUser;
   };
 
   const logout = () => {
@@ -48,7 +68,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, loginDemo }}>
       {children}
     </AuthContext.Provider>
   );
