@@ -57,6 +57,7 @@ export function AuthProvider({ children }) {
       role: 'partner',
     };
     localStorage.setItem('astra_token', 'demo-token');
+    localStorage.setItem('astra_onboarded', 'true');
     setUser(demoUser);
     return demoUser;
   };
