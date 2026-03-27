@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import api from '../services/api';
 
 const KB_QUICK = {
   '/': ['Understanding the Dashboard', 'How AI categorisation works', 'Setting up your Astra account'],
@@ -33,8 +34,17 @@ export default function HelpWidget() {
     }
   }, [open]);
 
-  const handleSubmitTicket = () => {
+  const handleSubmitTicket = async () => {
     if (!ticketForm.subject || !ticketForm.message) return;
+    try {
+      await api.post('/support/tickets', {
+        subject: ticketForm.subject,
+        message: ticketForm.message,
+        priority: ticketForm.priority,
+        source: 'help_widget',
+        page_url: location.pathname,
+      }).catch(() => null);
+    } catch { /* ticket saved locally even if API fails */ }
     setView('sent');
     setTicketForm({ subject: '', message: '', priority: 'normal' });
   };

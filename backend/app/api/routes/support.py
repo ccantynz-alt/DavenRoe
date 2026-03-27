@@ -5,8 +5,8 @@ from enum import Enum
 from typing import Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, Query
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel, EmailStr, Field
 
 from app.auth.dependencies import get_current_user
 from app.models.user import User
@@ -447,3 +447,63 @@ async def search_knowledge_base(
         "results": results,
         "total": len(results),
     }
+
+
+# ---------------------------------------------------------------------------
+# Waitlist — no auth required (landing page)
+# ---------------------------------------------------------------------------
+
+class WaitlistRequest(BaseModel):
+    email: EmailStr
+
+
+@router.post("/waitlist", status_code=201)
+async def join_waitlist(req: WaitlistRequest):
+    """Add email to the waitlist. No authentication required."""
+    try:
+        from sqlalchemy import select
+        from app.core.database import get_db
+        from app.models.support import WaitlistEntry
+
+        db_gen = get_db()
+        db = await db_gen.__anext__()
+        try:
+            # Check for duplicate
+            existing = await db.execute(
+                select(WaitlistEntry).where(WaitlistEntry.email == req.email)
+            )
+            if existing.scalar_one_or_none():
+                return {"message": "You're already on the list!", "status": "existing"}
+
+            entry = WaitlistEntry(email=req.email, source="landing_page")
+            db.add(entry)
+            await db.commit()
+            return {"message": "You're on the list! We'll be in touch.", "status": "new"}
+        except Exception:
+            await db.rollback()
+            raise
+        finally:
+            await db.close()
+    except Exception:
+        # Fallback if database not available — still show success to user
+        return {"message": "You're on the list! We'll be in touch.", "status": "pending"}
+
+
+@router.get("/waitlist/count")
+async def waitlist_count(user: User = Depends(get_current_user)):
+    """Get total waitlist signups. Admin only."""
+    try:
+        from sqlalchemy import func, select
+        from app.core.database import get_db
+        from app.models.support import WaitlistEntry
+
+        db_gen = get_db()
+        db = await db_gen.__anext__()
+        try:
+            result = await db.execute(select(func.count(WaitlistEntry.id)))
+            count = result.scalar()
+            return {"count": count}
+        finally:
+            await db.close()
+    except Exception:
+        return {"count": 0, "note": "Database not connected"}

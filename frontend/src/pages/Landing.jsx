@@ -38,9 +38,16 @@ export default function Landing({ onLogin, onNavigate }) {
     requestAnimationFrame(() => setLoaded(true));
   }, []);
 
-  const handleRegisterInterest = (e) => {
+  const handleRegisterInterest = async (e) => {
     e.preventDefault();
     if (!email || !email.includes('@')) return;
+    try {
+      await fetch('/api/v1/support/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }).catch(() => null);
+    } catch { /* show success regardless */ }
     setRegistered(true);
     setEmail('');
   };
