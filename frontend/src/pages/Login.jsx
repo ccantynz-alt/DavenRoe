@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
-  const { login, register } = useAuth();
+  const { login, register, loginDemo } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const [email, setEmail] = useState('');
@@ -145,6 +145,19 @@ export default function Login() {
               {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Register"}
             </button>
           </div>
+        </div>
+
+        {/* Demo Mode — bypass login when backend is unavailable */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <button
+            onClick={() => loginDemo()}
+            className="w-full px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
+          >
+            Enter Demo Mode
+          </button>
+          <p className="text-center text-[10px] text-gray-400 mt-2">
+            Preview the full dashboard with sample data. No account needed.
+          </p>
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
