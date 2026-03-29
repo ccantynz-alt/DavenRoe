@@ -1,4 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Badge } from '@/components/ui/Badge';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { cn } from '@/lib/utils';
 
 /**
  * Competitive comparison table — shows why Astra beats the competition.
@@ -56,35 +59,22 @@ function CellValue({ value }) {
   }
   return (
     <div className="flex justify-center">
-      <span className="text-[10px] font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+      <Badge variant="warning" className="text-[10px] px-2 py-0.5">
         {value}
-      </span>
+      </Badge>
     </div>
   );
 }
 
 export default function ComparisonTable() {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section ref={ref} className="py-28 px-6 lg:px-12 bg-gray-50">
-      <div
+    <section className="py-28 px-6 lg:px-12 bg-gray-50">
+      <motion.div
         className="max-w-6xl mx-auto"
-        style={{
-          opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0)' : 'translateY(30px)',
-          transition: 'all 0.8s ease-out',
-        }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 0.8, ease: 'easeOut' }}
       >
         <div className="text-center mb-16">
           <p className="text-[11px] font-medium tracking-[0.2em] text-indigo-600 uppercase mb-3">Comparison</p>
@@ -93,39 +83,44 @@ export default function ComparisonTable() {
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-          {/* Scrollable on mobile */}
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[700px]">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left py-4 px-6 text-sm font-semibold text-gray-900 w-[260px]">Feature</th>
+            <Table className="min-w-[700px]">
+              <TableHeader>
+                <TableRow className="border-b border-gray-100">
+                  <TableHead className="text-left py-4 px-6 text-sm font-semibold text-gray-900 w-[260px]">Feature</TableHead>
                   {COMPETITORS.map(c => (
-                    <th key={c.key} className={`py-4 px-4 text-center text-sm font-semibold ${c.highlight ? 'text-indigo-600 bg-indigo-50/50' : 'text-gray-500'}`}>
+                    <TableHead
+                      key={c.key}
+                      className={cn(
+                        'py-4 px-4 text-center text-sm font-semibold',
+                        c.highlight ? 'text-indigo-600 bg-indigo-50/50' : 'text-gray-500'
+                      )}
+                    >
                       {c.name}
-                    </th>
+                    </TableHead>
                   ))}
-                </tr>
-              </thead>
-              <tbody>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {FEATURES.map((feature, i) => (
-                  <tr key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
-                    <td className="py-3.5 px-6 text-sm text-gray-700">{feature.name}</td>
+                  <TableRow key={i} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
+                    <TableCell className="py-3.5 px-6 text-sm text-gray-700">{feature.name}</TableCell>
                     {COMPETITORS.map(c => (
-                      <td key={c.key} className={`py-3.5 px-4 ${c.highlight ? 'bg-indigo-50/30' : ''}`}>
+                      <TableCell key={c.key} className={cn('py-3.5 px-4', c.highlight && 'bg-indigo-50/30')}>
                         <CellValue value={feature[c.key]} />
-                      </td>
+                      </TableCell>
                     ))}
-                  </tr>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
           Based on publicly available feature lists as of March 2026. "basic" and "partial" indicate limited implementations.
         </p>
-      </div>
+      </motion.div>
     </section>
   );
 }

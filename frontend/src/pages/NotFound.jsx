@@ -1,7 +1,25 @@
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: 'easeOut' },
+  },
+};
+
 export default function NotFound({ onBack }) {
   return (
     <div className="bg-white text-gray-900 min-h-screen flex items-center justify-center px-6">
-      <div className="text-center max-w-lg">
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeUp}
+        className="text-center max-w-lg"
+      >
         <div className="w-20 h-20 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-8">
           A
         </div>
@@ -10,13 +28,10 @@ export default function NotFound({ onBack }) {
         <p className="text-gray-500 mb-8">
           The page you're looking for doesn't exist or has been moved.
         </p>
-        <button
-          onClick={onBack}
-          className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-        >
+        <Button size="lg" onClick={onBack}>
           Back to Homepage
-        </button>
-      </div>
+        </Button>
+      </motion.div>
     </div>
   );
 }

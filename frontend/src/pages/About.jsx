@@ -58,33 +58,39 @@ export default function About({ onBack }) {
       </nav>
 
       {/* Hero */}
-      <section className="py-24 px-6 lg:px-16">
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        variants={fadeUp}
+        className="py-24 px-6 lg:px-16"
+      >
         <div className="max-w-4xl mx-auto text-center">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={fadeUp}>
-            <p className="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-3">About Astra</p>
-            <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
-              We believe accounting firms<br />deserve better tools.
-            </h1>
-            <p className="text-xl text-gray-500 leading-relaxed max-w-3xl mx-auto">
-              Astra was built by accountants and engineers who saw the same problem everywhere: brilliant professionals drowning in manual data entry, copy-paste compliance, and repetitive month-end processes. We built the platform we wished existed.
-            </p>
-          </motion.div>
+          <p className="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-3">About Astra</p>
+          <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
+            We believe accounting firms<br />deserve better tools.
+          </h1>
+          <p className="text-xl text-gray-500 leading-relaxed max-w-3xl mx-auto">
+            Astra was built by accountants and engineers who saw the same problem everywhere: brilliant professionals drowning in manual data entry, copy-paste compliance, and repetitive month-end processes. We built the platform we wished existed.
+          </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* Mission */}
-      <section className="py-20 px-6 lg:px-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={fadeUp}>
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4">Our Mission</h2>
-              <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                Give every accounting firm the AI infrastructure that was previously only available to the Big Four. Autonomous bookkeeping, multi-jurisdiction tax compliance, and forensic intelligence — accessible from day one, not after a six-figure implementation.
-              </p>
-            </div>
-          </motion.div>
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.1 }}
+        variants={fadeUp}
+        className="py-20 px-6 lg:px-16 bg-gray-50"
+      >
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4">Our Mission</h2>
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+            Give every accounting firm the AI infrastructure that was previously only available to the Big Four. Autonomous bookkeeping, multi-jurisdiction tax compliance, and forensic intelligence — accessible from day one, not after a six-figure implementation.
+          </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* Values */}
       <section className="py-20 px-6 lg:px-16 bg-white">
@@ -165,10 +171,12 @@ export default function About({ onBack }) {
                 variants={fadeUp}
                 custom={i}
               >
-                <div>
-                  <div className="text-3xl lg:text-4xl font-bold text-indigo-600 mb-2">{stat.value}</div>
-                  <div className="text-sm text-gray-500">{stat.label}</div>
-                </div>
+                <Card className="border-transparent shadow-none">
+                  <CardContent className="p-4">
+                    <div className="text-3xl lg:text-4xl font-bold text-indigo-600 mb-2">{stat.value}</div>
+                    <div className="text-sm text-gray-500">{stat.label}</div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>
