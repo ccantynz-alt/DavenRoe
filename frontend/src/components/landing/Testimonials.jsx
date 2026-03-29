@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 
 /**
  * Premium testimonials section — dark with glass morphism cards.
@@ -46,15 +50,10 @@ const TESTIMONIALS = [
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
-  const [fade, setFade] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setFade(false);
-      setTimeout(() => {
-        setCurrent(c => (c + 1) % TESTIMONIALS.length);
-        setFade(true);
-      }, 300);
+      setCurrent(c => (c + 1) % TESTIMONIALS.length);
     }, 5000);
     return () => clearInterval(timer);
   }, []);
@@ -75,40 +74,56 @@ export default function Testimonials() {
       />
 
       <div className="max-w-4xl mx-auto text-center relative">
-        <p className="text-[11px] font-medium tracking-[0.2em] text-indigo-400 uppercase mb-12">What Practitioners Could Achieve</p>
-
-        <div
-          className="transition-all duration-300"
-          style={{ opacity: fade ? 1 : 0, transform: fade ? 'translateY(0)' : 'translateY(10px)' }}
+        <motion.p
+          className="text-[11px] font-medium tracking-[0.2em] text-indigo-400 uppercase mb-12"
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.6 }}
         >
-          <blockquote className="text-2xl lg:text-3xl font-light text-white leading-relaxed mb-8">
-            "{t.quote}"
-          </blockquote>
+          What Practitioners Could Achieve
+        </motion.p>
 
-          <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium mb-8">
-            {t.metric}
-          </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.4, ease: 'easeInOut' }}
+          >
+            <blockquote className="text-2xl lg:text-3xl font-light text-white leading-relaxed mb-8">
+              &ldquo;{t.quote}&rdquo;
+            </blockquote>
 
-          <div className="flex items-center justify-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-sm font-semibold text-indigo-300 border border-indigo-500/20">
-              {t.avatar}
+            <Badge className="bg-indigo-500/10 border-indigo-500/20 text-indigo-300 text-sm font-medium px-4 py-1.5 mb-8">
+              {t.metric}
+            </Badge>
+
+            <div className="flex items-center justify-center gap-3 mt-8">
+              <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-sm font-semibold text-indigo-300 border border-indigo-500/20">
+                {t.avatar}
+              </div>
+              <div className="text-left">
+                <div className="text-white font-semibold text-sm">{t.name}</div>
+                <div className="text-white/40 text-xs">{t.role}, {t.firm}</div>
+                <div className="text-white/25 text-[11px]">{t.location}</div>
+              </div>
             </div>
-            <div className="text-left">
-              <div className="text-white font-semibold text-sm">{t.name}</div>
-              <div className="text-white/40 text-xs">{t.role}, {t.firm}</div>
-              <div className="text-white/25 text-[11px]">{t.location}</div>
-            </div>
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
 
         <div className="flex justify-center gap-2 mt-12">
           {TESTIMONIALS.map((_, i) => (
-            <button
+            <Button
               key={i}
-              onClick={() => { setFade(false); setTimeout(() => { setCurrent(i); setFade(true); }, 300); }}
-              className={`transition-all duration-300 rounded-full ${
-                i === current ? 'w-8 h-2 bg-indigo-500' : 'w-2 h-2 bg-white/10 hover:bg-white/20'
-              }`}
+              variant="ghost"
+              size="sm"
+              onClick={() => setCurrent(i)}
+              className={cn(
+                'p-0 h-2 min-w-0 rounded-full transition-all duration-300 hover:bg-white/20',
+                i === current ? 'w-8 bg-indigo-500 hover:bg-indigo-400' : 'w-2 bg-white/10'
+              )}
             />
           ))}
         </div>

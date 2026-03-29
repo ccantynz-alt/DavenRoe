@@ -11,6 +11,10 @@
  *   <LegalDisclaimer type="incorporation" />
  */
 
+import { Card, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
+
 const DISCLAIMERS = {
   payroll: {
     text: 'Payroll calculations are based on published tax tables, award rates, and superannuation/pension rules. Legislation changes frequently and obligations vary by jurisdiction, employee classification, and individual circumstances. This tool does not constitute employment or tax advice. You are responsible for verifying all pay calculations, withholdings, and lodgements. Consult a qualified payroll professional or accountant before processing.',
@@ -55,32 +59,57 @@ const DISCLAIMERS = {
 };
 
 const SEVERITY_STYLES = {
-  info: 'bg-blue-50 border-blue-200 text-blue-700',
-  warning: 'bg-amber-50 border-amber-200 text-amber-700',
-  high: 'bg-red-50 border-red-200 text-red-700',
+  info: 'border-blue-200 bg-blue-50',
+  warning: 'border-amber-200 bg-amber-50',
+  high: 'border-red-200 bg-red-50',
+};
+
+const SEVERITY_TEXT = {
+  info: 'text-blue-700',
+  warning: 'text-amber-700',
+  high: 'text-red-700',
+};
+
+const BADGE_VARIANT_MAP = {
+  info: 'default',
+  warning: 'warning',
+  high: 'destructive',
 };
 
 export default function LegalDisclaimer({ type, className = '' }) {
   const config = DISCLAIMERS[type];
   if (!config) return null;
 
-  const style = SEVERITY_STYLES[config.severity] || SEVERITY_STYLES.info;
+  const cardStyle = SEVERITY_STYLES[config.severity] || SEVERITY_STYLES.info;
+  const textStyle = SEVERITY_TEXT[config.severity] || SEVERITY_TEXT.info;
+  const badgeVariant = BADGE_VARIANT_MAP[config.severity] || 'default';
 
   return (
-    <div className={`border rounded-lg px-4 py-2.5 text-xs leading-relaxed ${style} ${className}`}>
-      <span className="font-semibold">Important:</span> {config.text}
-    </div>
+    <Card className={cn('shadow-none', cardStyle, className)}>
+      <CardContent className="px-4 py-2.5">
+        <p className={cn('text-xs leading-relaxed', textStyle)}>
+          <Badge variant={badgeVariant} className="mr-1.5 text-[10px] px-1.5 py-0">
+            Important
+          </Badge>
+          {config.text}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 
 export function GlobalFooterDisclaimer() {
   return (
-    <div className="mt-8 pt-4 border-t border-gray-100 text-[10px] text-gray-400 leading-relaxed text-center">
-      Astra is a software tool, not an accounting firm, tax agent, financial advisor, or legal practice.
-      All outputs — including AI-generated content, tax calculations, payroll figures, forensic analysis, and financial scores — are
-      for informational purposes only and require professional review before reliance.
-      Astra and its operators accept no liability for losses arising from use of this software.
-      See our <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a> for full details.
-    </div>
+    <Card className="mt-8 border-t border-gray-100 shadow-none bg-transparent border-x-0 border-b-0 rounded-none">
+      <CardContent className="pt-4 pb-0 px-0">
+        <p className="text-[10px] text-gray-400 leading-relaxed text-center">
+          Astra is a software tool, not an accounting firm, tax agent, financial advisor, or legal practice.
+          All outputs — including AI-generated content, tax calculations, payroll figures, forensic analysis, and financial scores — are
+          for informational purposes only and require professional review before reliance.
+          Astra and its operators accept no liability for losses arising from use of this software.
+          See our <a href="/terms" className="underline hover:text-gray-600">Terms of Service</a> for full details.
+        </p>
+      </CardContent>
+    </Card>
   );
 }

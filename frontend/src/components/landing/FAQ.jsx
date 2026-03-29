@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/Accordion';
+import { cn } from '@/lib/utils';
 
 /**
  * Clean FAQ accordion — addresses real concerns
  * an accounting professional would have.
+ * Uses Radix Accordion for accessible expand/collapse.
  */
 
 const FAQS = [
@@ -41,51 +44,48 @@ const FAQS = [
 ];
 
 export default function FAQ() {
-  const [open, setOpen] = useState(null);
-
   return (
     <section className="py-24 px-6 lg:px-16 bg-gray-50">
       <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-16">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.6 }}
+        >
           <p className="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-3">FAQ</p>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">Common questions</h2>
-        </div>
+        </motion.div>
 
-        <div className="space-y-3">
-          {FAQS.map((faq, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-shadow hover:shadow-sm"
-            >
-              <button
-                onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between px-6 py-5 text-left"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.1 }}
+          transition={{ duration: 0.7, delay: 0.1 }}
+        >
+          <Accordion type="single" collapsible className="space-y-3">
+            {FAQS.map((faq, i) => (
+              <AccordionItem
+                key={i}
+                value={`faq-${i}`}
+                className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-shadow hover:shadow-sm px-0 data-[state=open]:shadow-sm"
               >
-                <span className="text-sm font-semibold text-gray-900 pr-8">{faq.q}</span>
-                <svg
-                  className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${open === i ? 'rotate-180' : ''}`}
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
+                <AccordionTrigger
+                  className={cn(
+                    'px-6 py-5 text-left text-sm font-semibold text-gray-900 hover:no-underline',
+                    '[&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-gray-400'
+                  )}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              <div
-                className="overflow-hidden transition-all duration-300"
-                style={{
-                  maxHeight: open === i ? '300px' : '0',
-                  opacity: open === i ? 1 : 0,
-                }}
-              >
-                <div className="px-6 pb-5 text-sm text-gray-500 leading-relaxed">
+                  {faq.q}
+                </AccordionTrigger>
+                <AccordionContent className="px-6 pb-5 text-sm text-gray-500 leading-relaxed">
                   {faq.a}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </motion.div>
       </div>
     </section>
   );

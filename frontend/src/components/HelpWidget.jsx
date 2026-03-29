@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
 import { cn } from '@/lib/utils';
 import api from '@/services/api';
 
@@ -78,7 +80,7 @@ export default function HelpWidget() {
       >
         <Card className="w-96 max-h-[520px] flex flex-col overflow-hidden shadow-2xl">
           {/* Header */}
-          <div className="bg-indigo-600 text-white px-5 py-4 flex items-center justify-between shrink-0 rounded-t-xl">
+          <div className={cn('bg-indigo-600 text-white px-5 py-4 flex items-center justify-between shrink-0 rounded-t-xl')}>
             <div>
               <h3 className="font-semibold text-sm">
                 {view === 'help' && 'Help & Support'}
@@ -173,30 +175,26 @@ export default function HelpWidget() {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Priority</label>
-                <select
+                <Select
                   value={ticketForm.priority}
-                  onChange={e => setTicketForm(f => ({ ...f, priority: e.target.value }))}
-                  className={cn(
-                    'flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors',
-                    'focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20'
-                  )}
+                  onValueChange={value => setTicketForm(f => ({ ...f, priority: value }))}
                 >
-                  <option value="low">Low — general question</option>
-                  <option value="normal">Normal — something isn't working</option>
-                  <option value="high">High — blocking my work</option>
-                  <option value="urgent">Urgent — data or security issue</option>
-                </select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low — general question</SelectItem>
+                    <SelectItem value="normal">Normal — something isn't working</SelectItem>
+                    <SelectItem value="high">High — blocking my work</SelectItem>
+                    <SelectItem value="urgent">Urgent — data or security issue</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Message</label>
-                <textarea
+                <Textarea
                   value={ticketForm.message}
                   onChange={e => setTicketForm(f => ({ ...f, message: e.target.value }))}
-                  className={cn(
-                    'flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors',
-                    'focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20',
-                    'disabled:cursor-not-allowed disabled:opacity-50'
-                  )}
                   rows={4}
                   placeholder="Describe your issue..."
                 />
@@ -217,7 +215,7 @@ export default function HelpWidget() {
           {/* Sent confirmation */}
           {view === 'sent' && (
             <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-              <div className="w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mb-4">
+              <div className={cn('w-14 h-14 rounded-full bg-green-100 flex items-center justify-center mb-4')}>
                 <svg className="w-7 h-7 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>

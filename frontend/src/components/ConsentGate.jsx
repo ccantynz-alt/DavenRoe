@@ -14,6 +14,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Switch } from '@/components/ui/Switch';
 import { cn } from '@/lib/utils';
 
 const CONSENT_VERSIONS = {
@@ -129,10 +130,10 @@ export default function ConsentGate({ feature, children }) {
   };
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center">
+    <div className={cn('min-h-[60vh] flex items-center justify-center')}>
       <Card className="max-w-lg w-full border-2 border-amber-300 shadow-lg">
         <CardContent className="pt-8 pb-8">
-          <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+          <div className={cn('w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4')}>
             <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
@@ -142,21 +143,22 @@ export default function ConsentGate({ feature, children }) {
 
           <p className="text-sm text-gray-600 mb-4 text-center">Please read and acknowledge the following before proceeding:</p>
 
-          <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-3">
-            {config.points.map((point, i) => (
-              <div key={i} className="flex gap-2 text-sm text-gray-700">
-                <span className="text-amber-500 font-bold mt-0.5 shrink-0">{i + 1}.</span>
-                <span>{point}</span>
-              </div>
-            ))}
-          </div>
+          <Card className="bg-gray-50 border-0 shadow-none mb-6">
+            <CardContent className="p-4 space-y-3">
+              {config.points.map((point, i) => (
+                <div key={i} className="flex gap-2 text-sm text-gray-700">
+                  <span className="text-amber-500 font-bold mt-0.5 shrink-0">{i + 1}.</span>
+                  <span>{point}</span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
 
           <label className="flex items-start gap-3 mb-6 cursor-pointer">
-            <input
-              type="checkbox"
+            <Switch
               checked={checked}
-              onChange={e => setChecked(e.target.checked)}
-              className="mt-1 w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              onCheckedChange={setChecked}
+              className="mt-0.5"
             />
             <span className="text-sm text-gray-700 font-medium">
               I have read and understand the above. I accept that Astra is a software tool and
