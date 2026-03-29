@@ -1,4 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
+import { Card } from '@/components/ui/Card';
+import { cn } from '@/lib/utils';
 
 /**
  * Glass morphism stat cards with glow effects.
@@ -34,21 +38,7 @@ const TEXT_COLORS = {
 
 export default function AnimatedStats() {
   const ref = useRef(null);
-  const [triggered, setTriggered] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTriggered(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.2 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
 
   return (
     <section ref={ref} className="py-24 px-6 lg:px-16 bg-[#08090d] relative overflow-hidden">
@@ -62,21 +52,26 @@ export default function AnimatedStats() {
       />
 
       <div className="max-w-6xl mx-auto relative">
-        <div className="text-center mb-16">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+        >
           <p className="text-[11px] font-medium tracking-[0.2em] text-indigo-400 uppercase mb-3">Performance</p>
           <h2 className="text-3xl lg:text-4xl font-bold text-white">Numbers that speak for themselves</h2>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {STATS.map((stat, i) => (
-            <div
+            <motion.div
               key={i}
               className="relative group"
-              style={{
-                opacity: triggered ? 1 : 0,
-                transform: triggered ? 'translateY(0)' : 'translateY(20px)',
-                transition: `all 0.6s ease-out ${i * 100}ms`,
-              }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
             >
               {/* Glow */}
               <div
@@ -84,12 +79,12 @@ export default function AnimatedStats() {
                 style={{ background: GLOW_COLORS[stat.color] }}
               />
 
-              <div className="relative bg-white/[0.04] backdrop-blur-sm rounded-2xl border border-white/[0.06] p-5 text-center hover:border-white/[0.12] transition-colors duration-300">
-                <CounterCell stat={stat} triggered={triggered} delay={i * 150} />
+              <Card className="relative bg-white/[0.04] backdrop-blur-sm rounded-2xl border-white/[0.06] p-5 text-center hover:border-white/[0.12] transition-colors duration-300 shadow-none">
+                <CounterCell stat={stat} triggered={isInView} delay={i * 150} />
                 <div className="text-sm font-semibold text-white/90 mt-2">{stat.label}</div>
                 <div className="text-[11px] text-white/40 mt-1">{stat.sublabel}</div>
-              </div>
-            </div>
+              </Card>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -126,7 +121,7 @@ function CounterCell({ stat, triggered, delay }) {
     : Math.floor(display).toLocaleString();
 
   return (
-    <div className={`text-3xl lg:text-4xl font-bold tabular-nums font-mono tracking-tight ${TEXT_COLORS[stat.color]}`}>
+    <div className={cn('text-3xl lg:text-4xl font-bold tabular-nums font-mono tracking-tight', TEXT_COLORS[stat.color])}>
       {triggered ? formatted : '0'}
       <span className="text-lg">{stat.suffix}</span>
     </div>
