@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Badge } from '@/components/ui/Badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/Dialog';
+import { cn } from '@/lib/utils';
 
 const ROLES = [
   { value: 'external_accountant', label: 'External Accountant' },
@@ -16,21 +26,20 @@ const SCOPES = [
   { value: 'full_review', label: 'Full Review', desc: 'Full access including audit trail, forensics, and requesting changes' },
 ];
 
-const STATUS_COLORS = {
-  pending: 'bg-gray-100 text-gray-600',
-  accepted: 'bg-green-100 text-green-700',
-  declined: 'bg-red-100 text-red-600',
-  expired: 'bg-amber-100 text-amber-600',
-  revoked: 'bg-red-50 text-red-400',
-  in_progress: 'bg-blue-100 text-blue-700',
-  approved: 'bg-green-100 text-green-700',
-  rejected: 'bg-red-100 text-red-600',
-  changes_requested: 'bg-amber-100 text-amber-700',
-  completed: 'bg-green-100 text-green-700',
+const STATUS_VARIANT = {
+  pending: 'secondary',
+  accepted: 'success',
+  declined: 'destructive',
+  expired: 'warning',
+  revoked: 'destructive',
+  in_progress: 'default',
+  approved: 'success',
+  rejected: 'destructive',
+  changes_requested: 'warning',
+  completed: 'success',
 };
 
 export default function PeerReview() {
-  const [tab, setTab] = useState('invites'); // invites | reviews
   const [invites, setInvites] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -90,259 +99,286 @@ export default function PeerReview() {
   };
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Peer Review</h2>
           <p className="text-gray-500 mt-1">Authorize external accountants for manual checks and sign-offs</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setShowInviteForm(true)}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
+          <Button onClick={() => setShowInviteForm(true)}>
             Invite Reviewer
-          </button>
-          <button onClick={() => setShowReviewForm(true)}
-            className="px-4 py-2 bg-white border text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50">
+          </Button>
+          <Button variant="outline" onClick={() => setShowReviewForm(true)}>
             Create Review
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1 w-fit">
-        {[['invites', `Invitations (${invites.length})`], ['reviews', `Reviews (${reviews.length})`]].map(([key, label]) => (
-          <button key={key} onClick={() => setTab(key)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              tab === key ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
-            }`}>{label}</button>
-        ))}
-      </div>
+      <Tabs defaultValue="invites" className="w-full">
+        <TabsList className="mb-6">
+          <TabsTrigger value="invites">Invitations ({invites.length})</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews ({reviews.length})</TabsTrigger>
+        </TabsList>
 
-      {/* Invitations Tab */}
-      {tab === 'invites' && (
-        <div className="space-y-3">
-          {invites.length === 0 && !showInviteForm && (
-            <div className="bg-white border rounded-xl p-12 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">No Invitations Yet</h3>
-              <p className="text-sm text-gray-500 mb-4">Invite external accountants or auditors to review your work</p>
-              <button onClick={() => setShowInviteForm(true)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
-                Send First Invitation
-              </button>
-            </div>
-          )}
-
-          {invites.map(inv => (
-            <div key={inv.id} className="bg-white border rounded-xl p-5 flex items-start justify-between">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold">{inv.invitee_name}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[inv.status]}`}>{inv.status}</span>
-                </div>
-                <p className="text-sm text-gray-500">{inv.invitee_email}</p>
-                <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
-                  <span>Role: {ROLES.find(r => r.value === inv.role)?.label || inv.role}</span>
-                  <span>Scope: {SCOPES.find(s => s.value === inv.scope)?.label || inv.scope}</span>
-                  <span>Entity: {inv.entity_name || inv.entity_id}</span>
-                  <span>Expires: {new Date(inv.expires_at).toLocaleDateString()}</span>
-                </div>
-              </div>
-              {inv.status === 'pending' && (
-                <button onClick={() => revokeInvite(inv.id)}
-                  className="text-xs text-red-400 hover:text-red-600 font-medium">Revoke</button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Reviews Tab */}
-      {tab === 'reviews' && (
-        <div className="space-y-3">
-          {reviews.length === 0 && !showReviewForm && (
-            <div className="bg-white border rounded-xl p-12 text-center">
-              <h3 className="text-lg font-bold text-gray-900 mb-2">No Reviews Yet</h3>
-              <p className="text-sm text-gray-500 mb-4">Create a review to request sign-off from external accountants</p>
-              <button onClick={() => setShowReviewForm(true)}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">
-                Create First Review
-              </button>
-            </div>
-          )}
-
-          {reviews.map(rev => (
-            <div key={rev.id} className="bg-white border rounded-xl p-5">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold">{rev.description}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[rev.status]}`}>{rev.status}</span>
+        {/* Invitations Tab */}
+        <TabsContent value="invites">
+          <div className="space-y-3">
+            {invites.length === 0 && !showInviteForm && (
+              <Card className="p-12 text-center">
+                <CardContent className="flex flex-col items-center p-0">
+                  <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>
                   </div>
-                  <p className="text-sm text-gray-500">{rev.entity_name || rev.entity_id} &middot; {rev.review_type?.replace('_', ' ')}</p>
-                </div>
-                {rev.due_date && (
-                  <span className="text-xs text-gray-400">Due: {new Date(rev.due_date).toLocaleDateString()}</span>
-                )}
-              </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">No Invitations Yet</h3>
+                  <p className="text-sm text-gray-500 mb-4">Invite external accountants or auditors to review your work</p>
+                  <Button onClick={() => setShowInviteForm(true)}>
+                    Send First Invitation
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
 
-              {/* Sign-offs */}
-              {rev.sign_offs?.length > 0 && (
-                <div className="border-t pt-3 mt-3">
-                  <p className="text-xs font-medium text-gray-500 mb-2">Sign-offs ({rev.sign_offs.length}/{rev.assigned_reviewers?.length || 0})</p>
-                  <div className="space-y-1">
-                    {rev.sign_offs.map((so, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm">
-                        <div className={`w-2 h-2 rounded-full ${
-                          so.decision === 'approved' ? 'bg-green-500' :
-                          so.decision === 'rejected' ? 'bg-red-500' : 'bg-amber-500'
-                        }`} />
-                        <span className="font-medium">{so.reviewer_name}</span>
-                        <span className="text-gray-400">— {so.decision}</span>
-                        {so.notes && <span className="text-gray-400 text-xs italic">"{so.notes}"</span>}
+            {invites.map((inv, index) => (
+              <motion.div key={inv.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
+                <Card>
+                  <CardContent className="p-5 flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold">{inv.invitee_name}</span>
+                        <Badge variant={STATUS_VARIANT[inv.status] || 'secondary'}>
+                          {inv.status}
+                        </Badge>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+                      <p className="text-sm text-gray-500">{inv.invitee_email}</p>
+                      <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                        <span>Role: {ROLES.find(r => r.value === inv.role)?.label || inv.role}</span>
+                        <span>Scope: {SCOPES.find(s => s.value === inv.scope)?.label || inv.scope}</span>
+                        <span>Entity: {inv.entity_name || inv.entity_id}</span>
+                        <span>Expires: {new Date(inv.expires_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    {inv.status === 'pending' && (
+                      <Button variant="ghost" size="sm" onClick={() => revokeInvite(inv.id)}
+                        className="text-red-400 hover:text-red-600">
+                        Revoke
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </TabsContent>
+
+        {/* Reviews Tab */}
+        <TabsContent value="reviews">
+          <div className="space-y-3">
+            {reviews.length === 0 && !showReviewForm && (
+              <Card className="p-12 text-center">
+                <CardContent className="flex flex-col items-center p-0">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">No Reviews Yet</h3>
+                  <p className="text-sm text-gray-500 mb-4">Create a review to request sign-off from external accountants</p>
+                  <Button onClick={() => setShowReviewForm(true)}>
+                    Create First Review
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {reviews.map((rev, index) => (
+              <motion.div key={rev.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.05 }}>
+                <Card>
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold">{rev.description}</span>
+                          <Badge variant={STATUS_VARIANT[rev.status] || 'secondary'}>
+                            {rev.status}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-gray-500">{rev.entity_name || rev.entity_id} &middot; {rev.review_type?.replace('_', ' ')}</p>
+                      </div>
+                      {rev.due_date && (
+                        <span className="text-xs text-gray-400">Due: {new Date(rev.due_date).toLocaleDateString()}</span>
+                      )}
+                    </div>
+
+                    {/* Sign-offs */}
+                    {rev.sign_offs?.length > 0 && (
+                      <div className="border-t pt-3 mt-3">
+                        <p className="text-xs font-medium text-gray-500 mb-2">Sign-offs ({rev.sign_offs.length}/{rev.assigned_reviewers?.length || 0})</p>
+                        <div className="space-y-1">
+                          {rev.sign_offs.map((so, i) => (
+                            <div key={i} className="flex items-center gap-2 text-sm">
+                              <div className={cn('w-2 h-2 rounded-full',
+                                so.decision === 'approved' ? 'bg-green-500' :
+                                so.decision === 'rejected' ? 'bg-red-500' : 'bg-amber-500'
+                              )} />
+                              <span className="font-medium">{so.reviewer_name}</span>
+                              <span className="text-gray-400">-- {so.decision}</span>
+                              {so.notes && <span className="text-gray-400 text-xs italic">"{so.notes}"</span>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Invite Form Dialog */}
+      <Dialog open={showInviteForm} onOpenChange={setShowInviteForm}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Invite External Reviewer</DialogTitle>
+            <DialogDescription>Send an invitation to an external accountant or auditor to review your work.</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <Input value={inviteForm.invitee_name} onChange={e => setInviteForm(f => ({ ...f, invitee_name: e.target.value }))}
+                  placeholder="Jane Smith" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                <Input type="email" value={inviteForm.invitee_email} onChange={e => setInviteForm(f => ({ ...f, invitee_email: e.target.value }))}
+                  placeholder="jane@firm.com" />
+              </div>
             </div>
-          ))}
-        </div>
-      )}
 
-      {/* Invite Form Modal */}
-      {showInviteForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-bold mb-4">Invite External Reviewer</h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-                  <input value={inviteForm.invitee_name} onChange={e => setInviteForm(f => ({ ...f, invitee_name: e.target.value }))}
-                    placeholder="Jane Smith" className="w-full border rounded-lg px-3 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-                  <input type="email" value={inviteForm.invitee_email} onChange={e => setInviteForm(f => ({ ...f, invitee_email: e.target.value }))}
-                    placeholder="jane@firm.com" className="w-full border rounded-lg px-3 py-2 text-sm" />
-                </div>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Entity Name</label>
+              <Input value={inviteForm.entity_name} onChange={e => setInviteForm(f => ({ ...f, entity_name: e.target.value }))}
+                placeholder="Acme Corp Pty Ltd" />
+            </div>
 
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Entity Name</label>
-                <input value={inviteForm.entity_name} onChange={e => setInviteForm(f => ({ ...f, entity_name: e.target.value }))}
-                  placeholder="Acme Corp Pty Ltd" className="w-full border rounded-lg px-3 py-2 text-sm" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                <Select value={inviteForm.role} onValueChange={val => setInviteForm(f => ({ ...f, role: val }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ROLES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                  <select value={inviteForm.role} onChange={e => setInviteForm(f => ({ ...f, role: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm">
-                    {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Access expires in</label>
-                  <select value={inviteForm.expires_in_days} onChange={e => setInviteForm(f => ({ ...f, expires_in_days: parseInt(e.target.value) }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm">
-                    <option value={7}>7 days</option>
-                    <option value={14}>14 days</option>
-                    <option value={30}>30 days</option>
-                    <option value={90}>90 days</option>
-                    <option value={365}>1 year</option>
-                  </select>
-                </div>
-              </div>
-
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Access Scope</label>
-                <div className="space-y-2">
-                  {SCOPES.map(s => (
-                    <label key={s.value} className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                      inviteForm.scope === s.value ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:bg-gray-50'
-                    }`}>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Access expires in</label>
+                <Select value={String(inviteForm.expires_in_days)} onValueChange={val => setInviteForm(f => ({ ...f, expires_in_days: parseInt(val) }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="7">7 days</SelectItem>
+                    <SelectItem value="14">14 days</SelectItem>
+                    <SelectItem value="30">30 days</SelectItem>
+                    <SelectItem value="90">90 days</SelectItem>
+                    <SelectItem value="365">1 year</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Access Scope</label>
+              <div className="space-y-2">
+                {SCOPES.map(s => (
+                  <Card key={s.value}
+                    className={cn('cursor-pointer transition-colors',
+                      inviteForm.scope === s.value ? 'border-indigo-500 bg-indigo-50' : 'hover:bg-gray-50'
+                    )}
+                    onClick={() => setInviteForm(f => ({ ...f, scope: s.value }))}>
+                    <CardContent className="p-3 flex items-start gap-3">
                       <input type="radio" name="scope" value={s.value} checked={inviteForm.scope === s.value}
-                        onChange={e => setInviteForm(f => ({ ...f, scope: e.target.value }))} className="mt-0.5" />
+                        onChange={() => setInviteForm(f => ({ ...f, scope: s.value }))} className="mt-0.5" />
                       <div>
                         <p className="text-sm font-medium">{s.label}</p>
                         <p className="text-xs text-gray-500">{s.desc}</p>
                       </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Message (optional)</label>
-                <textarea value={inviteForm.message} onChange={e => setInviteForm(f => ({ ...f, message: e.target.value }))}
-                  placeholder="Hi Jane, could you review the March BAS before submission?"
-                  rows={3} className="w-full border rounded-lg px-3 py-2 text-sm" />
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </div>
 
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowInviteForm(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
-              <button onClick={sendInvite}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Send Invitation</button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Message (optional)</label>
+              <Textarea value={inviteForm.message} onChange={e => setInviteForm(f => ({ ...f, message: e.target.value }))}
+                placeholder="Hi Jane, could you review the March BAS before submission?"
+                rows={3} />
             </div>
           </div>
-        </div>
-      )}
 
-      {/* Review Form Modal */}
-      {showReviewForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full">
-            <h3 className="text-lg font-bold mb-4">Create Review Request</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Entity Name</label>
-                <input value={reviewForm.entity_name} onChange={e => setReviewForm(f => ({ ...f, entity_name: e.target.value }))}
-                  placeholder="Acme Corp Pty Ltd" className="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowInviteForm(false)}>Cancel</Button>
+            <Button onClick={sendInvite}>Send Invitation</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Review Type</label>
-                <select value={reviewForm.review_type} onChange={e => setReviewForm(f => ({ ...f, review_type: e.target.value }))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm">
-                  <option value="month_end">Month-End Review</option>
-                  <option value="tax_return">Tax Return Review</option>
-                  <option value="bas_review">BAS/VAT Review</option>
-                  <option value="annual_audit">Annual Audit</option>
-                  <option value="ad_hoc">Ad-Hoc Review</option>
-                </select>
-              </div>
+      {/* Review Form Dialog */}
+      <Dialog open={showReviewForm} onOpenChange={setShowReviewForm}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Create Review Request</DialogTitle>
+            <DialogDescription>Request a sign-off from external accountants on specific work.</DialogDescription>
+          </DialogHeader>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
-                <textarea value={reviewForm.description} onChange={e => setReviewForm(f => ({ ...f, description: e.target.value }))}
-                  placeholder="Please review the March 2026 month-end close for Acme Corp"
-                  rows={3} className="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
-                <input type="date" value={reviewForm.due_date} onChange={e => setReviewForm(f => ({ ...f, due_date: e.target.value }))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Entity Name</label>
+              <Input value={reviewForm.entity_name} onChange={e => setReviewForm(f => ({ ...f, entity_name: e.target.value }))}
+                placeholder="Acme Corp Pty Ltd" />
             </div>
 
-            <div className="flex gap-3 mt-6">
-              <button onClick={() => setShowReviewForm(false)}
-                className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200">Cancel</button>
-              <button onClick={createReview}
-                className="px-6 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700">Create Review</button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Review Type</label>
+              <Select value={reviewForm.review_type} onValueChange={val => setReviewForm(f => ({ ...f, review_type: val }))}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="month_end">Month-End Review</SelectItem>
+                  <SelectItem value="tax_return">Tax Return Review</SelectItem>
+                  <SelectItem value="bas_review">BAS/VAT Review</SelectItem>
+                  <SelectItem value="annual_audit">Annual Audit</SelectItem>
+                  <SelectItem value="ad_hoc">Ad-Hoc Review</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+              <Textarea value={reviewForm.description} onChange={e => setReviewForm(f => ({ ...f, description: e.target.value }))}
+                placeholder="Please review the March 2026 month-end close for Acme Corp"
+                rows={3} />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+              <Input type="date" value={reviewForm.due_date} onChange={e => setReviewForm(f => ({ ...f, due_date: e.target.value }))} />
             </div>
           </div>
-        </div>
-      )}
-    </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowReviewForm(false)}>Cancel</Button>
+            <Button onClick={createReview}>Create Review</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </motion.div>
   );
 }
