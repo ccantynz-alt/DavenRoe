@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
 
 const INTEGRATIONS = [
   // Banking
@@ -44,9 +50,27 @@ const INTEGRATIONS = [
 
 const CATEGORIES = ['All', ...Array.from(new Set(INTEGRATIONS.map(i => i.category)))];
 
-const statusStyles = {
-  active: { label: 'Connected', cls: 'bg-green-50 text-green-700 border-green-200' },
-  available: { label: 'Available', cls: 'bg-gray-50 text-gray-600 border-gray-200' },
+const statusBadgeVariant = {
+  active: 'success',
+  available: 'secondary',
+};
+
+const statusLabel = {
+  active: 'Connected',
+  available: 'Available',
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
 };
 
 export default function IntegrationsPage() {
@@ -73,57 +97,70 @@ export default function IntegrationsPage() {
       {/* Category Pills */}
       <div className="flex flex-wrap gap-2 mb-6">
         {CATEGORIES.map(cat => (
-          <button
+          <Badge
             key={cat}
-            onClick={() => setCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            variant={category === cat ? 'default' : 'secondary'}
+            className={cn(
+              'cursor-pointer select-none px-4 py-1.5 text-sm transition-colors',
               category === cat
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                : 'hover:bg-gray-200'
+            )}
+            onClick={() => setCategory(cat)}
           >
             {cat} ({categoryCount(cat)})
-          </button>
+          </Badge>
         ))}
       </div>
 
       {/* Search */}
       <div className="mb-6">
-        <input
+        <Input
           type="text"
           placeholder="Search integrations..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full max-w-md px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+          className="max-w-md"
         />
       </div>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((integration, i) => {
-          const st = statusStyles[integration.status] || statusStyles.available;
-          return (
-            <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-indigo-100 transition-all">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{integration.name}</h3>
-                  <span className="text-xs text-gray-400">{integration.category}</span>
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        key={`${category}-${search}`}
+      >
+        {filtered.map((integration, i) => (
+          <motion.div key={i} variants={itemVariants} whileHover={{ y: -4, transition: { duration: 0.2 } }}>
+            <Card className="h-full flex flex-col hover:border-indigo-100">
+              <CardHeader className="pb-2">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-base">{integration.name}</CardTitle>
+                    <span className="text-xs text-gray-400">{integration.category}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400 font-mono">{integration.region}</span>
+                    <Badge variant={statusBadgeVariant[integration.status] || 'secondary'}>
+                      {statusLabel[integration.status] || 'Available'}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400 font-mono">{integration.region}</span>
-                  <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium border ${st.cls}`}>
-                    {st.label}
-                  </span>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500 leading-relaxed mb-4">{integration.description}</p>
-              <button className="text-sm text-indigo-600 font-medium hover:text-indigo-800 transition-colors">
-                Configure &rarr;
-              </button>
-            </div>
-          );
-        })}
-      </div>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <p className="text-sm text-gray-500 leading-relaxed">{integration.description}</p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="link" className="px-0 text-indigo-600 hover:text-indigo-800">
+                  Configure &rarr;
+                </Button>
+              </CardFooter>
+            </Card>
+          </motion.div>
+        ))}
+      </motion.div>
 
       {filtered.length === 0 && (
         <div className="text-center py-12 text-gray-400">No integrations match your search.</div>

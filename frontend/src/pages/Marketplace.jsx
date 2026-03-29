@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion, AnimatePresence } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/Dialog';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { cn } from '@/lib/utils';
 
 const CATEGORIES = [
   'All', 'CRM', 'E-Commerce', 'Payments', 'Productivity', 'Tax', 'HR & Payroll',
@@ -98,6 +106,15 @@ const APPS = [
   { id: 'buildertrend', name: 'Buildertrend', category: 'Construction', description: 'Residential construction budgeting, estimates, and purchase orders', rating: 4.4, installs: '4K+', icon: 'BT' },
 ];
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.03, duration: 0.3, ease: 'easeOut' },
+  }),
+};
+
 export default function Marketplace() {
   const [category, setCategory] = useState('All');
   const [search, setSearch] = useState('');
@@ -134,120 +151,175 @@ export default function Marketplace() {
           <h2 className="text-3xl font-bold">Marketplace</h2>
           <p className="text-gray-500 mt-1">{APPS.length} integrations across {CATEGORIES.length - 1} categories</p>
         </div>
-        <div className="text-sm text-gray-500">{installed.size} installed</div>
+        <Badge variant="secondary" className="text-sm px-3 py-1">
+          {installed.size} installed
+        </Badge>
       </div>
 
       {/* Search */}
       <div className="flex gap-3 mb-6">
-        <input
-          type="text" placeholder="Search integrations..." value={search}
+        <Input
+          type="text"
+          placeholder="Search integrations..."
+          value={search}
           onChange={e => setSearch(e.target.value)}
-          className="flex-1 px-4 py-2 border rounded-lg"
+          className="flex-1"
         />
       </div>
 
-      {/* Categories */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-        {CATEGORIES.map(cat => (
-          <button key={cat} onClick={() => setCategory(cat)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${category === cat ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* App Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        {filtered.map(app => (
-          <div key={app.id} onClick={() => setSelectedApp(app)}
-            className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer">
-            <div className="flex items-start gap-3 mb-3">
-              <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
-                {app.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold truncate">{app.name}</h3>
-                  {installed.has(app.id) && (
-                    <span className="text-xs px-1.5 py-0.5 bg-green-100 text-green-700 rounded shrink-0">Installed</span>
-                  )}
-                </div>
-                <p className="text-xs text-indigo-500">{app.category}</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-500 mb-3 line-clamp-2">{app.description}</p>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs text-gray-400">
-                <span className="text-yellow-500">{'★'.repeat(Math.round(app.rating))}</span>
-                <span>{app.rating}</span>
-                <span>·</span>
-                <span>{app.installs}</span>
-              </div>
-              {installed.has(app.id) ? (
-                <button onClick={e => { e.stopPropagation(); handleUninstall(app.id); }}
-                  className="text-xs px-3 py-1 bg-red-50 text-red-600 rounded-lg hover:bg-red-100">
-                  Uninstall
-                </button>
-              ) : (
-                <button onClick={e => { e.stopPropagation(); handleInstall(app.id); }}
-                  className="text-xs px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                  Install
-                </button>
+      {/* Categories as Tabs */}
+      <Tabs value={category} onValueChange={setCategory} className="mb-6">
+        <TabsList className="flex gap-1 h-auto flex-wrap bg-transparent p-0">
+          {CATEGORIES.map(cat => (
+            <TabsTrigger
+              key={cat}
+              value={cat}
+              className={cn(
+                'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors',
+                'data-[state=active]:bg-indigo-600 data-[state=active]:text-white data-[state=active]:shadow-none',
+                'data-[state=inactive]:bg-gray-100 data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-gray-200'
               )}
-            </div>
+            >
+              {cat}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        {/* Single content area for all tabs since filtering is state-driven */}
+        <TabsContent value={category} className="mt-0">
+          {/* App Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <AnimatePresence mode="popLayout">
+              {filtered.map((app, i) => (
+                <motion.div
+                  key={app.id}
+                  custom={i}
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  layout
+                >
+                  <Card
+                    className="p-0 cursor-pointer h-full"
+                    onClick={() => setSelectedApp(app)}
+                  >
+                    <CardContent className="p-5">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
+                          {app.icon}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold truncate">{app.name}</h3>
+                            {installed.has(app.id) && (
+                              <Badge variant="success" className="shrink-0">Installed</Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-indigo-500">{app.category}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-500 mb-3 line-clamp-2">{app.description}</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                          <span className="text-yellow-500">{'★'.repeat(Math.round(app.rating))}</span>
+                          <span>{app.rating}</span>
+                          <span>·</span>
+                          <span>{app.installs}</span>
+                        </div>
+                        {installed.has(app.id) ? (
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={e => { e.stopPropagation(); handleUninstall(app.id); }}
+                          >
+                            Uninstall
+                          </Button>
+                        ) : (
+                          <Button
+                            size="sm"
+                            className="h-7 text-xs"
+                            onClick={e => { e.stopPropagation(); handleInstall(app.id); }}
+                          >
+                            Install
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-        ))}
-      </div>
+        </TabsContent>
+      </Tabs>
 
       {/* App Detail Modal */}
-      {selectedApp && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setSelectedApp(null)}>
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6" onClick={e => e.stopPropagation()}>
-            <div className="flex items-start gap-4 mb-4">
-              <div className="w-16 h-16 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg shrink-0">
-                {selectedApp.icon}
-              </div>
-              <div>
-                <h2 className="text-xl font-bold">{selectedApp.name}</h2>
-                <p className="text-sm text-indigo-500">{selectedApp.category}</p>
-                <div className="flex items-center gap-2 text-sm text-gray-400 mt-1">
-                  <span className="text-yellow-500">{'★'.repeat(Math.round(selectedApp.rating))}</span>
-                  <span>{selectedApp.rating} rating</span>
-                  <span>·</span>
-                  <span>{selectedApp.installs} installs</span>
+      <Dialog open={!!selectedApp} onOpenChange={(open) => { if (!open) setSelectedApp(null); }}>
+        {selectedApp && (
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg shrink-0">
+                  {selectedApp.icon}
+                </div>
+                <div>
+                  <DialogTitle className="text-xl">{selectedApp.name}</DialogTitle>
+                  <DialogDescription asChild>
+                    <div>
+                      <p className="text-sm text-indigo-500">{selectedApp.category}</p>
+                      <div className="flex items-center gap-2 text-sm text-gray-400 mt-1">
+                        <span className="text-yellow-500">{'★'.repeat(Math.round(selectedApp.rating))}</span>
+                        <span>{selectedApp.rating} rating</span>
+                        <span>·</span>
+                        <span>{selectedApp.installs} installs</span>
+                      </div>
+                    </div>
+                  </DialogDescription>
                 </div>
               </div>
-            </div>
-            <p className="text-gray-600 mb-4">{selectedApp.description}</p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-4">
-              <h4 className="font-medium text-sm mb-2">Features</h4>
-              <ul className="text-sm text-gray-600 space-y-1">
-                <li>• Automatic data synchronization</li>
-                <li>• Two-way transaction mapping</li>
-                <li>• Real-time webhook notifications</li>
-                <li>• OAuth 2.0 secure authentication</li>
-              </ul>
-            </div>
-            <div className="flex gap-3">
+            </DialogHeader>
+            <p className="text-gray-600">{selectedApp.description}</p>
+            <Card className="shadow-none border-gray-100 bg-gray-50">
+              <CardContent className="p-4">
+                <h4 className="font-medium text-sm mb-2">Features</h4>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li>Automatic data synchronization</li>
+                  <li>Two-way transaction mapping</li>
+                  <li>Real-time webhook notifications</li>
+                  <li>OAuth 2.0 secure authentication</li>
+                </ul>
+              </CardContent>
+            </Card>
+            <DialogFooter className="flex-row gap-3 sm:space-x-0">
               {installed.has(selectedApp.id) ? (
-                <button onClick={() => { handleUninstall(selectedApp.id); setSelectedApp(null); }}
-                  className="flex-1 py-2.5 bg-red-100 text-red-700 rounded-lg font-medium hover:bg-red-200">
+                <Button
+                  variant="destructive"
+                  className="flex-1"
+                  onClick={() => { handleUninstall(selectedApp.id); setSelectedApp(null); }}
+                >
                   Uninstall
-                </button>
+                </Button>
               ) : (
-                <button onClick={() => { handleInstall(selectedApp.id); setSelectedApp(null); }}
-                  className="flex-1 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">
+                <Button
+                  className="flex-1"
+                  onClick={() => { handleInstall(selectedApp.id); setSelectedApp(null); }}
+                >
                   Install
-                </button>
+                </Button>
               )}
-              <button onClick={() => setSelectedApp(null)}
-                className="px-6 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200">
+              <Button
+                variant="secondary"
+                onClick={() => setSelectedApp(null)}
+              >
                 Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   );
 }

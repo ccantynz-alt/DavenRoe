@@ -1,5 +1,14 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Badge } from '@/components/ui/Badge';
+import { Switch } from '@/components/ui/Switch';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 
 const TOOLS = [
   {
@@ -101,6 +110,19 @@ const TOOLS = [
   },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.25 } },
+};
+
 export default function Toolkit() {
   const [activeTool, setActiveTool] = useState(null);
   const [formData, setFormData] = useState({});
@@ -132,7 +154,11 @@ export default function Toolkit() {
   };
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+    >
       <div className="mb-8">
         <h2 className="text-3xl font-bold">Toolkit</h2>
         <p className="text-gray-500 mt-1">
@@ -142,107 +168,176 @@ export default function Toolkit() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Tool List */}
-        <div className="lg:col-span-1 space-y-6">
-          {categories.map((cat) => (
-            <div key={cat}>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2 px-1">
-                {cat}
-              </h3>
-              <div className="space-y-1">
-                {TOOLS.filter((t) => t.category === cat).map((tool) => (
-                  <button
-                    key={tool.id}
-                    onClick={() => {
-                      setActiveTool(tool);
-                      setFormData({});
-                      setResult(null);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${
-                      activeTool?.id === tool.id
-                        ? 'bg-astra-50 text-astra-700 font-medium'
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    <div className="font-medium">{tool.title}</div>
-                    <div className="text-xs text-gray-400">{tool.description}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
+        <div className="lg:col-span-1">
+          <Tabs defaultValue={categories[0]} className="w-full">
+            <TabsList className="w-full mb-4">
+              {categories.map((cat) => (
+                <TabsTrigger key={cat} value={cat} className="flex-1">
+                  {cat}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {categories.map((cat) => (
+              <TabsContent key={cat} value={cat}>
+                <motion.div
+                  className="space-y-1"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {TOOLS.filter((t) => t.category === cat).map((tool) => (
+                    <motion.div key={tool.id} variants={itemVariants}>
+                      <Button
+                        variant={activeTool?.id === tool.id ? 'secondary' : 'ghost'}
+                        className={cn(
+                          'w-full justify-start h-auto py-2.5 px-3 text-left flex-col items-start gap-0',
+                          activeTool?.id === tool.id && 'bg-astra-50 text-astra-700 ring-1 ring-astra-200'
+                        )}
+                        onClick={() => {
+                          setActiveTool(tool);
+                          setFormData({});
+                          setResult(null);
+                        }}
+                      >
+                        <span className="font-medium text-sm">{tool.title}</span>
+                        <span className="text-xs text-gray-400 font-normal">{tool.description}</span>
+                      </Button>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </TabsContent>
+            ))}
+          </Tabs>
         </div>
 
         {/* Tool Panel */}
         <div className="lg:col-span-2">
-          {activeTool ? (
-            <div className="bg-white rounded-xl border p-6">
-              <h3 className="text-xl font-bold mb-1">{activeTool.title}</h3>
-              <p className="text-sm text-gray-500 mb-6">{activeTool.description}</p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {activeTool.fields.map((field) => (
-                  <div key={field.name}>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">
-                      {field.label}
-                    </label>
-                    {field.type === 'select' ? (
-                      <select
-                        className="w-full border rounded-lg px-3 py-2 text-sm"
-                        value={formData[field.name] || field.options[0]}
-                        onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                      >
-                        {field.options.map((opt) => (
-                          <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                      </select>
-                    ) : field.type === 'checkbox' ? (
-                      <input
-                        type="checkbox"
-                        checked={!!formData[field.name]}
-                        onChange={(e) => setFormData({ ...formData, [field.name]: e.target.checked })}
-                        className="mt-1"
-                      />
-                    ) : (
-                      <input
-                        type={field.type}
-                        placeholder={field.placeholder}
-                        className="w-full border rounded-lg px-3 py-2 text-sm"
-                        value={formData[field.name] || ''}
-                        onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() => handleRun(activeTool)}
-                disabled={loading}
-                className="px-6 py-2 bg-astra-600 text-white rounded-lg text-sm font-medium hover:bg-astra-700 disabled:opacity-50"
+          <AnimatePresence mode="wait">
+            {activeTool ? (
+              <motion.div
+                key={activeTool.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25 }}
               >
-                {loading ? 'Calculating...' : 'Calculate'}
-              </button>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <CardTitle className="text-xl">{activeTool.title}</CardTitle>
+                      <Badge variant="secondary">{activeTool.category}</Badge>
+                    </div>
+                    <CardDescription>{activeTool.description}</CardDescription>
+                  </CardHeader>
 
-              {result && (
-                <div className="mt-6 bg-gray-50 rounded-lg p-4 overflow-auto max-h-96">
-                  {result.error ? (
-                    <p className="text-red-600 text-sm">{result.error}</p>
-                  ) : (
-                    <pre className="text-xs text-gray-700 whitespace-pre-wrap">
-                      {JSON.stringify(result, null, 2)}
-                    </pre>
-                  )}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="bg-gray-50 rounded-xl border border-dashed border-gray-300 p-12 text-center">
-              <p className="text-gray-400 text-lg mb-2">Select a tool</p>
-              <p className="text-gray-400 text-sm">Pick any tool from the sidebar to get started</p>
-            </div>
-          )}
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                      {activeTool.fields.map((field) => (
+                        <div key={field.name}>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            {field.label}
+                          </label>
+                          {field.type === 'select' ? (
+                            <Select
+                              value={formData[field.name] || field.options[0]}
+                              onValueChange={(value) =>
+                                setFormData({ ...formData, [field.name]: value })
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {field.options.map((opt) => (
+                                  <SelectItem key={opt} value={opt}>
+                                    {opt}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : field.type === 'checkbox' ? (
+                            <div className="flex items-center gap-2 mt-1">
+                              <Switch
+                                checked={!!formData[field.name]}
+                                onCheckedChange={(checked) =>
+                                  setFormData({ ...formData, [field.name]: checked })
+                                }
+                              />
+                              <span className="text-sm text-gray-500">
+                                {formData[field.name] ? 'Yes' : 'No'}
+                              </span>
+                            </div>
+                          ) : (
+                            <Input
+                              type={field.type}
+                              placeholder={field.placeholder}
+                              value={formData[field.name] || ''}
+                              onChange={(e) =>
+                                setFormData({ ...formData, [field.name]: e.target.value })
+                              }
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    <Button
+                      onClick={() => handleRun(activeTool)}
+                      disabled={loading}
+                    >
+                      {loading ? 'Calculating...' : 'Calculate'}
+                    </Button>
+
+                    <AnimatePresence>
+                      {result && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.25 }}
+                          className="mt-6 overflow-hidden"
+                        >
+                          <Card className={cn(
+                            'overflow-auto max-h-96',
+                            result.error ? 'border-red-200 bg-red-50' : 'bg-gray-50'
+                          )}>
+                            <CardContent className="pt-4">
+                              {result.error ? (
+                                <p className="text-red-600 text-sm">{result.error}</p>
+                              ) : (
+                                <pre className="text-xs text-gray-700 whitespace-pre-wrap">
+                                  {JSON.stringify(result, null, 2)}
+                                </pre>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <Card className="border-dashed bg-gray-50/50">
+                  <CardContent className="p-12 text-center">
+                    <p className="text-gray-400 text-lg mb-2">Select a tool</p>
+                    <p className="text-gray-400 text-sm">
+                      Pick any tool from the sidebar to get started
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

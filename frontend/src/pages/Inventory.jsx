@@ -1,4 +1,12 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { cn } from '@/lib/utils';
 
 const DEMO_ITEMS = [
   { id: 1, sku: 'WDG-001', name: 'Premium Widget A', category: 'Widgets', location: 'Sydney Warehouse', qty: 342, reorder: 50, unit_cost: 12.50, sell_price: 29.99, method: 'FIFO', status: 'in_stock' },
@@ -15,10 +23,20 @@ const LOCATIONS = ['All Locations', 'Sydney Warehouse', 'Melbourne Depot', 'Auck
 const CATEGORIES = ['All Categories', 'Widgets', 'Services', 'Assemblies', 'Raw Materials'];
 
 const statusConfig = {
-  in_stock: { label: 'In Stock', cls: 'bg-green-50 text-green-700' },
-  low_stock: { label: 'Low Stock', cls: 'bg-yellow-50 text-yellow-700' },
-  out_of_stock: { label: 'Out of Stock', cls: 'bg-red-50 text-red-700' },
-  service: { label: 'Service', cls: 'bg-blue-50 text-blue-700' },
+  in_stock: { label: 'In Stock', variant: 'success' },
+  low_stock: { label: 'Low Stock', variant: 'warning' },
+  out_of_stock: { label: 'Out of Stock', variant: 'destructive' },
+  service: { label: 'Service', variant: 'default' },
+};
+
+const cardAnim = {
+  hidden: { opacity: 0, y: 16 },
+  visible: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.07, duration: 0.35, ease: 'easeOut' } }),
+};
+
+const tableAnim = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { delay: 0.25, duration: 0.4, ease: 'easeOut' } },
 };
 
 export default function Inventory() {
@@ -45,128 +63,159 @@ export default function Inventory() {
           <h1 className="text-2xl font-bold text-gray-900">Inventory</h1>
           <p className="text-sm text-gray-500 mt-1">Track stock levels, assemblies, and costing across locations</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
-        >
+        <Button onClick={() => setShowForm(!showForm)}>
           + Add Item
-        </button>
+        </Button>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <SummaryCard label="Total Items" value={DEMO_ITEMS.length} sub={`${totalItems} units in stock`} />
-        <SummaryCard label="Inventory Value" value={`$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`} sub="At cost basis" />
-        <SummaryCard label="Low / Out of Stock" value={lowStockCount} sub="Items need attention" alert={lowStockCount > 0} />
-        <SummaryCard label="Locations" value={LOCATIONS.length - 1} sub="Active warehouses" />
+        {[
+          { label: 'Total Items', value: DEMO_ITEMS.length, sub: `${totalItems} units in stock`, alert: false },
+          { label: 'Inventory Value', value: `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`, sub: 'At cost basis', alert: false },
+          { label: 'Low / Out of Stock', value: lowStockCount, sub: 'Items need attention', alert: lowStockCount > 0 },
+          { label: 'Locations', value: LOCATIONS.length - 1, sub: 'Active warehouses', alert: false },
+        ].map((card, i) => (
+          <motion.div key={card.label} custom={i} initial="hidden" animate="visible" variants={cardAnim}>
+            <Card className={cn(card.alert && 'border-yellow-200')}>
+              <CardContent className="p-5">
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">{card.label}</p>
+                <p className={cn('text-2xl font-bold', card.alert ? 'text-yellow-600' : 'text-gray-900')}>{card.value}</p>
+                <p className="text-xs text-gray-400 mt-1">{card.sub}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
       {/* Add Item Form */}
       {showForm && (
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h3 className="font-semibold text-gray-900 mb-4">New Inventory Item</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <input placeholder="SKU" className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-            <input placeholder="Item Name" className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-            <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-              <option>Category</option>
-              {CATEGORIES.slice(1).map(c => <option key={c}>{c}</option>)}
-            </select>
-            <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-              <option>Location</option>
-              {LOCATIONS.slice(1).map(l => <option key={l}>{l}</option>)}
-            </select>
-            <input placeholder="Quantity" type="number" className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-            <input placeholder="Unit Cost" type="number" step="0.01" className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-            <input placeholder="Sell Price" type="number" step="0.01" className="px-3 py-2 border border-gray-200 rounded-lg text-sm" />
-            <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-              <option>Costing Method</option>
-              <option>FIFO</option>
-              <option>Weighted Average</option>
-              <option>Specific ID</option>
-            </select>
-          </div>
-          <div className="flex gap-3 mt-4">
-            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">
-              Save Item
-            </button>
-            <button onClick={() => setShowForm(false)} className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors">
-              Cancel
-            </button>
-          </div>
-        </div>
+        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}>
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>New Inventory Item</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Input placeholder="SKU" />
+                <Input placeholder="Item Name" />
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.slice(1).map(c => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LOCATIONS.slice(1).map(l => (
+                      <SelectItem key={l} value={l}>{l}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input placeholder="Quantity" type="number" />
+                <Input placeholder="Unit Cost" type="number" step="0.01" />
+                <Input placeholder="Sell Price" type="number" step="0.01" />
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Costing Method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FIFO">FIFO</SelectItem>
+                    <SelectItem value="Weighted Average">Weighted Average</SelectItem>
+                    <SelectItem value="Specific ID">Specific ID</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-3 mt-4">
+                <Button>Save Item</Button>
+                <Button variant="secondary" onClick={() => setShowForm(false)}>Cancel</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-4">
-        <input
+        <Input
           type="text"
           placeholder="Search by name or SKU..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-sm w-64 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+          className="w-64"
         />
-        <select value={location} onChange={e => setLocation(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-          {LOCATIONS.map(l => <option key={l}>{l}</option>)}
-        </select>
-        <select value={category} onChange={e => setCategory(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white">
-          {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-        </select>
+        <Select value={location} onValueChange={setLocation}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {LOCATIONS.map(l => (
+              <SelectItem key={l} value={l}>{l}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={category} onValueChange={setCategory}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {CATEGORIES.map(c => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">SKU</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Item</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Category</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Location</th>
-                <th className="text-right px-4 py-3 font-semibold text-gray-600">Qty</th>
-                <th className="text-right px-4 py-3 font-semibold text-gray-600">Unit Cost</th>
-                <th className="text-right px-4 py-3 font-semibold text-gray-600">Sell Price</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Method</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-600">Status</th>
-              </tr>
-            </thead>
-            <tbody>
+      <motion.div initial="hidden" animate="visible" variants={tableAnim}>
+        <Card className="overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-gray-50">
+                <TableHead>SKU</TableHead>
+                <TableHead>Item</TableHead>
+                <TableHead>Category</TableHead>
+                <TableHead>Location</TableHead>
+                <TableHead className="text-right">Qty</TableHead>
+                <TableHead className="text-right">Unit Cost</TableHead>
+                <TableHead className="text-right">Sell Price</TableHead>
+                <TableHead>Method</TableHead>
+                <TableHead>Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filtered.map(item => {
                 const st = statusConfig[item.status];
                 return (
-                  <tr key={item.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td className="px-4 py-3 font-mono text-xs text-gray-500">{item.sku}</td>
-                    <td className="px-4 py-3 font-medium text-gray-900">{item.name}</td>
-                    <td className="px-4 py-3 text-gray-600">{item.category}</td>
-                    <td className="px-4 py-3 text-gray-600">{item.location}</td>
-                    <td className="px-4 py-3 text-right text-gray-900">{item.qty != null ? item.qty.toLocaleString() : '-'}</td>
-                    <td className="px-4 py-3 text-right text-gray-600">{item.unit_cost != null ? `$${item.unit_cost.toFixed(2)}` : '-'}</td>
-                    <td className="px-4 py-3 text-right text-gray-600">{item.sell_price != null ? `$${item.sell_price.toFixed(2)}` : '-'}</td>
-                    <td className="px-4 py-3 text-gray-600">{item.method}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium ${st.cls}`}>{st.label}</span>
-                    </td>
-                  </tr>
+                  <TableRow key={item.id}>
+                    <TableCell className="font-mono text-xs text-gray-500">{item.sku}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{item.name}</TableCell>
+                    <TableCell className="text-gray-600">{item.category}</TableCell>
+                    <TableCell className="text-gray-600">{item.location}</TableCell>
+                    <TableCell className="text-right text-gray-900">{item.qty != null ? item.qty.toLocaleString() : '-'}</TableCell>
+                    <TableCell className="text-right text-gray-600">{item.unit_cost != null ? `$${item.unit_cost.toFixed(2)}` : '-'}</TableCell>
+                    <TableCell className="text-right text-gray-600">{item.sell_price != null ? `$${item.sell_price.toFixed(2)}` : '-'}</TableCell>
+                    <TableCell className="text-gray-600">{item.method}</TableCell>
+                    <TableCell>
+                      <Badge variant={st.variant}>{st.label}</Badge>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-        {filtered.length === 0 && (
-          <div className="p-12 text-center text-gray-400">No items match your filters.</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function SummaryCard({ label, value, sub, alert }) {
-  return (
-    <div className={`bg-white rounded-xl border p-5 ${alert ? 'border-yellow-200' : 'border-gray-200'}`}>
-      <p className="text-xs text-gray-500 font-medium uppercase tracking-wider mb-1">{label}</p>
-      <p className={`text-2xl font-bold ${alert ? 'text-yellow-600' : 'text-gray-900'}`}>{value}</p>
-      <p className="text-xs text-gray-400 mt-1">{sub}</p>
+            </TableBody>
+          </Table>
+          {filtered.length === 0 && (
+            <div className="p-12 text-center text-gray-400">No items match your filters.</div>
+          )}
+        </Card>
+      </motion.div>
     </div>
   );
 }

@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
 
 const SPEC_ICONS = {
   tax: '$', audit: '>', management: '~', forensic: '!',
@@ -11,6 +15,19 @@ const SPEC_COLORS = {
   tax: 'blue', audit: 'purple', management: 'emerald', forensic: 'pink',
   insolvency: 'red', trust_estate: 'amber', nfp: 'teal', superannuation: 'orange',
   payroll: 'cyan', government: 'slate', esg: 'green', advisory: 'indigo',
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
 };
 
 export default function Specialists() {
@@ -35,99 +52,130 @@ export default function Specialists() {
 
   return (
     <div>
-      <div className="mb-8">
+      <motion.div
+        className="mb-8"
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+      >
         <h2 className="text-3xl font-bold">Specialist Toolkits</h2>
         <p className="text-gray-500 mt-1">
           Heavy-lifting automation for every type of accountant —{' '}
           <span className="font-semibold text-astra-600">{totalAutomations} automations</span> across{' '}
           <span className="font-semibold text-astra-600">{specs.length} specializations</span>
         </p>
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Specialization Grid */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <motion.div
+          className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {specs.map((spec) => (
-            <button
-              key={spec.id}
-              onClick={() => setSelected(spec)}
-              className={`text-left bg-white rounded-xl border p-5 transition-all hover:shadow-md ${
-                selected?.id === spec.id
-                  ? 'border-astra-500 ring-2 ring-astra-200'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl font-mono text-gray-300">
-                  {SPEC_ICONS[spec.id] || '*'}
-                </span>
-                <span className="text-xs px-2 py-1 rounded-full bg-astra-50 text-astra-700 font-medium">
-                  {spec.heavy_lifting_count} tools
-                </span>
-              </div>
-              <h3 className="font-semibold text-lg mb-1">{spec.title}</h3>
-              <p className="text-sm text-gray-500 line-clamp-2">{spec.description}</p>
-              <div className="flex flex-wrap gap-1 mt-3">
-                {spec.certifications?.slice(0, 3).map((cert) => (
-                  <span key={cert} className="text-[10px] px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded">
-                    {cert}
+            <motion.div key={spec.id} variants={itemVariants}>
+              <Card
+                as="button"
+                onClick={() => setSelected(spec)}
+                className={cn(
+                  'text-left w-full p-5 cursor-pointer transition-all',
+                  selected?.id === spec.id
+                    ? 'border-astra-500 ring-2 ring-astra-200'
+                    : 'border-gray-200 hover:border-gray-300'
+                )}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-2xl font-mono text-gray-300">
+                    {SPEC_ICONS[spec.id] || '*'}
                   </span>
-                ))}
-              </div>
-            </button>
+                  <Badge variant="default" className="bg-astra-50 text-astra-700 border-transparent text-xs">
+                    {spec.heavy_lifting_count} tools
+                  </Badge>
+                </div>
+                <h3 className="font-semibold text-lg mb-1">{spec.title}</h3>
+                <p className="text-sm text-gray-500 line-clamp-2">{spec.description}</p>
+                <div className="flex flex-wrap gap-1 mt-3">
+                  {spec.certifications?.slice(0, 3).map((cert) => (
+                    <Badge key={cert} variant="secondary" className="text-[10px] px-1.5 py-0.5 font-normal">
+                      {cert}
+                    </Badge>
+                  ))}
+                </div>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Detail Panel */}
         <div className="lg:col-span-1">
-          {selected ? (
-            <div className="bg-white rounded-xl border p-6 sticky top-8">
-              <h3 className="text-xl font-bold mb-2">{selected.title}</h3>
-              <p className="text-sm text-gray-500 mb-6">{selected.description}</p>
+          <AnimatePresence mode="wait">
+            {selected ? (
+              <motion.div
+                key={selected.id}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              >
+                <Card className="p-6 sticky top-8">
+                  <CardTitle className="text-xl font-bold mb-2">{selected.title}</CardTitle>
+                  <CardDescription className="mb-6">{selected.description}</CardDescription>
 
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Pain Points We Solve</h4>
-                <ul className="space-y-2">
-                  {selected.pain_points?.map((pp, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-red-400 mt-0.5 shrink-0">x</span>
-                      {pp}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  <div className="mb-6">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Pain Points We Solve</h4>
+                    <ul className="space-y-2">
+                      {selected.pain_points?.map((pp, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                          <span className="text-red-400 mt-0.5 shrink-0">x</span>
+                          {pp}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-              <div className="mb-6">
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">
-                  Heavy Lifting ({selected.heavy_lifting?.length} automations)
-                </h4>
-                <ul className="space-y-2">
-                  {selected.heavy_lifting?.map((hl, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="text-green-500 mt-0.5 shrink-0">+</span>
-                      {hl}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  <div className="mb-6">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">
+                      Heavy Lifting ({selected.heavy_lifting?.length} automations)
+                    </h4>
+                    <ul className="space-y-2">
+                      {selected.heavy_lifting?.map((hl, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                          <span className="text-green-500 mt-0.5 shrink-0">+</span>
+                          {hl}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-              <div>
-                <h4 className="text-sm font-semibold text-gray-700 mb-2">Certifications</h4>
-                <div className="flex flex-wrap gap-2">
-                  {selected.certifications?.map((cert) => (
-                    <span key={cert} className="text-xs px-2 py-1 bg-astra-50 text-astra-700 rounded-lg font-medium">
-                      {cert}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gray-50 rounded-xl border border-dashed border-gray-300 p-8 text-center sticky top-8">
-              <p className="text-gray-400 text-lg mb-2">Select a specialization</p>
-              <p className="text-gray-400 text-sm">Click any card to see the full toolkit</p>
-            </div>
-          )}
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Certifications</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selected.certifications?.map((cert) => (
+                        <Badge key={cert} variant="default" className="bg-astra-50 text-astra-700 border-transparent">
+                          {cert}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Card className="border-dashed border-gray-300 bg-gray-50 p-8 text-center sticky top-8">
+                  <p className="text-gray-400 text-lg mb-2">Select a specialization</p>
+                  <p className="text-gray-400 text-sm">Click any card to see the full toolkit</p>
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

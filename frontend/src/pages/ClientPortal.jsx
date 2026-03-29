@@ -1,6 +1,23 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { cn } from '@/lib/utils';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.4, ease: 'easeOut' },
+  }),
+};
 
 export default function ClientPortal() {
   const { user } = useAuth();
@@ -27,7 +44,6 @@ function AccountantView() {
     setSending(true);
     setMessage(null);
     try {
-      // Register the client user with the client role
       await api.post('/auth/register', {
         email,
         password: crypto.randomUUID().slice(0, 12) + 'A1!',
@@ -56,78 +72,118 @@ function AccountantView() {
   };
 
   return (
-    <div>
+    <motion.div initial="hidden" animate="visible" variants={fadeUp}>
       <h2 className="text-3xl font-bold mb-2">Client Portal</h2>
       <p className="text-gray-500 mb-8">Invite clients to view their own financial data</p>
 
       {/* Invite Form */}
-      <div className="bg-white border rounded-xl p-6 mb-8">
-        <h3 className="font-semibold text-lg mb-4">Invite a Client</h3>
-        <form onSubmit={handleInvite} className="flex gap-4 items-end">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Client Email</label>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg" placeholder="client@example.com" required />
-          </div>
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Entity Access</label>
-            <select value={entityId} onChange={e => setEntityId(e.target.value)}
-              className="w-full px-3 py-2 border rounded-lg" required>
-              <option value="">Select entity...</option>
-              {entities.map(ent => (
-                <option key={ent.id} value={ent.id}>{ent.name}</option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" disabled={sending}
-            className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50">
-            {sending ? 'Sending...' : 'Send Invite'}
-          </button>
-        </form>
+      <motion.div variants={fadeUp} custom={0}>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Invite a Client</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleInvite} className="flex gap-4 items-end">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Client Email</label>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="client@example.com"
+                  required
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Entity Access</label>
+                <Select value={entityId} onValueChange={setEntityId} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select entity..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {entities.map(ent => (
+                      <SelectItem key={ent.id} value={ent.id}>{ent.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button type="submit" disabled={sending}>
+                {sending ? 'Sending...' : 'Send Invite'}
+              </Button>
+            </form>
 
-        {message && (
-          <div className={`mt-4 p-3 rounded-lg text-sm ${
-            message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200'
-            : message.type === 'info' ? 'bg-blue-50 text-blue-700 border border-blue-200'
-            : 'bg-red-50 text-red-700 border border-red-200'
-          }`}>
-            {message.text}
-          </div>
-        )}
-      </div>
+            {message && (
+              <div className={cn(
+                'mt-4 p-3 rounded-lg text-sm border',
+                message.type === 'success' && 'bg-green-50 text-green-700 border-green-200',
+                message.type === 'info' && 'bg-blue-50 text-blue-700 border-blue-200',
+                message.type === 'error' && 'bg-red-50 text-red-700 border-red-200',
+              )}>
+                {message.text}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* How it works */}
-      <div className="bg-white border rounded-xl p-6 mb-8">
-        <h3 className="font-semibold text-lg mb-4">How the Client Portal Works</h3>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <StepCard step="1" title="Invite" desc="Enter your client's email and assign them to their entity" />
-          <StepCard step="2" title="Client Logs In" desc="They receive an email with login credentials" />
-          <StepCard step="3" title="Scoped Access" desc="They see only their entity — invoices, documents, tax position" />
-          <StepCard step="4" title="Collaborate" desc="They upload receipts, view reports, and approve documents" />
-        </div>
-      </div>
+      <motion.div variants={fadeUp} custom={1}>
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>How the Client Portal Works</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {[
+                { step: '1', title: 'Invite', desc: "Enter your client's email and assign them to their entity" },
+                { step: '2', title: 'Client Logs In', desc: 'They receive an email with login credentials' },
+                { step: '3', title: 'Scoped Access', desc: 'They see only their entity — invoices, documents, tax position' },
+                { step: '4', title: 'Collaborate', desc: 'They upload receipts, view reports, and approve documents' },
+              ].map((item, i) => (
+                <StepCard key={item.step} step={item.step} title={item.title} desc={item.desc} index={i} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Recent Invitations */}
       {invitations.length > 0 && (
-        <div className="bg-white border rounded-xl p-6">
-          <h3 className="font-semibold text-lg mb-4">Recent Invitations</h3>
-          <div className="space-y-2">
-            {invitations.map((inv, i) => (
-              <div key={i} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-                <div>
-                  <p className="font-medium">{inv.email}</p>
-                  <p className="text-sm text-gray-400">{inv.entity}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400">{new Date(inv.sent_at).toLocaleDateString()}</span>
-                  <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">{inv.status}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <motion.div variants={fadeUp} custom={2}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Invitations</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Entity</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {invitations.map((inv, i) => (
+                    <TableRow key={i}>
+                      <TableCell className="font-medium">{inv.email}</TableCell>
+                      <TableCell className="text-gray-500">{inv.entity}</TableCell>
+                      <TableCell className="text-gray-400 text-xs">
+                        {new Date(inv.sent_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Badge variant="success">{inv.status}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -135,49 +191,69 @@ function AccountantView() {
 function ClientView() {
   const { user } = useAuth();
 
+  const portalItems = [
+    { title: 'Your Invoices', desc: 'View outstanding and paid invoices', link: '/invoicing', icon: '$' },
+    { title: 'Your Documents', desc: 'Upload receipts and view tax documents', link: '/documents', icon: '^' },
+    { title: 'Reports', desc: 'View your P&L, Balance Sheet, and more', link: '/reports', icon: '=' },
+    { title: 'Tax Position', desc: 'See your tax calculations and treaty benefits', link: '/tax', icon: '%' },
+  ];
+
   return (
-    <div>
+    <motion.div initial="hidden" animate="visible" variants={fadeUp}>
       <h2 className="text-3xl font-bold mb-2">Your Portal</h2>
       <p className="text-gray-500 mb-8">Welcome, {user?.full_name}</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <PortalCard title="Your Invoices" desc="View outstanding and paid invoices" link="/invoicing" icon="$" />
-        <PortalCard title="Your Documents" desc="Upload receipts and view tax documents" link="/documents" icon="^" />
-        <PortalCard title="Reports" desc="View your P&L, Balance Sheet, and more" link="/reports" icon="=" />
-        <PortalCard title="Tax Position" desc="See your tax calculations and treaty benefits" link="/tax" icon="%" />
+        {portalItems.map((item, i) => (
+          <motion.div key={item.title} variants={fadeUp} custom={i}>
+            <PortalCard title={item.title} desc={item.desc} link={item.link} icon={item.icon} />
+          </motion.div>
+        ))}
       </div>
 
-      <div className="bg-white border rounded-xl p-6">
-        <h3 className="font-semibold text-lg mb-2">Need Help?</h3>
-        <p className="text-gray-500 text-sm">
-          Contact your accountant or use Ask Astra to get answers about your financial data in plain English.
-        </p>
-      </div>
-    </div>
+      <motion.div variants={fadeUp} custom={4}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Need Help?</CardTitle>
+            <CardDescription>
+              Contact your accountant or use Ask Astra to get answers about your financial data in plain English.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
 
 
-function StepCard({ step, title, desc }) {
+function StepCard({ step, title, desc, index }) {
   return (
-    <div className="text-center">
+    <motion.div
+      className="text-center"
+      variants={fadeUp}
+      custom={index}
+    >
       <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center mx-auto mb-2">
         {step}
       </div>
       <p className="font-medium text-sm">{title}</p>
       <p className="text-xs text-gray-400 mt-1">{desc}</p>
-    </div>
+    </motion.div>
   );
 }
 
 function PortalCard({ title, desc, link, icon }) {
   return (
-    <a href={link} className="bg-white border rounded-xl p-6 hover:shadow-md transition-shadow block">
-      <div className="flex items-center gap-3 mb-2">
-        <span className="text-2xl font-mono text-indigo-500">{icon}</span>
-        <h3 className="font-semibold">{title}</h3>
-      </div>
-      <p className="text-sm text-gray-500">{desc}</p>
+    <a href={link} className="block">
+      <Card className="h-full cursor-pointer">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-mono text-indigo-500">{icon}</span>
+            <CardTitle>{title}</CardTitle>
+          </div>
+          <CardDescription>{desc}</CardDescription>
+        </CardHeader>
+      </Card>
     </a>
   );
 }

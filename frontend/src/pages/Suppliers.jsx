@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { cn } from '@/lib/utils';
 
 const CATEGORIES = [
   { value: 'office_supplies', label: 'Office Supplies' },
@@ -18,9 +26,17 @@ const CATEGORIES = [
 
 const PAYMENT_TERMS = [7, 14, 20, 30, 45, 60, 90];
 
-const STATUS_COLORS = {
-  active: 'bg-green-100 text-green-700',
-  inactive: 'bg-gray-100 text-gray-500',
+const STATUS_BADGE = {
+  active: { variant: 'success', label: 'Active' },
+  inactive: { variant: 'secondary', label: 'Inactive' },
+};
+
+const STAT_COLORS = {
+  indigo: 'bg-indigo-50 text-indigo-700',
+  green: 'bg-green-50 text-green-700',
+  gray: 'bg-gray-50 text-gray-600',
+  amber: 'bg-amber-50 text-amber-700',
+  blue: 'bg-blue-50 text-blue-700',
 };
 
 const DEMO_SUPPLIERS = [
@@ -84,25 +100,36 @@ export default function Suppliers() {
   if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Suppliers</h2>
           <p className="text-gray-500 mt-1">Manage vendors, payment terms, and supplier relationships</p>
         </div>
-        <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        <Button onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? 'Cancel' : '+ New Supplier'}
-        </button>
+        </Button>
       </div>
 
       {/* Summary Cards */}
       {summary && (
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-          <StatCard label="Total Suppliers" value={summary.total_suppliers} />
-          <StatCard label="Active" value={summary.active} color="green" />
-          <StatCard label="Inactive" value={summary.inactive} color="gray" />
-          <StatCard label="Outstanding" value={`$${Number(summary.total_outstanding).toLocaleString()}`} color="amber" />
-          <StatCard label="Paid YTD" value={`$${Number(summary.total_paid_ytd).toLocaleString()}`} color="blue" />
+          {[
+            { label: 'Total Suppliers', value: summary.total_suppliers, color: 'indigo' },
+            { label: 'Active', value: summary.active, color: 'green' },
+            { label: 'Inactive', value: summary.inactive, color: 'gray' },
+            { label: 'Outstanding', value: `$${Number(summary.total_outstanding).toLocaleString()}`, color: 'amber' },
+            { label: 'Paid YTD', value: `$${Number(summary.total_paid_ytd).toLocaleString()}`, color: 'blue' },
+          ].map((stat, i) => (
+            <motion.div key={stat.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+              <Card className={cn('border-0 shadow-none', STAT_COLORS[stat.color])}>
+                <CardContent className="p-4">
+                  <p className="text-xs font-medium opacity-70">{stat.label}</p>
+                  <p className="text-xl font-bold mt-1">{stat.value}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
       )}
 
@@ -111,74 +138,80 @@ export default function Suppliers() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
-        <input type="text" placeholder="Search suppliers..." value={search} onChange={e => setSearch(e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm w-64 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className="px-3 py-2 border rounded-lg text-sm bg-white">
-          <option value="">All Categories</option>
-          {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-        </select>
-        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="px-3 py-2 border rounded-lg text-sm bg-white">
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+        <Input
+          type="text"
+          placeholder="Search suppliers..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-64"
+        />
+        <Select value={filterCat} onValueChange={v => setFilterCat(v === '__all__' ? '' : v)}>
+          <SelectTrigger className="w-48"><SelectValue placeholder="All Categories" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">All Categories</SelectItem>
+            {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={filterStatus} onValueChange={v => setFilterStatus(v === '__all__' ? '' : v)}>
+          <SelectTrigger className="w-40"><SelectValue placeholder="All Status" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="__all__">All Status</SelectItem>
+            <SelectItem value="active">Active</SelectItem>
+            <SelectItem value="inactive">Inactive</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Supplier Detail Modal */}
       {selected && <SupplierDetail supplier={selected} onClose={() => setSelected(null)} />}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-gray-50 border-b">
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Supplier</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Contact</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden lg:table-cell">Category</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Terms</th>
-              <th className="text-right px-4 py-3 font-semibold text-gray-700">Outstanding</th>
-              <th className="text-right px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Total Paid</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(s => (
-              <tr key={s.id} onClick={() => setSelected(s)} className="border-b hover:bg-gray-50 cursor-pointer transition-colors">
-                <td className="px-4 py-3">
-                  <div className="font-medium text-gray-900">{s.name}</div>
-                  <div className="text-xs text-gray-500">{s.email}</div>
-                </td>
-                <td className="px-4 py-3 text-gray-600 hidden md:table-cell">{s.contact_name || '—'}</td>
-                <td className="px-4 py-3 hidden lg:table-cell">
-                  <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">{CATEGORIES.find(c => c.value === s.category)?.label || s.category}</span>
-                </td>
-                <td className="px-4 py-3 text-gray-600">Net {s.payment_terms}</td>
-                <td className="px-4 py-3 text-right font-medium">
-                  {s.outstanding > 0 ? <span className="text-amber-600">${Number(s.outstanding).toLocaleString()}</span> : <span className="text-gray-400">$0</span>}
-                </td>
-                <td className="px-4 py-3 text-right text-gray-600 hidden md:table-cell">${Number(s.total_paid).toLocaleString()}</td>
-                <td className="px-4 py-3 text-center">
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[s.status]}`}>{s.status}</span>
-                </td>
-              </tr>
-            ))}
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>Supplier</TableHead>
+              <TableHead className="hidden md:table-cell">Contact</TableHead>
+              <TableHead className="hidden lg:table-cell">Category</TableHead>
+              <TableHead>Terms</TableHead>
+              <TableHead className="text-right">Outstanding</TableHead>
+              <TableHead className="text-right hidden md:table-cell">Total Paid</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.map(s => {
+              const badge = STATUS_BADGE[s.status] || { variant: 'secondary', label: s.status };
+              return (
+                <TableRow key={s.id} onClick={() => setSelected(s)} className="cursor-pointer">
+                  <TableCell>
+                    <div className="font-medium text-gray-900">{s.name}</div>
+                    <div className="text-xs text-gray-500">{s.email}</div>
+                  </TableCell>
+                  <TableCell className="text-gray-600 hidden md:table-cell">{s.contact_name || '—'}</TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    <Badge variant="secondary">{CATEGORIES.find(c => c.value === s.category)?.label || s.category}</Badge>
+                  </TableCell>
+                  <TableCell className="text-gray-600">Net {s.payment_terms}</TableCell>
+                  <TableCell className="text-right font-medium">
+                    {s.outstanding > 0 ? <span className="text-amber-600">${Number(s.outstanding).toLocaleString()}</span> : <span className="text-gray-400">$0</span>}
+                  </TableCell>
+                  <TableCell className="text-right text-gray-600 hidden md:table-cell">${Number(s.total_paid).toLocaleString()}</TableCell>
+                  <TableCell className="text-center">
+                    <Badge variant={badge.variant}>{badge.label}</Badge>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             {filtered.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-12 text-center text-gray-400">No suppliers found</td></tr>
+              <TableRow>
+                <TableCell colSpan={7} className="text-center text-gray-400 py-12">No suppliers found</TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value, color = 'indigo' }) {
-  const colors = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', gray: 'bg-gray-50 text-gray-600', amber: 'bg-amber-50 text-amber-700', blue: 'bg-blue-50 text-blue-700' };
-  return (
-    <div className={`rounded-xl p-4 ${colors[color]}`}>
-      <p className="text-xs font-medium opacity-70">{label}</p>
-      <p className="text-xl font-bold mt-1">{value}</p>
-    </div>
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -186,50 +219,73 @@ function CreateSupplierForm({ onSubmit, onCancel }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '', contact_name: '', tax_id: '', payment_terms: 30, currency: 'AUD', category: 'other', address: '', notes: '' });
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
   return (
-    <div className="bg-white rounded-xl border p-6 mb-8">
-      <h3 className="font-bold text-lg mb-4">New Supplier</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Business Name *</label><input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Email</label><input type="email" value={form.email} onChange={e => set('email', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Phone</label><input value={form.phone} onChange={e => set('phone', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Contact Name</label><input value={form.contact_name} onChange={e => set('contact_name', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Tax ID / ABN / EIN</label><input value={form.tax_id} onChange={e => set('tax_id', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Category</label>
-          <select value={form.category} onChange={e => set('category', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-          </select>
+    <Card className="mb-8">
+      <CardContent className="p-6">
+        <h3 className="font-bold text-lg mb-4">New Supplier</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Business Name *</label><Input value={form.name} onChange={e => set('name', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Email</label><Input type="email" value={form.email} onChange={e => set('email', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Phone</label><Input value={form.phone} onChange={e => set('phone', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Contact Name</label><Input value={form.contact_name} onChange={e => set('contact_name', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Tax ID / ABN / EIN</label><Input value={form.tax_id} onChange={e => set('tax_id', e.target.value)} /></div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Category</label>
+            <Select value={form.category} onValueChange={v => set('category', v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {CATEGORIES.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Payment Terms</label>
+            <Select value={String(form.payment_terms)} onValueChange={v => set('payment_terms', Number(v))}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {PAYMENT_TERMS.map(t => <SelectItem key={t} value={String(t)}>Net {t}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Currency</label>
+            <Select value={form.currency} onValueChange={v => set('currency', v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {['AUD', 'NZD', 'GBP', 'USD', 'EUR'].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="md:col-span-3"><label className="text-xs font-medium text-gray-600 block mb-1">Address</label><Input value={form.address} onChange={e => set('address', e.target.value)} /></div>
+          <div className="md:col-span-3"><label className="text-xs font-medium text-gray-600 block mb-1">Notes</label><textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={2} className="flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20" /></div>
         </div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Payment Terms</label>
-          <select value={form.payment_terms} onChange={e => set('payment_terms', Number(e.target.value))} className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            {PAYMENT_TERMS.map(t => <option key={t} value={t}>Net {t}</option>)}
-          </select>
+        <div className="flex justify-end gap-3 mt-4">
+          <Button variant="outline" onClick={onCancel}>Cancel</Button>
+          <Button onClick={() => form.name && onSubmit(form)} disabled={!form.name}>Create Supplier</Button>
         </div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Currency</label>
-          <select value={form.currency} onChange={e => set('currency', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            {['AUD', 'NZD', 'GBP', 'USD', 'EUR'].map(c => <option key={c}>{c}</option>)}
-          </select>
-        </div>
-        <div className="md:col-span-3"><label className="text-xs font-medium text-gray-600 block mb-1">Address</label><input value={form.address} onChange={e => set('address', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div className="md:col-span-3"><label className="text-xs font-medium text-gray-600 block mb-1">Notes</label><textarea value={form.notes} onChange={e => set('notes', e.target.value)} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-      </div>
-      <div className="flex justify-end gap-3 mt-4">
-        <button onClick={onCancel} className="px-4 py-2 border rounded-lg text-sm text-gray-600 hover:bg-gray-50">Cancel</button>
-        <button onClick={() => form.name && onSubmit(form)} disabled={!form.name} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40">Create Supplier</button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
 function SupplierDetail({ supplier: s, onClose }) {
+  const badge = STATUS_BADGE[s.status] || { variant: 'secondary', label: s.status };
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex justify-between items-start mb-4">
           <div>
             <h3 className="text-xl font-bold text-gray-900">{s.name}</h3>
-            <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[s.status]}`}>{s.status}</span>
+            <Badge variant={badge.variant} className="mt-1">{badge.label}</Badge>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">x</button>
+          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-gray-400 hover:text-gray-600">
+            <span className="text-xl leading-none">&times;</span>
+          </Button>
         </div>
         <div className="space-y-3 text-sm">
           {s.contact_name && <Row label="Contact" value={s.contact_name} />}
@@ -246,7 +302,7 @@ function SupplierDetail({ supplier: s, onClose }) {
           </div>
           {s.notes && <div className="border-t pt-3 mt-3"><p className="text-xs text-gray-500 mb-1">Notes</p><p className="text-gray-700">{s.notes}</p></div>}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

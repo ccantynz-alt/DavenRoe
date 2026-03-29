@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
-import ProprietaryNotice from '../components/ProprietaryNotice';
-import LegalDisclaimer from '../components/LegalDisclaimer';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import ProprietaryNotice from '@/components/ProprietaryNotice';
+import LegalDisclaimer from '@/components/LegalDisclaimer';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Progress } from '@/components/ui/Progress';
+import { cn } from '@/lib/utils';
 
 const PILLAR_CONFIG = {
   liquidity: { label: 'Liquidity', color: 'blue', description: 'Cash position & short-term solvency' },
@@ -12,15 +18,38 @@ const PILLAR_CONFIG = {
   risk: { label: 'Risk', color: 'red', description: 'Anomaly exposure & overdue liability' },
 };
 
-const GRADE_COLORS = {
-  'A+': 'text-emerald-600 bg-emerald-50 border-emerald-200',
-  'A': 'text-emerald-600 bg-emerald-50 border-emerald-200',
-  'B+': 'text-blue-600 bg-blue-50 border-blue-200',
-  'B': 'text-blue-600 bg-blue-50 border-blue-200',
-  'C+': 'text-yellow-600 bg-yellow-50 border-yellow-200',
-  'C': 'text-yellow-600 bg-yellow-50 border-yellow-200',
-  'D': 'text-orange-600 bg-orange-50 border-orange-200',
-  'F': 'text-red-600 bg-red-50 border-red-200',
+const GRADE_BADGE_VARIANT = {
+  'A+': 'success',
+  'A': 'success',
+  'B+': 'default',
+  'B': 'default',
+  'C+': 'warning',
+  'C': 'warning',
+  'D': 'warning',
+  'F': 'destructive',
+};
+
+function scoreColor(score) {
+  if (score >= 80) return { bar: 'bg-emerald-500', text: 'text-emerald-600', bg: 'bg-emerald-50' };
+  if (score >= 60) return { bar: 'bg-blue-500', text: 'text-blue-600', bg: 'bg-blue-50' };
+  if (score >= 40) return { bar: 'bg-amber-500', text: 'text-amber-600', bg: 'bg-amber-50' };
+  return { bar: 'bg-red-500', text: 'text-red-600', bg: 'bg-red-50' };
+}
+
+function scoreBadgeVariant(score) {
+  if (score >= 80) return 'success';
+  if (score >= 60) return 'default';
+  if (score >= 40) return 'warning';
+  return 'destructive';
+}
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.08, duration: 0.4, ease: 'easeOut' } }),
+};
+
+const stagger = {
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
 function ScoreRing({ score, size = 160, strokeWidth = 12, children }) {
@@ -48,74 +77,90 @@ function ScoreRing({ score, size = 160, strokeWidth = 12, children }) {
   );
 }
 
-function PillarBar({ pillar, config, expanded, onToggle }) {
-  const score = pillar.score;
-  const color = score >= 80 ? 'bg-emerald-500' : score >= 60 ? 'bg-blue-500' : score >= 40 ? 'bg-amber-500' : 'bg-red-500';
-  const textColor = score >= 80 ? 'text-emerald-700' : score >= 60 ? 'text-blue-700' : score >= 40 ? 'text-amber-700' : 'text-red-700';
-  const bgColor = score >= 80 ? 'bg-emerald-50' : score >= 60 ? 'bg-blue-50' : score >= 40 ? 'bg-amber-50' : 'bg-red-50';
+function PillarBar({ pillar, config, expanded, onToggle, index }) {
+  const s = pillar.score;
+  const colors = scoreColor(s);
 
   return (
-    <div className={`bg-white rounded-xl border p-5 transition-all hover:shadow-md cursor-pointer ${expanded ? 'ring-2 ring-indigo-200' : ''}`} onClick={onToggle}>
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <h4 className="font-semibold text-gray-900">{config.label}</h4>
-          <p className="text-xs text-gray-400 mt-0.5">{config.description}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={`text-2xl font-bold ${textColor}`}>{score}</span>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${bgColor} ${textColor}`}>{pillar.label}</span>
-        </div>
-      </div>
-      <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-        <div className={`h-full rounded-full transition-all duration-700 ease-out ${color}`} style={{ width: `${score}%` }} />
-      </div>
-      {expanded && pillar.metrics && (
-        <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {Object.entries(pillar.metrics).map(([key, val]) => (
-            <div key={key} className="bg-gray-50 rounded-lg p-3">
-              <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">{key.replace(/_/g, ' ')}</p>
-              <p className="text-sm font-semibold text-gray-900">
-                {typeof val === 'number' ? (key.includes('rate') || key.includes('margin') || key.includes('growth') || key.includes('return')
-                  ? `${val}%`
-                  : key.includes('days') ? `${val} days`
-                  : val >= 1000 ? `$${val.toLocaleString()}` : val.toLocaleString()
-                ) : val}
-              </p>
+    <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={index}>
+      <Card
+        className={cn('cursor-pointer transition-all', expanded && 'ring-2 ring-indigo-200')}
+        onClick={onToggle}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-base">{config.label}</CardTitle>
+              <CardDescription className="mt-0.5">{config.description}</CardDescription>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
+            <div className="flex items-center gap-2">
+              <span className={cn('text-2xl font-bold', colors.text)}>{s}</span>
+              <Badge variant={scoreBadgeVariant(s)}>{pillar.label}</Badge>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Progress value={s} className="h-2.5" indicatorClassName={colors.bar} />
+          {expanded && pillar.metrics && (
+            <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {Object.entries(pillar.metrics).map(([key, val]) => (
+                <div key={key} className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">{key.replace(/_/g, ' ')}</p>
+                  <p className="text-sm font-semibold text-gray-900">
+                    {typeof val === 'number' ? (key.includes('rate') || key.includes('margin') || key.includes('growth') || key.includes('return')
+                      ? `${val}%`
+                      : key.includes('days') ? `${val} days`
+                      : val >= 1000 ? `$${val.toLocaleString()}` : val.toLocaleString()
+                    ) : val}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
-function RecommendationCard({ rec }) {
-  const styles = {
-    high: 'bg-red-50 border-red-200',
-    medium: 'bg-amber-50 border-amber-200',
-    positive: 'bg-emerald-50 border-emerald-200',
+function RecommendationCard({ rec, index }) {
+  const priorityVariant = {
+    high: 'destructive',
+    medium: 'warning',
+    positive: 'success',
   };
-  const icons = { high: '!', medium: '~', positive: '+' };
+  const styles = {
+    high: 'border-red-200 bg-red-50/50',
+    medium: 'border-amber-200 bg-amber-50/50',
+    positive: 'border-emerald-200 bg-emerald-50/50',
+  };
   const iconBg = { high: 'bg-red-500', medium: 'bg-amber-500', positive: 'bg-emerald-500' };
+  const icons = { high: '!', medium: '~', positive: '+' };
 
   return (
-    <div className={`border rounded-xl p-5 ${styles[rec.priority] || 'bg-gray-50 border-gray-200'}`}>
-      <div className="flex items-start gap-3">
-        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0 ${iconBg[rec.priority] || 'bg-gray-500'}`}>
-          {icons[rec.priority] || '?'}
-        </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h4 className="font-semibold text-sm text-gray-900">{rec.title}</h4>
-            <span className="text-[10px] uppercase tracking-wider text-gray-400 bg-white/60 px-2 py-0.5 rounded-full">{rec.pillar}</span>
+    <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={index}>
+      <Card className={cn(styles[rec.priority] || 'border-gray-200 bg-gray-50/50')}>
+        <CardContent className="p-5">
+          <div className="flex items-start gap-3">
+            <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0', iconBg[rec.priority] || 'bg-gray-500')}>
+              {icons[rec.priority] || '?'}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="font-semibold text-sm text-gray-900">{rec.title}</h4>
+                <Badge variant={priorityVariant[rec.priority] || 'secondary'} className="text-[10px]">
+                  {rec.pillar}
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-600 leading-relaxed">{rec.description}</p>
+              {rec.impact && (
+                <p className="text-xs text-gray-400 mt-2 font-medium">{rec.impact}</p>
+              )}
+            </div>
           </div>
-          <p className="text-sm text-gray-600 leading-relaxed">{rec.description}</p>
-          {rec.impact && (
-            <p className="text-xs text-gray-400 mt-2 font-medium">{rec.impact}</p>
-          )}
-        </div>
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -126,23 +171,29 @@ function TrendChart({ trend }) {
   const range = max - min || 1;
 
   return (
-    <div className="bg-white rounded-xl border p-6">
-      <h3 className="font-semibold text-gray-900 mb-1">Score Trend</h3>
-      <p className="text-xs text-gray-400 mb-6">Composite health score over time</p>
-      <div className="flex items-end gap-1.5" style={{ height: 180 }}>
-        {trend.map((t, i) => {
-          const height = ((t.composite_score - min) / range) * 140 + 20;
-          const color = t.composite_score >= 80 ? 'bg-emerald-500' : t.composite_score >= 60 ? 'bg-blue-500' : t.composite_score >= 40 ? 'bg-amber-500' : 'bg-red-500';
-          return (
-            <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-              <span className="text-[10px] font-medium text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">{t.composite_score}</span>
-              <div className={`w-full rounded-t-md transition-all duration-500 ${color} hover:opacity-80`} style={{ height }} />
-              <span className="text-[10px] text-gray-400 mt-1">{t.month.slice(5)}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    <motion.div variants={fadeUp} initial="hidden" animate="visible">
+      <Card>
+        <CardHeader>
+          <CardTitle>Score Trend</CardTitle>
+          <CardDescription>Composite health score over time</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-end gap-1.5" style={{ height: 180 }}>
+            {trend.map((t, i) => {
+              const height = ((t.composite_score - min) / range) * 140 + 20;
+              const colors = scoreColor(t.composite_score);
+              return (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
+                  <span className="text-[10px] font-medium text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">{t.composite_score}</span>
+                  <div className={cn('w-full rounded-t-md transition-all duration-500 hover:opacity-80', colors.bar)} style={{ height }} />
+                  <span className="text-[10px] text-gray-400 mt-1">{t.month.slice(5)}</span>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -164,20 +215,26 @@ function DataSummary({ data }) {
   ];
 
   return (
-    <div className="bg-white rounded-xl border p-6">
-      <h3 className="font-semibold text-gray-900 mb-1">Financial Summary</h3>
-      <p className="text-xs text-gray-400 mb-4">Key figures for current period</p>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {items.map((item, i) => (
-          <div key={i} className="bg-gray-50 rounded-lg p-3">
-            <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">{item.label}</p>
-            <p className={`text-sm font-semibold ${item.warn ? 'text-red-600' : item.highlight === false ? 'text-red-600' : item.highlight ? 'text-emerald-600' : 'text-gray-900'}`}>
-              {item.value}
-            </p>
+    <motion.div variants={fadeUp} initial="hidden" animate="visible">
+      <Card>
+        <CardHeader>
+          <CardTitle>Financial Summary</CardTitle>
+          <CardDescription>Key figures for current period</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {items.map((item, i) => (
+              <div key={i} className="bg-gray-50 rounded-lg p-3">
+                <p className="text-[10px] uppercase tracking-wider text-gray-400 mb-1">{item.label}</p>
+                <p className={cn('text-sm font-semibold', item.warn ? 'text-red-600' : item.highlight === false ? 'text-red-600' : item.highlight ? 'text-emerald-600' : 'text-gray-900')}>
+                  {item.value}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -185,7 +242,6 @@ export default function FinancialHealthScore() {
   const [scoreData, setScoreData] = useState(null);
   const [trendData, setTrendData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('overview');
   const [expandedPillar, setExpandedPillar] = useState(null);
   const toast = useToast();
 
@@ -249,145 +305,152 @@ export default function FinancialHealthScore() {
     { month: '2026-03', composite_score: 72 },
   ];
 
-  const tabs = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'pillars', label: 'Detailed Pillars' },
-    { id: 'recommendations', label: 'Recommendations' },
-    { id: 'data', label: 'Financial Data' },
-  ];
-
-  const gradeClass = GRADE_COLORS[score.grade] || 'text-gray-600 bg-gray-50 border-gray-200';
+  const gradeVariant = GRADE_BADGE_VARIANT[score.grade] || 'secondary';
 
   return (
-    <div>
+    <motion.div initial="hidden" animate="visible" variants={stagger}>
       {/* Header */}
-      <div className="mb-8">
+      <motion.div className="mb-8" variants={fadeUp}>
         <div className="flex items-center gap-3 mb-2">
           <h2 className="text-3xl font-bold text-gray-900">Financial Health Score</h2>
-          <span className={`text-xs font-bold px-3 py-1 rounded-full border ${gradeClass}`}>
+          <Badge variant={gradeVariant} className="text-xs font-bold px-3 py-1">
             Grade: {score.grade}
-          </span>
+          </Badge>
         </div>
         <p className="text-gray-500">Comprehensive financial wellness assessment powered by AI analysis across five key pillars</p>
         <LegalDisclaimer type="financial_health" className="mt-3" />
-      </div>
+      </motion.div>
 
       {/* Hero: Score Ring + Pillar Summary */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         {/* Score Ring */}
-        <div className="bg-white rounded-xl border p-8 flex flex-col items-center justify-center">
-          <ScoreRing score={score.composite_score} size={180} strokeWidth={14}>
-            <span className="text-4xl font-bold text-gray-900">{score.composite_score}</span>
-            <span className="text-xs text-gray-400 mt-1">out of 100</span>
-          </ScoreRing>
-          <p className="mt-4 text-sm text-gray-500 text-center">
-            {score.composite_score >= 80 ? 'Excellent financial health. Your business is well-positioned.' :
-             score.composite_score >= 60 ? 'Good financial health with room for improvement in key areas.' :
-             score.composite_score >= 40 ? 'Fair financial health. Several areas need attention.' :
-             'Financial health needs immediate attention across multiple areas.'}
-          </p>
-        </div>
+        <motion.div variants={fadeUp} custom={0}>
+          <Card className="h-full flex flex-col items-center justify-center p-8">
+            <ScoreRing score={score.composite_score} size={180} strokeWidth={14}>
+              <span className="text-4xl font-bold text-gray-900">{score.composite_score}</span>
+              <span className="text-xs text-gray-400 mt-1">out of 100</span>
+            </ScoreRing>
+            <p className="mt-4 text-sm text-gray-500 text-center">
+              {score.composite_score >= 80 ? 'Excellent financial health. Your business is well-positioned.' :
+               score.composite_score >= 60 ? 'Good financial health with room for improvement in key areas.' :
+               score.composite_score >= 40 ? 'Fair financial health. Several areas need attention.' :
+               'Financial health needs immediate attention across multiple areas.'}
+            </p>
+          </Card>
+        </motion.div>
 
         {/* Pillar Quick View */}
-        <div className="lg:col-span-2 bg-white rounded-xl border p-6">
-          <h3 className="font-semibold text-gray-900 mb-4">Health Pillars</h3>
-          <div className="space-y-4">
-            {Object.entries(score.pillars).map(([key, pillar]) => {
-              const cfg = PILLAR_CONFIG[key];
-              const s = pillar.score;
-              const barColor = s >= 80 ? 'bg-emerald-500' : s >= 60 ? 'bg-blue-500' : s >= 40 ? 'bg-amber-500' : 'bg-red-500';
-              const textColor = s >= 80 ? 'text-emerald-600' : s >= 60 ? 'text-blue-600' : s >= 40 ? 'text-amber-600' : 'text-red-600';
-              return (
-                <div key={key}>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-gray-700">{cfg.label}</span>
-                      <span className={`text-xs font-medium ${textColor}`}>{pillar.label}</span>
+        <motion.div className="lg:col-span-2" variants={fadeUp} custom={1}>
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Health Pillars</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {Object.entries(score.pillars).map(([key, pillar]) => {
+                  const cfg = PILLAR_CONFIG[key];
+                  const s = pillar.score;
+                  const colors = scoreColor(s);
+                  return (
+                    <div key={key}>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-700">{cfg.label}</span>
+                          <Badge variant={scoreBadgeVariant(s)} className="text-[10px] px-1.5 py-0">
+                            {pillar.label}
+                          </Badge>
+                        </div>
+                        <span className={cn('text-sm font-bold', colors.text)}>{s}/100</span>
+                      </div>
+                      <Progress value={s} indicatorClassName={colors.bar} />
                     </div>
-                    <span className={`text-sm font-bold ${textColor}`}>{s}/100</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-700 ${barColor}`} style={{ width: `${s}%` }} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
-            <p className="text-xs text-gray-400">Weighted: Liquidity 25% | Profitability 25% | Efficiency 20% | Growth 15% | Risk 15%</p>
-          </div>
-        </div>
+                  );
+                })}
+              </div>
+              <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between">
+                <p className="text-xs text-gray-400">Weighted: Liquidity 25% | Profitability 25% | Efficiency 20% | Growth 15% | Risk 15%</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-        {tabs.map(t => (
-          <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-              activeTab === t.id ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <Tabs defaultValue="overview" className="mb-8">
+        <motion.div variants={fadeUp} custom={2}>
+          <TabsList className="mb-6">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="pillars">Detailed Pillars</TabsTrigger>
+            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+            <TabsTrigger value="data">Financial Data</TabsTrigger>
+          </TabsList>
+        </motion.div>
 
-      {/* Tab Content */}
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <TrendChart trend={trend} />
-          <div className="space-y-4">
-            <h3 className="font-semibold text-gray-900">Top Recommendations</h3>
-            {(score.recommendations || []).slice(0, 3).map((rec, i) => (
-              <RecommendationCard key={i} rec={rec} />
-            ))}
+        <TabsContent value="overview">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <TrendChart trend={trend} />
+            <motion.div className="space-y-4" variants={stagger} initial="hidden" animate="visible">
+              <h3 className="font-semibold text-gray-900">Top Recommendations</h3>
+              {(score.recommendations || []).slice(0, 3).map((rec, i) => (
+                <RecommendationCard key={i} rec={rec} index={i} />
+              ))}
+            </motion.div>
           </div>
-        </div>
-      )}
+        </TabsContent>
 
-      {activeTab === 'pillars' && (
-        <div className="space-y-4">
-          {Object.entries(score.pillars).map(([key, pillar]) => (
-            <PillarBar
-              key={key}
-              pillar={pillar}
-              config={PILLAR_CONFIG[key]}
-              expanded={expandedPillar === key}
-              onToggle={() => setExpandedPillar(expandedPillar === key ? null : key)}
-            />
-          ))}
-        </div>
-      )}
+        <TabsContent value="pillars">
+          <motion.div className="space-y-4" variants={stagger} initial="hidden" animate="visible">
+            {Object.entries(score.pillars).map(([key, pillar], i) => (
+              <PillarBar
+                key={key}
+                pillar={pillar}
+                config={PILLAR_CONFIG[key]}
+                expanded={expandedPillar === key}
+                onToggle={() => setExpandedPillar(expandedPillar === key ? null : key)}
+                index={i}
+              />
+            ))}
+          </motion.div>
+        </TabsContent>
 
-      {activeTab === 'recommendations' && (
-        <div className="space-y-4">
-          {(score.recommendations || []).length === 0 ? (
-            <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-8 text-center">
-              <p className="text-emerald-700 font-medium">All systems performing well</p>
-              <p className="text-emerald-600 text-sm mt-1">No actionable recommendations at this time.</p>
-            </div>
-          ) : (
-            score.recommendations.map((rec, i) => <RecommendationCard key={i} rec={rec} />)
-          )}
-        </div>
-      )}
+        <TabsContent value="recommendations">
+          <motion.div className="space-y-4" variants={stagger} initial="hidden" animate="visible">
+            {(score.recommendations || []).length === 0 ? (
+              <Card className="border-emerald-200 bg-emerald-50">
+                <CardContent className="p-8 text-center">
+                  <p className="text-emerald-700 font-medium">All systems performing well</p>
+                  <p className="text-emerald-600 text-sm mt-1">No actionable recommendations at this time.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              score.recommendations.map((rec, i) => <RecommendationCard key={i} rec={rec} index={i} />)
+            )}
+          </motion.div>
+        </TabsContent>
 
-      {activeTab === 'data' && <DataSummary data={score.data_summary} />}
+        <TabsContent value="data">
+          <DataSummary data={score.data_summary} />
+        </TabsContent>
+      </Tabs>
 
       {/* Benchmark Context */}
-      <div className="mt-8 bg-gray-50 rounded-xl border border-gray-200 p-6">
-        <h3 className="font-semibold text-gray-900 mb-1">About This Score</h3>
-        <p className="text-sm text-gray-500 leading-relaxed">
-          Your Financial Health Score is calculated from real-time accounting data across five pillars:
-          liquidity, profitability, efficiency, growth, and risk. Each pillar is weighted and benchmarked
-          against industry standards for professional services businesses. Scores update automatically as
-          new transactions are recorded, invoices are sent, and payments are received. No competitor offers
-          this level of continuous financial wellness monitoring.
-        </p>
-      </div>
+      <motion.div variants={fadeUp} custom={3}>
+        <Card className="bg-gray-50 border-gray-200">
+          <CardHeader>
+            <CardTitle>About This Score</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-500 leading-relaxed">
+              Your Financial Health Score is calculated from real-time accounting data across five pillars:
+              liquidity, profitability, efficiency, growth, and risk. Each pillar is weighted and benchmarked
+              against industry standards for professional services businesses. Scores update automatically as
+              new transactions are recorded, invoices are sent, and payments are received. No competitor offers
+              this level of continuous financial wellness monitoring.
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
       <ProprietaryNotice />
-    </div>
+    </motion.div>
   );
 }

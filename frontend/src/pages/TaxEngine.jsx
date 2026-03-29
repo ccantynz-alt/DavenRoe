@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { calculateGST, calculateWHT, getTreaties } from '../services/api';
+import { motion } from 'framer-motion';
+import { calculateGST, calculateWHT, getTreaties } from '@/services/api';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
 
 export default function TaxEngine() {
   const [activeTab, setActiveTab] = useState('gst');
@@ -54,136 +62,179 @@ export default function TaxEngine() {
     setLoading(false);
   };
 
+  const handleTabChange = (value) => {
+    setActiveTab(value);
+    setResult(null);
+  };
+
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
       <h2 className="text-3xl font-bold mb-2">Tax Engine</h2>
       <p className="text-gray-500 mb-6">Deterministic tax calculations based on published legislation</p>
-      <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-8 text-xs text-amber-700">
-        Tax calculations are based on published rates and rules as of the date shown. Tax law is subject to change, interpretation, and jurisdiction-specific exceptions. These calculations are for informational purposes only and do not constitute tax advice. Always verify with a qualified tax professional before filing.
-      </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-8">
-        {[
-          { id: 'gst', label: 'GST / VAT' },
-          { id: 'wht', label: 'Cross-Border WHT' },
-          { id: 'treaties', label: 'Tax Treaties' },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => { setActiveTab(tab.id); setResult(null); }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'bg-astra-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Card className="mb-8 border-amber-200 bg-amber-50 shadow-none hover:shadow-none">
+        <CardContent className="px-4 py-2.5 pt-2.5">
+          <p className="text-xs text-amber-700">
+            Tax calculations are based on published rates and rules as of the date shown. Tax law is subject to change, interpretation, and jurisdiction-specific exceptions. These calculations are for informational purposes only and do not constitute tax advice. Always verify with a qualified tax professional before filing.
+          </p>
+        </CardContent>
+      </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Input */}
-        <div className="bg-white rounded-xl border p-6">
-          {activeTab === 'gst' && (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Calculate GST / VAT</h3>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Jurisdiction</label>
-                <select value={gstJurisdiction} onChange={(e) => setGstJurisdiction(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2">
-                  <option value="AU">Australia (10% GST)</option>
-                  <option value="NZ">New Zealand (15% GST)</option>
-                  <option value="GB">United Kingdom (20% VAT)</option>
-                  <option value="US">United States (No federal GST)</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Net Amount</label>
-                <input type="number" value={gstAmount} onChange={(e) => setGstAmount(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2" />
-              </div>
-              <button onClick={handleGST} disabled={loading}
-                className="w-full bg-astra-600 text-white rounded-lg py-2 font-medium hover:bg-astra-700 disabled:opacity-50">
-                {loading ? 'Calculating...' : 'Calculate'}
-              </button>
-            </div>
-          )}
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="mb-8">
+        <TabsList>
+          <TabsTrigger value="gst">GST / VAT</TabsTrigger>
+          <TabsTrigger value="wht">Cross-Border WHT</TabsTrigger>
+          <TabsTrigger value="treaties">Tax Treaties</TabsTrigger>
+        </TabsList>
 
-          {activeTab === 'wht' && (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Cross-Border Withholding Tax</h3>
-              <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+          {/* Input Card */}
+          <Card>
+            <TabsContent value="gst" className="mt-0">
+              <CardHeader>
+                <CardTitle>Calculate GST / VAT</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Payer Country</label>
-                  <select value={whtPayer} onChange={(e) => setWhtPayer(e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2">
-                    <option value="US">United States</option>
-                    <option value="AU">Australia</option>
-                    <option value="NZ">New Zealand</option>
-                    <option value="GB">United Kingdom</option>
-                  </select>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Jurisdiction</label>
+                  <Select value={gstJurisdiction} onValueChange={setGstJurisdiction}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select jurisdiction" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="AU">Australia (10% GST)</SelectItem>
+                      <SelectItem value="NZ">New Zealand (15% GST)</SelectItem>
+                      <SelectItem value="GB">United Kingdom (20% VAT)</SelectItem>
+                      <SelectItem value="US">United States (No federal GST)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Payee Country</label>
-                  <select value={whtPayee} onChange={(e) => setWhtPayee(e.target.value)}
-                    className="w-full border rounded-lg px-3 py-2">
-                    <option value="NZ">New Zealand</option>
-                    <option value="AU">Australia</option>
-                    <option value="US">United States</option>
-                    <option value="GB">United Kingdom</option>
-                  </select>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Net Amount</label>
+                  <Input
+                    type="number"
+                    value={gstAmount}
+                    onChange={(e) => setGstAmount(e.target.value)}
+                  />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Gross Amount</label>
-                <input type="number" value={whtAmount} onChange={(e) => setWhtAmount(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Income Type</label>
-                <select value={whtType} onChange={(e) => setWhtType(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2">
-                  <option value="services">Services</option>
-                  <option value="dividends">Dividends</option>
-                  <option value="interest">Interest</option>
-                  <option value="royalties">Royalties</option>
-                </select>
-              </div>
-              <button onClick={handleWHT} disabled={loading}
-                className="w-full bg-astra-600 text-white rounded-lg py-2 font-medium hover:bg-astra-700 disabled:opacity-50">
-                {loading ? 'Calculating...' : 'Calculate WHT'}
-              </button>
-            </div>
-          )}
+                <Button onClick={handleGST} disabled={loading} className="w-full">
+                  {loading ? 'Calculating...' : 'Calculate'}
+                </Button>
+              </CardContent>
+            </TabsContent>
 
-          {activeTab === 'treaties' && (
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Double Tax Agreements</h3>
-              <p className="text-sm text-gray-500">
-                View all 6 bilateral DTAs loaded in the engine (US, AU, NZ, GB).
-              </p>
-              <button onClick={handleTreaties} disabled={loading}
-                className="w-full bg-astra-600 text-white rounded-lg py-2 font-medium hover:bg-astra-700 disabled:opacity-50">
-                {loading ? 'Loading...' : 'Load Treaties'}
-              </button>
-            </div>
-          )}
-        </div>
+            <TabsContent value="wht" className="mt-0">
+              <CardHeader>
+                <CardTitle>Cross-Border Withholding Tax</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Payer Country</label>
+                    <Select value={whtPayer} onValueChange={setWhtPayer}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="US">United States</SelectItem>
+                        <SelectItem value="AU">Australia</SelectItem>
+                        <SelectItem value="NZ">New Zealand</SelectItem>
+                        <SelectItem value="GB">United Kingdom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Payee Country</label>
+                    <Select value={whtPayee} onValueChange={setWhtPayee}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="NZ">New Zealand</SelectItem>
+                        <SelectItem value="AU">Australia</SelectItem>
+                        <SelectItem value="US">United States</SelectItem>
+                        <SelectItem value="GB">United Kingdom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Gross Amount</label>
+                  <Input
+                    type="number"
+                    value={whtAmount}
+                    onChange={(e) => setWhtAmount(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Income Type</label>
+                  <Select value={whtType} onValueChange={setWhtType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select income type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="services">Services</SelectItem>
+                      <SelectItem value="dividends">Dividends</SelectItem>
+                      <SelectItem value="interest">Interest</SelectItem>
+                      <SelectItem value="royalties">Royalties</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button onClick={handleWHT} disabled={loading} className="w-full">
+                  {loading ? 'Calculating...' : 'Calculate WHT'}
+                </Button>
+              </CardContent>
+            </TabsContent>
 
-        {/* Result */}
-        <div className="bg-white rounded-xl border p-6">
-          <h3 className="font-semibold text-lg mb-4">Result</h3>
-          {result ? (
-            <pre className="text-sm bg-gray-50 rounded-lg p-4 overflow-auto whitespace-pre-wrap">
-              {JSON.stringify(result, null, 2)}
-            </pre>
-          ) : (
-            <p className="text-gray-400 text-sm">Run a calculation to see results</p>
-          )}
+            <TabsContent value="treaties" className="mt-0">
+              <CardHeader>
+                <CardTitle>Double Tax Agreements</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-gray-500">
+                  View all 6 bilateral DTAs loaded in the engine (US, AU, NZ, GB).
+                </p>
+                <Button onClick={handleTreaties} disabled={loading} className="w-full">
+                  {loading ? 'Loading...' : 'Load Treaties'}
+                </Button>
+              </CardContent>
+            </TabsContent>
+          </Card>
+
+          {/* Result Card */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Result</CardTitle>
+                {result && !result.error && (
+                  <Badge variant="success">Calculated</Badge>
+                )}
+                {result?.error && (
+                  <Badge variant="destructive">Error</Badge>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {result ? (
+                <motion.pre
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-sm bg-gray-50 rounded-lg p-4 overflow-auto whitespace-pre-wrap"
+                >
+                  {JSON.stringify(result, null, 2)}
+                </motion.pre>
+              ) : (
+                <p className="text-gray-400 text-sm">Run a calculation to see results</p>
+              )}
+            </CardContent>
+          </Card>
         </div>
-      </div>
-    </div>
+      </Tabs>
+    </motion.div>
   );
 }

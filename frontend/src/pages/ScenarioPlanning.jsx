@@ -1,6 +1,18 @@
 import { useState } from 'react';
-import { useToast } from '../components/Toast';
-import ProprietaryNotice from '../components/ProprietaryNotice';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '@/components/Toast';
+import ProprietaryNotice from '@/components/ProprietaryNotice';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Badge } from '@/components/ui/Badge';
+import {
+  Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
+} from '@/components/ui/Table';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from '@/components/ui/Dialog';
+import { cn } from '@/lib/utils';
 
 const PRESETS = [
   { id: 'hire', label: 'Hire new employees', icon: '👤', fields: ['num_hires', 'avg_salary', 'start_month'] },
@@ -136,6 +148,12 @@ function generateInsights(baseline, scenarioMonths, baselineMonths) {
 
 const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n);
 
+const fadeUp = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.35, ease: 'easeOut' },
+};
+
 export default function ScenarioPlanning() {
   const toast = useToast();
   const [baseline, setBaseline] = useState({
@@ -181,252 +199,350 @@ export default function ScenarioPlanning() {
 
   return (
     <div className="space-y-6">
-      <div>
+      <motion.div {...fadeUp}>
         <h1 className="text-2xl font-bold text-gray-900">Scenario Planning</h1>
         <p className="text-sm text-gray-500 mt-0.5">Model "what if" scenarios and see the 12-month financial impact</p>
-      </div>
+      </motion.div>
 
       {/* Baseline inputs */}
-      <div className="bg-white border rounded-xl p-5">
-        <h3 className="font-semibold text-gray-900 mb-3">Current Baseline</h3>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Monthly Revenue</label>
-            <input type="number" value={baseline.monthly_revenue}
-              onChange={e => setBaseline(b => ({ ...b, monthly_revenue: parseFloat(e.target.value) || 0 }))}
-              className="w-full border rounded-lg px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Monthly Expenses</label>
-            <input type="number" value={baseline.monthly_expenses}
-              onChange={e => setBaseline(b => ({ ...b, monthly_expenses: parseFloat(e.target.value) || 0 }))}
-              className="w-full border rounded-lg px-3 py-2 text-sm" />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-500 mb-1">Cash On Hand</label>
-            <input type="number" value={baseline.cash_on_hand}
-              onChange={e => setBaseline(b => ({ ...b, cash_on_hand: parseFloat(e.target.value) || 0 }))}
-              className="w-full border rounded-lg px-3 py-2 text-sm" />
-          </div>
-        </div>
-      </div>
+      <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.05 }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Current Baseline</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Monthly Revenue</label>
+                <Input
+                  type="number"
+                  value={baseline.monthly_revenue}
+                  onChange={e => setBaseline(b => ({ ...b, monthly_revenue: parseFloat(e.target.value) || 0 }))}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Monthly Expenses</label>
+                <Input
+                  type="number"
+                  value={baseline.monthly_expenses}
+                  onChange={e => setBaseline(b => ({ ...b, monthly_expenses: parseFloat(e.target.value) || 0 }))}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Cash On Hand</label>
+                <Input
+                  type="number"
+                  value={baseline.cash_on_hand}
+                  onChange={e => setBaseline(b => ({ ...b, cash_on_hand: parseFloat(e.target.value) || 0 }))}
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Active scenarios */}
-      <div className="bg-white border rounded-xl p-5">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="font-semibold text-gray-900">Scenarios ({scenarios.length})</h3>
-          <button onClick={() => setShowAdd(true)}
-            className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-            + Add Scenario
-          </button>
-        </div>
-        {scenarios.length === 0 ? (
-          <p className="text-sm text-gray-400 py-4 text-center">Add scenarios above to model different outcomes</p>
-        ) : (
-          <div className="space-y-2">
-            {scenarios.map((sc, idx) => {
-              const preset = PRESETS.find(p => p.id === sc.type);
-              return (
-                <div key={idx} className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2.5">
-                  <div className="flex items-center gap-3">
-                    <span className="text-lg">{preset?.icon || '📋'}</span>
-                    <div>
-                      <p className="text-sm font-medium text-gray-800">{sc.label}</p>
-                      <p className="text-xs text-gray-400">
-                        {Object.entries(sc.params).filter(([, v]) => v).map(([k, v]) =>
-                          `${FIELD_LABELS[k]?.split(' ').slice(0, 2).join(' ') || k}: ${v}`
-                        ).join(' · ')}
-                      </p>
-                    </div>
-                  </div>
-                  <button onClick={() => removeScenario(idx)} className="text-gray-400 hover:text-red-500 text-sm">✕</button>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Chart: Cash flow projection */}
-      <div className="bg-white border rounded-xl p-5">
-        <h3 className="font-semibold text-gray-900 mb-4">12-Month Cash Flow Projection</h3>
-        <div className="relative" style={{ height: chartH + 40 }}>
-          {/* Zero line */}
-          {minCash < 0 && (
-            <div className="absolute left-0 right-0 border-t border-dashed border-red-300"
-              style={{ top: toY(0) }}>
-              <span className="text-[10px] text-red-400 absolute -top-3 left-0">$0</span>
-            </div>
-          )}
-
-          {/* Baseline line */}
-          <svg className="absolute inset-0 w-full" style={{ height: chartH }} viewBox={`0 0 100 ${chartH}`} preserveAspectRatio="none">
-            <polyline fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4 2"
-              points={baselineMonths.map((m, i) => `${(i / 11) * 100},${toY(m.cash_balance)}`).join(' ')} />
-            {scenarioMonths && (
-              <polyline fill="none" stroke="#3b82f6" strokeWidth="2"
-                points={scenarioMonths.map((m, i) => `${(i / 11) * 100},${toY(m.cash_balance)}`).join(' ')} />
-            )}
-          </svg>
-
-          {/* Month labels */}
-          <div className="absolute bottom-0 left-0 right-0 flex justify-between">
-            {baselineMonths.map(m => (
-              <span key={m.month} className="text-[10px] text-gray-400">{m.label}</span>
-            ))}
-          </div>
-
-          {/* Legend */}
-          <div className="absolute top-0 right-0 flex gap-4 text-xs">
-            <span className="flex items-center gap-1">
-              <span className="w-4 h-0.5 bg-gray-400 inline-block" style={{ borderTop: '2px dashed #94a3b8' }} />
-              Baseline
-            </span>
-            {scenarioMonths && (
-              <span className="flex items-center gap-1">
-                <span className="w-4 h-0.5 bg-blue-500 inline-block" />
-                With Scenarios
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Side-by-side comparison table */}
-      {scenarioMonths && (
-        <div className="bg-white border rounded-xl p-5">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-semibold text-gray-900">Month-by-Month Comparison</h3>
-            <button onClick={() => setComparing(!comparing)}
-              className="text-sm text-blue-600 hover:underline">{comparing ? 'Hide' : 'Show'} details</button>
-          </div>
-          {comparing && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-xs text-gray-500 border-b">
-                    <th className="pb-2 text-left font-medium">Month</th>
-                    <th className="pb-2 text-right font-medium">Baseline Cash</th>
-                    <th className="pb-2 text-right font-medium">Scenario Cash</th>
-                    <th className="pb-2 text-right font-medium">Difference</th>
-                    <th className="pb-2 text-right font-medium">Scenario Revenue</th>
-                    <th className="pb-2 text-right font-medium">Scenario Expenses</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {baselineMonths.map((bm, i) => {
-                    const sm = scenarioMonths[i];
-                    const diff = sm.cash_balance - bm.cash_balance;
+      <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.1 }}>
+        <Card>
+          <CardHeader className="flex-row items-center justify-between space-y-0">
+            <CardTitle>
+              Scenarios
+              <Badge variant="secondary" className="ml-2 align-middle">{scenarios.length}</Badge>
+            </CardTitle>
+            <Button size="sm" onClick={() => setShowAdd(true)}>
+              + Add Scenario
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {scenarios.length === 0 ? (
+              <p className="text-sm text-gray-400 py-4 text-center">Add scenarios above to model different outcomes</p>
+            ) : (
+              <div className="space-y-2">
+                <AnimatePresence>
+                  {scenarios.map((sc, idx) => {
+                    const preset = PRESETS.find(p => p.id === sc.type);
                     return (
-                      <tr key={i} className="border-b last:border-0">
-                        <td className="py-2 text-gray-700">{bm.label}</td>
-                        <td className="py-2 text-right text-gray-500">{fmt(bm.cash_balance)}</td>
-                        <td className={`py-2 text-right font-medium ${sm.cash_balance < 0 ? 'text-red-600' : 'text-gray-900'}`}>
-                          {fmt(sm.cash_balance)}
-                        </td>
-                        <td className={`py-2 text-right ${diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {diff >= 0 ? '+' : ''}{fmt(diff)}
-                        </td>
-                        <td className="py-2 text-right text-gray-500">{fmt(sm.revenue)}</td>
-                        <td className="py-2 text-right text-gray-500">{fmt(sm.expenses)}</td>
-                      </tr>
+                      <motion.div
+                        key={`${sc.type}-${idx}`}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 12 }}
+                        transition={{ duration: 0.25 }}
+                        className="flex items-center justify-between bg-gray-50 rounded-lg px-4 py-2.5"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">{preset?.icon || '📋'}</span>
+                          <div>
+                            <p className="text-sm font-medium text-gray-800">{sc.label}</p>
+                            <p className="text-xs text-gray-400">
+                              {Object.entries(sc.params).filter(([, v]) => v).map(([k, v]) =>
+                                `${FIELD_LABELS[k]?.split(' ').slice(0, 2).join(' ') || k}: ${v}`
+                              ).join(' · ')}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-gray-400 hover:text-red-500"
+                          onClick={() => removeScenario(idx)}
+                        >
+                          ✕
+                        </Button>
+                      </motion.div>
                     );
                   })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* AI Insights */}
-      {insights.length > 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5">
-          <h3 className="font-semibold text-blue-900 mb-3">AI Analysis</h3>
-          <div className="space-y-2">
-            {insights.map((insight, i) => (
-              <p key={i} className={`text-sm ${insight.startsWith('Warning') ? 'text-red-700 font-medium' : 'text-blue-800'}`}>
-                {insight}
-              </p>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Summary cards */}
-      {scenarioMonths && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Year-End Cash (Baseline)</p>
-            <p className="text-xl font-bold text-gray-600">{fmt(baselineMonths[11].cash_balance)}</p>
-          </div>
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Year-End Cash (Scenario)</p>
-            <p className={`text-xl font-bold ${scenarioMonths[11].cash_balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
-              {fmt(scenarioMonths[11].cash_balance)}
-            </p>
-          </div>
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Net Impact</p>
-            <p className={`text-xl font-bold ${scenarioMonths[11].cash_balance - baselineMonths[11].cash_balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {fmt(scenarioMonths[11].cash_balance - baselineMonths[11].cash_balance)}
-            </p>
-          </div>
-          <div className="bg-white border rounded-xl p-4">
-            <p className="text-xs text-gray-500 mb-1">Months Until Negative</p>
-            <p className="text-xl font-bold text-gray-900">
-              {scenarioMonths.find(m => m.cash_balance < 0)
-                ? scenarioMonths.findIndex(m => m.cash_balance < 0) + 1
-                : 'Never'}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Add scenario modal */}
-      {showAdd && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => { setShowAdd(false); setAddType(null); setAddParams({}); }}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-bold mb-4">Add Scenario</h2>
-
-            {!addType ? (
-              <div className="grid grid-cols-2 gap-3">
-                {PRESETS.map(p => (
-                  <button key={p.id} onClick={() => setAddType(p.id)}
-                    className="flex items-center gap-3 p-4 border rounded-xl hover:bg-gray-50 text-left transition">
-                    <span className="text-2xl">{p.icon}</span>
-                    <span className="text-sm font-medium text-gray-800">{p.label}</span>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <button onClick={() => { setAddType(null); setAddParams({}); }}
-                  className="text-sm text-blue-600 hover:underline mb-2">&larr; Back to scenarios</button>
-                <h3 className="font-medium text-gray-800">{PRESETS.find(p => p.id === addType)?.icon} {PRESETS.find(p => p.id === addType)?.label}</h3>
-                {PRESETS.find(p => p.id === addType)?.fields.map(field => (
-                  <div key={field}>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{FIELD_LABELS[field]}</label>
-                    {field === 'description' ? (
-                      <textarea value={addParams[field] || ''} onChange={e => setAddParams(p => ({ ...p, [field]: e.target.value }))}
-                        className="w-full border rounded-lg px-3 py-2 text-sm" rows={2} />
-                    ) : (
-                      <input type="number" value={addParams[field] || ''} onChange={e => setAddParams(p => ({ ...p, [field]: e.target.value }))}
-                        className="w-full border rounded-lg px-3 py-2 text-sm" />
-                    )}
-                  </div>
-                ))}
-                <div className="flex justify-end gap-2 mt-4">
-                  <button onClick={() => { setShowAdd(false); setAddType(null); setAddParams({}); }}
-                    className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
-                  <button onClick={addScenario}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Add Scenario</button>
-                </div>
+                </AnimatePresence>
               </div>
             )}
-          </div>
-        </div>
-      )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Chart: Cash flow projection */}
+      <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.15 }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>12-Month Cash Flow Projection</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="relative" style={{ height: chartH + 40 }}>
+              {/* Zero line */}
+              {minCash < 0 && (
+                <div className="absolute left-0 right-0 border-t border-dashed border-red-300"
+                  style={{ top: toY(0) }}>
+                  <span className="text-[10px] text-red-400 absolute -top-3 left-0">$0</span>
+                </div>
+              )}
+
+              {/* Baseline line */}
+              <svg className="absolute inset-0 w-full" style={{ height: chartH }} viewBox={`0 0 100 ${chartH}`} preserveAspectRatio="none">
+                <polyline fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeDasharray="4 2"
+                  points={baselineMonths.map((m, i) => `${(i / 11) * 100},${toY(m.cash_balance)}`).join(' ')} />
+                {scenarioMonths && (
+                  <polyline fill="none" stroke="#3b82f6" strokeWidth="2"
+                    points={scenarioMonths.map((m, i) => `${(i / 11) * 100},${toY(m.cash_balance)}`).join(' ')} />
+                )}
+              </svg>
+
+              {/* Month labels */}
+              <div className="absolute bottom-0 left-0 right-0 flex justify-between">
+                {baselineMonths.map(m => (
+                  <span key={m.month} className="text-[10px] text-gray-400">{m.label}</span>
+                ))}
+              </div>
+
+              {/* Legend */}
+              <div className="absolute top-0 right-0 flex gap-4 text-xs">
+                <span className="flex items-center gap-1">
+                  <span className="w-4 h-0.5 bg-gray-400 inline-block" style={{ borderTop: '2px dashed #94a3b8' }} />
+                  Baseline
+                </span>
+                {scenarioMonths && (
+                  <span className="flex items-center gap-1">
+                    <span className="w-4 h-0.5 bg-blue-500 inline-block" />
+                    With Scenarios
+                  </span>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Side-by-side comparison table */}
+      <AnimatePresence>
+        {scenarioMonths && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card>
+              <CardHeader className="flex-row items-center justify-between space-y-0">
+                <CardTitle>Month-by-Month Comparison</CardTitle>
+                <Button variant="link" size="sm" onClick={() => setComparing(!comparing)}>
+                  {comparing ? 'Hide' : 'Show'} details
+                </Button>
+              </CardHeader>
+              {comparing && (
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-left font-medium">Month</TableHead>
+                        <TableHead className="text-right font-medium">Baseline Cash</TableHead>
+                        <TableHead className="text-right font-medium">Scenario Cash</TableHead>
+                        <TableHead className="text-right font-medium">Difference</TableHead>
+                        <TableHead className="text-right font-medium">Scenario Revenue</TableHead>
+                        <TableHead className="text-right font-medium">Scenario Expenses</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {baselineMonths.map((bm, i) => {
+                        const sm = scenarioMonths[i];
+                        const diff = sm.cash_balance - bm.cash_balance;
+                        return (
+                          <TableRow key={i}>
+                            <TableCell className="text-gray-700">{bm.label}</TableCell>
+                            <TableCell className="text-right text-gray-500">{fmt(bm.cash_balance)}</TableCell>
+                            <TableCell className={cn('text-right font-medium', sm.cash_balance < 0 ? 'text-red-600' : 'text-gray-900')}>
+                              {fmt(sm.cash_balance)}
+                            </TableCell>
+                            <TableCell className={cn('text-right', diff >= 0 ? 'text-green-600' : 'text-red-600')}>
+                              {diff >= 0 ? '+' : ''}{fmt(diff)}
+                            </TableCell>
+                            <TableCell className="text-right text-gray-500">{fmt(sm.revenue)}</TableCell>
+                            <TableCell className="text-right text-gray-500">{fmt(sm.expenses)}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              )}
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* AI Insights */}
+      <AnimatePresence>
+        {insights.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className="border-blue-200 bg-blue-50">
+              <CardHeader>
+                <CardTitle className="text-blue-900">AI Analysis</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {insights.map((insight, i) => (
+                    <p key={i} className={cn('text-sm', insight.startsWith('Warning') ? 'text-red-700 font-medium' : 'text-blue-800')}>
+                      {insight}
+                    </p>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Summary cards */}
+      <AnimatePresence>
+        {scenarioMonths && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.3, delay: 0.05 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-3"
+          >
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs text-gray-500 mb-1">Year-End Cash (Baseline)</p>
+                <p className="text-xl font-bold text-gray-600">{fmt(baselineMonths[11].cash_balance)}</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs text-gray-500 mb-1">Year-End Cash (Scenario)</p>
+                <p className={cn('text-xl font-bold', scenarioMonths[11].cash_balance < 0 ? 'text-red-600' : 'text-green-600')}>
+                  {fmt(scenarioMonths[11].cash_balance)}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs text-gray-500 mb-1">Net Impact</p>
+                <p className={cn('text-xl font-bold', scenarioMonths[11].cash_balance - baselineMonths[11].cash_balance >= 0 ? 'text-green-600' : 'text-red-600')}>
+                  {fmt(scenarioMonths[11].cash_balance - baselineMonths[11].cash_balance)}
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs text-gray-500 mb-1">Months Until Negative</p>
+                <p className="text-xl font-bold text-gray-900">
+                  {scenarioMonths.find(m => m.cash_balance < 0)
+                    ? scenarioMonths.findIndex(m => m.cash_balance < 0) + 1
+                    : 'Never'}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Add scenario dialog */}
+      <Dialog open={showAdd} onOpenChange={(open) => { if (!open) { setShowAdd(false); setAddType(null); setAddParams({}); } }}>
+        <DialogContent className="max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Scenario</DialogTitle>
+          </DialogHeader>
+
+          {!addType ? (
+            <div className="grid grid-cols-2 gap-3">
+              {PRESETS.map(p => (
+                <Button
+                  key={p.id}
+                  variant="outline"
+                  className="flex items-center justify-start gap-3 h-auto p-4 text-left"
+                  onClick={() => setAddType(p.id)}
+                >
+                  <span className="text-2xl">{p.icon}</span>
+                  <span className="text-sm font-medium text-gray-800">{p.label}</span>
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <Button variant="link" size="sm" className="p-0" onClick={() => { setAddType(null); setAddParams({}); }}>
+                &larr; Back to scenarios
+              </Button>
+              <h3 className="font-medium text-gray-800">{PRESETS.find(p => p.id === addType)?.icon} {PRESETS.find(p => p.id === addType)?.label}</h3>
+              {PRESETS.find(p => p.id === addType)?.fields.map(field => (
+                <div key={field}>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">{FIELD_LABELS[field]}</label>
+                  {field === 'description' ? (
+                    <textarea
+                      value={addParams[field] || ''}
+                      onChange={e => setAddParams(p => ({ ...p, [field]: e.target.value }))}
+                      className={cn(
+                        'flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors',
+                        'placeholder:text-gray-400',
+                        'focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20',
+                      )}
+                      rows={2}
+                    />
+                  ) : (
+                    <Input
+                      type="number"
+                      value={addParams[field] || ''}
+                      onChange={e => setAddParams(p => ({ ...p, [field]: e.target.value }))}
+                    />
+                  )}
+                </div>
+              ))}
+              <DialogFooter className="mt-4">
+                <Button variant="outline" onClick={() => { setShowAdd(false); setAddType(null); setAddParams({}); }}>
+                  Cancel
+                </Button>
+                <Button onClick={addScenario}>
+                  Add Scenario
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <ProprietaryNotice />
     </div>
   );

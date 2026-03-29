@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
 
 const ACCOUNT_TYPES = [
   { value: 'asset', label: 'Asset', color: 'bg-blue-100 text-blue-700' },
@@ -20,21 +28,20 @@ const SUB_TYPES = {
 
 const TAX_CODES = ['GST', 'GST Free', 'BAS Excluded', 'N/A'];
 
-const STATUS_COLORS = {
-  active: 'bg-green-100 text-green-700',
-  inactive: 'bg-gray-100 text-gray-500',
+const STATUS_MAP = {
+  active: { variant: 'success', label: 'active' },
+  inactive: { variant: 'secondary', label: 'inactive' },
 };
 
 const TYPE_COLORS = {
-  asset: 'bg-blue-100 text-blue-700',
-  liability: 'bg-red-100 text-red-700',
-  equity: 'bg-purple-100 text-purple-700',
-  revenue: 'bg-green-100 text-green-700',
-  expense: 'bg-amber-100 text-amber-700',
+  asset: 'bg-blue-100 text-blue-700 border-transparent',
+  liability: 'bg-red-100 text-red-700 border-transparent',
+  equity: 'bg-purple-100 text-purple-700 border-transparent',
+  revenue: 'bg-green-100 text-green-700 border-transparent',
+  expense: 'bg-amber-100 text-amber-700 border-transparent',
 };
 
 const DEMO_ACCOUNTS = [
-  // Assets (1000-1999)
   { id: '1', code: '1000', name: 'Cash at Bank', type: 'asset', sub_type: 'Bank', description: 'Main operating bank account for day-to-day transactions', balance: 142680.50, currency: 'AUD', status: 'active', is_system: true, tax_code: 'BAS Excluded' },
   { id: '2', code: '1100', name: 'Accounts Receivable', type: 'asset', sub_type: 'Current Asset', description: 'Trade debtors — amounts owed by customers for goods and services', balance: 38450.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'GST' },
   { id: '3', code: '1200', name: 'Inventory', type: 'asset', sub_type: 'Current Asset', description: 'Stock on hand — finished goods, raw materials, and work in progress', balance: 24300.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'GST' },
@@ -43,8 +50,6 @@ const DEMO_ACCOUNTS = [
   { id: '6', code: '1510', name: 'Accumulated Depreciation', type: 'asset', sub_type: 'Fixed Asset', description: 'Accumulated depreciation on office equipment and fixtures', balance: -12500.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'BAS Excluded' },
   { id: '7', code: '1600', name: 'Motor Vehicles', type: 'asset', sub_type: 'Fixed Asset', description: 'Company-owned motor vehicles', balance: 38000.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'GST' },
   { id: '8', code: '1610', name: 'Accumulated Depreciation - Vehicles', type: 'asset', sub_type: 'Fixed Asset', description: 'Accumulated depreciation on motor vehicles', balance: -9500.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'BAS Excluded' },
-
-  // Liabilities (2000-2999)
   { id: '9', code: '2000', name: 'Accounts Payable', type: 'liability', sub_type: 'Current Liability', description: 'Trade creditors — amounts owed to suppliers', balance: 22340.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'GST' },
   { id: '10', code: '2100', name: 'GST/VAT Payable', type: 'liability', sub_type: 'Current Liability', description: 'Goods and Services Tax collected, net of input tax credits', balance: 8750.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'BAS Excluded' },
   { id: '11', code: '2200', name: 'PAYG/PAYE Payable', type: 'liability', sub_type: 'Current Liability', description: 'Pay-As-You-Go withholding tax payable to the ATO', balance: 6420.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'BAS Excluded' },
@@ -52,19 +57,13 @@ const DEMO_ACCOUNTS = [
   { id: '13', code: '2400', name: 'Credit Card', type: 'liability', sub_type: 'Current Liability', description: 'Business credit card balance', balance: 3200.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'BAS Excluded' },
   { id: '14', code: '2500', name: 'Business Loan', type: 'liability', sub_type: 'Non-Current Liability', description: 'Term business loan — ANZ Business Account', balance: 85000.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'BAS Excluded' },
   { id: '15', code: '2600', name: 'Unearned Revenue', type: 'liability', sub_type: 'Current Liability', description: 'Deposits and advance payments received for services not yet delivered', balance: 12000.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'GST' },
-
-  // Equity (3000-3999)
   { id: '16', code: '3000', name: 'Owner\'s Equity', type: 'equity', sub_type: 'Owner\'s Equity', description: 'Owner\'s capital contribution to the business', balance: 100000.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'N/A' },
   { id: '17', code: '3100', name: 'Retained Earnings', type: 'equity', sub_type: 'Retained Earnings', description: 'Accumulated net profit retained in the business from prior periods', balance: 67240.50, currency: 'AUD', status: 'active', is_system: true, tax_code: 'N/A' },
   { id: '18', code: '3200', name: 'Drawings', type: 'equity', sub_type: 'Drawings', description: 'Owner\'s personal withdrawals from the business', balance: -15000.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'N/A' },
-
-  // Revenue (4000-4999)
   { id: '19', code: '4000', name: 'Sales Revenue', type: 'revenue', sub_type: 'Operating Revenue', description: 'Revenue from the sale of goods and products', balance: 385200.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'GST' },
   { id: '20', code: '4100', name: 'Service Revenue', type: 'revenue', sub_type: 'Operating Revenue', description: 'Revenue from professional and consulting services', balance: 128400.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'GST' },
   { id: '21', code: '4200', name: 'Interest Income', type: 'revenue', sub_type: 'Non-Operating Revenue', description: 'Interest earned on bank accounts and term deposits', balance: 1840.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'GST Free' },
   { id: '22', code: '4300', name: 'Other Income', type: 'revenue', sub_type: 'Other Revenue', description: 'Miscellaneous income — asset disposal gains, rebates, refunds', balance: 3200.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'GST' },
-
-  // Expenses (5000-5999)
   { id: '23', code: '5000', name: 'Cost of Goods Sold', type: 'expense', sub_type: 'Direct Cost', description: 'Direct costs of purchasing or manufacturing goods sold', balance: 154080.00, currency: 'AUD', status: 'active', is_system: true, tax_code: 'GST' },
   { id: '24', code: '5100', name: 'Office Supplies', type: 'expense', sub_type: 'Operating Expense', description: 'Stationery, printing, postage, and general office consumables', balance: 4320.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'GST' },
   { id: '25', code: '5200', name: 'Rent', type: 'expense', sub_type: 'Operating Expense', description: 'Office and warehouse lease payments', balance: 36000.00, currency: 'AUD', status: 'active', is_system: false, tax_code: 'GST' },
@@ -142,15 +141,15 @@ export default function ChartOfAccounts() {
   if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Chart of Accounts</h2>
           <p className="text-gray-500 mt-1">Manage your general ledger accounts, classifications, and tax codes</p>
         </div>
-        <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        <Button onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? 'Cancel' : '+ New Account'}
-        </button>
+        </Button>
       </div>
 
       {/* Summary Cards */}
@@ -168,14 +167,27 @@ export default function ChartOfAccounts() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-6">
-        <input type="text" placeholder="Search by name or code..." value={search} onChange={e => setSearch(e.target.value)}
-          className="px-3 py-2 border rounded-lg text-sm w-64 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+        <Input
+          type="text"
+          placeholder="Search by name or code..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-64"
+        />
         <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
           {FILTER_TABS.map(tab => (
-            <button key={tab.value} onClick={() => setFilterType(tab.value)}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${filterType === tab.value ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            <Button
+              key={tab.value}
+              variant="ghost"
+              size="sm"
+              onClick={() => setFilterType(tab.value)}
+              className={cn(
+                'rounded-md',
+                filterType === tab.value && 'bg-white text-gray-900 shadow-sm hover:bg-white'
+              )}
+            >
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -184,50 +196,50 @@ export default function ChartOfAccounts() {
       {selected && <AccountDetail account={selected} onClose={() => setSelected(null)} />}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-gray-50 border-b">
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Code</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700">Account Name</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Type</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden lg:table-cell">Sub-Type</th>
-              <th className="text-right px-4 py-3 font-semibold text-gray-700">Balance</th>
-              <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Tax Code</th>
-              <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-            </tr>
-          </thead>
-          <tbody>
+      <Card className="overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>Code</TableHead>
+              <TableHead>Account Name</TableHead>
+              <TableHead className="hidden md:table-cell">Type</TableHead>
+              <TableHead className="hidden lg:table-cell">Sub-Type</TableHead>
+              <TableHead className="text-right">Balance</TableHead>
+              <TableHead className="hidden md:table-cell">Tax Code</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filtered.map(a => (
-              <tr key={a.id} onClick={() => setSelected(a)} className="border-b hover:bg-gray-50 cursor-pointer transition-colors">
-                <td className="px-4 py-3 font-mono text-gray-600">{a.code}</td>
-                <td className="px-4 py-3">
+              <TableRow key={a.id} onClick={() => setSelected(a)} className="cursor-pointer">
+                <TableCell className="font-mono text-gray-600">{a.code}</TableCell>
+                <TableCell>
                   <div className="font-medium text-gray-900">{a.name}</div>
                   <div className="text-xs text-gray-500 md:hidden">{ACCOUNT_TYPES.find(t => t.value === a.type)?.label}</div>
-                </td>
-                <td className="px-4 py-3 hidden md:table-cell">
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${TYPE_COLORS[a.type]}`}>{ACCOUNT_TYPES.find(t => t.value === a.type)?.label}</span>
-                </td>
-                <td className="px-4 py-3 text-gray-600 hidden lg:table-cell">{a.sub_type}</td>
-                <td className="px-4 py-3 text-right font-medium">
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  <Badge className={TYPE_COLORS[a.type]}>{ACCOUNT_TYPES.find(t => t.value === a.type)?.label}</Badge>
+                </TableCell>
+                <TableCell className="text-gray-600 hidden lg:table-cell">{a.sub_type}</TableCell>
+                <TableCell className="text-right font-medium">
                   {a.balance < 0
                     ? <span className="text-red-600">({formatCurrency(Math.abs(a.balance))})</span>
                     : <span className="text-gray-900">{formatCurrency(a.balance)}</span>
                   }
-                </td>
-                <td className="px-4 py-3 text-gray-600 hidden md:table-cell">{a.tax_code}</td>
-                <td className="px-4 py-3 text-center">
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[a.status]}`}>{a.status}</span>
-                </td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-gray-600 hidden md:table-cell">{a.tax_code}</TableCell>
+                <TableCell className="text-center">
+                  <Badge variant={STATUS_MAP[a.status]?.variant || 'secondary'}>{a.status}</Badge>
+                </TableCell>
+              </TableRow>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={7} className="px-4 py-12 text-center text-gray-400">No accounts found</td></tr>
+              <TableRow><TableCell colSpan={7} className="text-center text-gray-400 py-12">No accounts found</TableCell></TableRow>
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -238,10 +250,14 @@ function formatCurrency(val) {
 function StatCard({ label, value, color = 'indigo' }) {
   const colors = { indigo: 'bg-indigo-50 text-indigo-700', blue: 'bg-blue-50 text-blue-700', red: 'bg-red-50 text-red-700', purple: 'bg-purple-50 text-purple-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700' };
   return (
-    <div className={`rounded-xl p-4 ${colors[color]}`}>
-      <p className="text-xs font-medium opacity-70">{label}</p>
-      <p className="text-xl font-bold mt-1">{value}</p>
-    </div>
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
+      <Card className={cn('border-none shadow-none', colors[color])}>
+        <CardContent className="p-4">
+          <p className="text-xs font-medium opacity-70">{label}</p>
+          <p className="text-xl font-bold mt-1">{value}</p>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
@@ -252,61 +268,94 @@ function CreateAccountForm({ onSubmit, onCancel }) {
   const availableSubTypes = SUB_TYPES[form.type] || [];
 
   const handleTypeChange = (type) => {
-    set('type', type);
     setForm(f => ({ ...f, type, sub_type: '' }));
   };
 
   return (
-    <div className="bg-white rounded-xl border p-6 mb-8">
-      <h3 className="font-bold text-lg mb-4">New Account</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Account Code *</label><input value={form.code} onChange={e => set('code', e.target.value)} placeholder="e.g. 1000" maxLength={4} className="w-full px-3 py-2 border rounded-lg text-sm font-mono" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Account Name *</label><input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Type *</label>
-          <select value={form.type} onChange={e => handleTypeChange(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            {ACCOUNT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-          </select>
-        </div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Sub-Type</label>
-          <select value={form.sub_type} onChange={e => set('sub_type', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            <option value="">Select sub-type</option>
-            {availableSubTypes.map(st => <option key={st} value={st}>{st}</option>)}
-          </select>
-        </div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Tax Code</label>
-          <select value={form.tax_code} onChange={e => set('tax_code', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            {TAX_CODES.map(tc => <option key={tc} value={tc}>{tc}</option>)}
-          </select>
-        </div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Currency</label>
-          <select value={form.currency} onChange={e => set('currency', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-            {['AUD', 'NZD', 'GBP', 'USD', 'EUR'].map(c => <option key={c}>{c}</option>)}
-          </select>
-        </div>
-        <div className="md:col-span-3"><label className="text-xs font-medium text-gray-600 block mb-1">Description</label><textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-      </div>
-      <div className="flex justify-end gap-3 mt-4">
-        <button onClick={onCancel} className="px-4 py-2 border rounded-lg text-sm text-gray-600 hover:bg-gray-50">Cancel</button>
-        <button onClick={() => form.code && form.name && onSubmit(form)} disabled={!form.code || !form.name} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40">Create Account</button>
-      </div>
-    </div>
+    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <h3 className="font-bold text-lg mb-4">New Account</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Account Code *</label>
+              <Input value={form.code} onChange={e => set('code', e.target.value)} placeholder="e.g. 1000" maxLength={4} className="font-mono" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Account Name *</label>
+              <Input value={form.name} onChange={e => set('name', e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Type *</label>
+              <Select value={form.type} onValueChange={handleTypeChange}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {ACCOUNT_TYPES.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Sub-Type</label>
+              <Select value={form.sub_type} onValueChange={v => set('sub_type', v)}>
+                <SelectTrigger><SelectValue placeholder="Select sub-type" /></SelectTrigger>
+                <SelectContent>
+                  {availableSubTypes.map(st => <SelectItem key={st} value={st}>{st}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Tax Code</label>
+              <Select value={form.tax_code} onValueChange={v => set('tax_code', v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {TAX_CODES.map(tc => <SelectItem key={tc} value={tc}>{tc}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Currency</label>
+              <Select value={form.currency} onValueChange={v => set('currency', v)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {['AUD', 'NZD', 'GBP', 'USD', 'EUR'].map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="md:col-span-3">
+              <label className="text-xs font-medium text-gray-600 block mb-1">Description</label>
+              <textarea value={form.description} onChange={e => set('description', e.target.value)} rows={2} className="w-full flex rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-gray-400 focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20" />
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={onCancel}>Cancel</Button>
+            <Button onClick={() => form.code && form.name && onSubmit(form)} disabled={!form.code || !form.name}>Create Account</Button>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }
 
 function AccountDetail({ account: a, onClose }) {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[80vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex justify-between items-start mb-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="font-mono text-sm text-gray-500">{a.code}</span>
-              <span className={`text-xs font-medium px-2 py-1 rounded-full ${TYPE_COLORS[a.type]}`}>{ACCOUNT_TYPES.find(t => t.value === a.type)?.label}</span>
+              <Badge className={TYPE_COLORS[a.type]}>{ACCOUNT_TYPES.find(t => t.value === a.type)?.label}</Badge>
             </div>
             <h3 className="text-xl font-bold text-gray-900">{a.name}</h3>
-            <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[a.status]}`}>{a.status}</span>
+            <Badge variant={STATUS_MAP[a.status]?.variant || 'secondary'}>{a.status}</Badge>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">x</button>
+          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-gray-400 hover:text-gray-600">x</Button>
         </div>
         <div className="space-y-3 text-sm">
           <Row label="Account Code" value={a.code} />
@@ -320,7 +369,7 @@ function AccountDetail({ account: a, onClose }) {
           </div>
           {a.description && <div className="border-t pt-3 mt-3"><p className="text-xs text-gray-500 mb-1">Description</p><p className="text-gray-700">{a.description}</p></div>}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

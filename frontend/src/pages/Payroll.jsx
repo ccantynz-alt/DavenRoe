@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
-import LegalDisclaimer from '../components/LegalDisclaimer';
+import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import LegalDisclaimer from '@/components/LegalDisclaimer';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { cn } from '@/lib/utils';
 
 const PAY_FREQUENCIES = ['weekly', 'fortnightly', 'monthly'];
 const EMPLOYMENT_TYPES = ['full_time', 'part_time', 'casual', 'contractor'];
@@ -16,6 +26,30 @@ const US_STATES = [
 
 const SUPER_LABELS = { AU: 'Super Rate', NZ: 'KiwiSaver %', GB: 'Pension %', US: '401(k) %' };
 const SUPER_DEFAULTS = { AU: 11.5, NZ: 3, GB: 5, US: 0 };
+
+const JURISDICTION_LABELS = { AU: 'Australia', NZ: 'New Zealand', GB: 'United Kingdom', US: 'United States' };
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+};
+
+function payRunStatusVariant(status) {
+  switch (status) {
+    case 'paid': return 'success';
+    case 'approved': return 'default';
+    case 'processing': return 'warning';
+    default: return 'secondary';
+  }
+}
 
 export default function Payroll() {
   const [tab, setTab] = useState('employees');
@@ -64,7 +98,13 @@ export default function Payroll() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="flex items-center justify-between mb-8"
+      >
         <div>
           <h2 className="text-3xl font-bold">Payroll</h2>
           <p className="text-gray-500 mt-1">
@@ -72,239 +112,284 @@ export default function Payroll() {
           </p>
           <LegalDisclaimer type="payroll" className="mt-3" />
         </div>
-        <button
-          onClick={() => setShowAdd(!showAdd)}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-        >
+        <Button onClick={() => setShowAdd(!showAdd)}>
           {showAdd ? 'Cancel' : '+ Add Employee'}
-        </button>
-      </div>
+        </Button>
+      </motion.div>
 
-      {/* Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white border rounded-xl p-4">
-          <p className="text-xs text-gray-500">Total Employees</p>
-          <p className="text-2xl font-bold">{employees.length}</p>
-        </div>
-        <div className="bg-white border rounded-xl p-4">
-          <p className="text-xs text-gray-500">Active</p>
-          <p className="text-2xl font-bold text-green-600">{employees.filter(e => e.is_active !== false).length}</p>
-        </div>
-        <div className="bg-white border rounded-xl p-4">
-          <p className="text-xs text-gray-500">Annual Payroll Cost</p>
-          <p className="text-2xl font-bold">${totalPayroll.toLocaleString()}</p>
-        </div>
-        <div className="bg-white border rounded-xl p-4">
-          <p className="text-xs text-gray-500">Jurisdictions</p>
-          <div className="flex gap-1 mt-1">
-            {(jurisdictions.length > 0 ? jurisdictions : ['AU', 'NZ', 'GB', 'US']).map(j => (
-              <span key={j} className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded text-xs font-medium">{j}</span>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Summary Cards */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+      >
+        <motion.div variants={itemVariants}>
+          <Card className="p-4">
+            <p className="text-xs text-gray-500">Total Employees</p>
+            <p className="text-2xl font-bold">{employees.length}</p>
+          </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <Card className="p-4">
+            <p className="text-xs text-gray-500">Active</p>
+            <p className="text-2xl font-bold text-green-600">{employees.filter(e => e.is_active !== false).length}</p>
+          </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <Card className="p-4">
+            <p className="text-xs text-gray-500">Annual Payroll Cost</p>
+            <p className="text-2xl font-bold">${totalPayroll.toLocaleString()}</p>
+          </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <Card className="p-4">
+            <p className="text-xs text-gray-500">Jurisdictions</p>
+            <div className="flex gap-1 mt-1">
+              {(jurisdictions.length > 0 ? jurisdictions : ['AU', 'NZ', 'GB', 'US']).map(j => (
+                <Badge key={j} variant="default" className="bg-indigo-50 text-indigo-600 border-transparent">{j}</Badge>
+              ))}
+            </div>
+          </Card>
+        </motion.div>
+      </motion.div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
-        {['employees', 'pay-runs', 'leave'].map(t => (
-          <button key={t} onClick={() => { setTab(t); setSelectedPayRun(null); }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === t ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-            {t === 'pay-runs' ? 'Pay Runs' : t.charAt(0).toUpperCase() + t.slice(1)}
-          </button>
-        ))}
-      </div>
+      <Tabs value={tab} onValueChange={(val) => { setTab(val); setSelectedPayRun(null); }} className="mb-6">
+        <TabsList>
+          <TabsTrigger value="employees">Employees</TabsTrigger>
+          <TabsTrigger value="pay-runs">Pay Runs</TabsTrigger>
+          <TabsTrigger value="leave">Leave</TabsTrigger>
+        </TabsList>
 
-      {/* Add Employee Form */}
-      {showAdd && <AddEmployeeForm onCreated={(emp) => { setEmployees(prev => [emp, ...prev]); setShowAdd(false); toast.success('Employee added'); }} />}
+        {/* Add Employee Form */}
+        {showAdd && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="mt-4"
+          >
+            <AddEmployeeForm onCreated={(emp) => { setEmployees(prev => [emp, ...prev]); setShowAdd(false); toast.success('Employee added'); }} />
+          </motion.div>
+        )}
 
-      {/* Employee List */}
-      {tab === 'employees' && (
-        <div className="bg-white rounded-xl border overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Employee</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Type</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Jurisdiction</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Salary</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Contributions</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map(emp => (
-                <tr key={emp.id || emp.employee_code} className="border-b hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <p className="font-medium">{emp.full_name}</p>
-                    <p className="text-xs text-gray-400">{emp.email}</p>
-                  </td>
-                  <td className="px-4 py-3 capitalize text-gray-500">{(emp.employment_type || '').replace('_', ' ')}</td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 bg-gray-100 rounded text-xs">{emp.jurisdiction}</span>
-                    {emp.state && <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs ml-1">{emp.state}</span>}
-                  </td>
-                  <td className="px-4 py-3 font-medium">${(emp.base_salary || 0).toLocaleString()}</td>
-                  <td className="px-4 py-3 text-gray-500">
-                    {emp.jurisdiction === 'US' ? (
-                      <span>{emp.retirement_rate ? `401(k) ${emp.retirement_rate}%` : 'No 401(k)'}</span>
-                    ) : (
-                      <span>{SUPER_LABELS[emp.jurisdiction]} {emp.superannuation_rate || SUPER_DEFAULTS[emp.jurisdiction]}%</span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-0.5 rounded text-xs ${emp.is_active !== false ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                      {emp.is_active !== false ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-              {employees.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400">No employees yet</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Pay Runs */}
-      {tab === 'pay-runs' && !selectedPayRun && (
-        <div className="space-y-4">
-          <PayRunCreator onCreated={(pr) => { setPayRuns(prev => [pr, ...prev]); toast.success('Pay run created'); }} />
-          {payRuns.map(pr => (
-            <div key={pr.id} className="bg-white border rounded-xl p-5 flex items-center justify-between hover:shadow-sm transition-shadow">
-              <div>
-                <p className="font-semibold">{pr.pay_period_start} — {pr.pay_period_end}</p>
-                <p className="text-sm text-gray-500">{pr.employee_count || pr.employees_processed || '—'} employees</p>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <p className="font-semibold">${(pr.total_net || 0).toLocaleString()}</p>
-                  <p className="text-xs text-gray-400">Net pay</p>
-                </div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  pr.status === 'paid' ? 'bg-green-100 text-green-700' :
-                  pr.status === 'approved' ? 'bg-blue-100 text-blue-700' :
-                  pr.status === 'processing' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-gray-100 text-gray-600'
-                }`}>{pr.status}</span>
-                {pr.status === 'draft' && (
-                  <button onClick={() => processPayRun(pr.id)} className="px-3 py-1 bg-indigo-600 text-white rounded-lg text-xs font-medium hover:bg-indigo-700">
-                    Process
-                  </button>
-                )}
-                {pr.status === 'processing' && (
-                  <button onClick={() => approvePayRun(pr.id)} className="px-3 py-1 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700">
-                    Approve
-                  </button>
-                )}
-                {pr.payslips && pr.payslips.length > 0 && (
-                  <button onClick={() => setSelectedPayRun(pr)} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200">
-                    View Payslips
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-          {payRuns.length === 0 && (
-            <div className="bg-gray-50 border rounded-xl p-8 text-center">
-              <p className="text-gray-500 font-medium">No pay runs yet</p>
-              <p className="text-gray-400 text-sm mt-1">Create your first pay run above.</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Payslip Detail View */}
-      {tab === 'pay-runs' && selectedPayRun && (
-        <div>
-          <button onClick={() => setSelectedPayRun(null)} className="text-sm text-indigo-600 hover:text-indigo-800 mb-4 flex items-center gap-1">
-            &larr; Back to pay runs
-          </button>
-          <div className="bg-white rounded-xl border p-6 mb-4">
-            <h3 className="font-semibold text-lg mb-1">Pay Run: {selectedPayRun.pay_period_start} — {selectedPayRun.pay_period_end}</h3>
-            <div className="flex gap-6 text-sm text-gray-500">
-              <span>Gross: <strong className="text-gray-900">${(selectedPayRun.total_gross || 0).toLocaleString()}</strong></span>
-              <span>Tax: <strong className="text-gray-900">${(selectedPayRun.total_tax || 0).toLocaleString()}</strong></span>
-              <span>Super/401k: <strong className="text-gray-900">${(selectedPayRun.total_super || 0).toLocaleString()}</strong></span>
-              <span>Net: <strong className="text-green-600">${(selectedPayRun.total_net || 0).toLocaleString()}</strong></span>
-            </div>
-          </div>
-          <div className="space-y-3">
-            {(selectedPayRun.payslips || []).map(slip => (
-              <div key={slip.id} className="bg-white border rounded-xl p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="font-semibold">{slip.employee_name}</p>
-                    <div className="flex gap-2 mt-1">
-                      <span className="text-xs px-2 py-0.5 bg-gray-100 rounded">{slip.employee_code}</span>
-                      <span className="text-xs px-2 py-0.5 bg-gray-100 rounded">{slip.jurisdiction}</span>
-                      {slip.breakdown?.state && <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-600 rounded">{slip.breakdown.state}</span>}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-green-600">${slip.net_pay?.toLocaleString()}</p>
-                    <p className="text-xs text-gray-400">Net pay</p>
-                  </div>
-                </div>
-                {/* Tax breakdown */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 mt-3 pt-3 border-t border-gray-100">
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <p className="text-[10px] uppercase text-gray-400">Gross</p>
-                    <p className="text-sm font-semibold">${slip.gross_pay?.toLocaleString()}</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-2">
-                    <p className="text-[10px] uppercase text-gray-400">Tax</p>
-                    <p className="text-sm font-semibold text-red-600">${slip.tax_withheld?.toLocaleString()}</p>
-                  </div>
-                  {slip.super_contribution > 0 && (
-                    <div className="bg-gray-50 rounded-lg p-2">
-                      <p className="text-[10px] uppercase text-gray-400">{slip.jurisdiction === 'US' ? '401(k)' : slip.jurisdiction === 'NZ' ? 'KiwiSaver' : slip.jurisdiction === 'GB' ? 'Pension' : 'Super'}</p>
-                      <p className="text-sm font-semibold">${slip.super_contribution?.toLocaleString()}</p>
-                    </div>
-                  )}
-                  {Object.entries(slip.breakdown || {}).filter(([k]) => !['state', '401k_rate', 'super_rate', 'kiwisaver_rate', 'pension_rate'].includes(k)).map(([key, val]) => (
-                    <div key={key} className="bg-gray-50 rounded-lg p-2">
-                      <p className="text-[10px] uppercase text-gray-400">{key.replace(/_/g, ' ')}</p>
-                      <p className="text-sm font-semibold">{typeof val === 'number' ? `$${val.toLocaleString()}` : val}</p>
-                    </div>
+        {/* Employees Tab */}
+        <TabsContent value="employees">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+            <Card className="overflow-hidden">
+              <Table>
+                <TableHeader className="bg-gray-50">
+                  <TableRow>
+                    <TableHead>Employee</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Jurisdiction</TableHead>
+                    <TableHead>Salary</TableHead>
+                    <TableHead>Contributions</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {employees.map(emp => (
+                    <TableRow key={emp.id || emp.employee_code}>
+                      <TableCell>
+                        <p className="font-medium">{emp.full_name}</p>
+                        <p className="text-xs text-gray-400">{emp.email}</p>
+                      </TableCell>
+                      <TableCell className="capitalize text-gray-500">{(emp.employment_type || '').replace('_', ' ')}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Badge variant="secondary">{emp.jurisdiction}</Badge>
+                          {emp.state && <Badge className="bg-blue-50 text-blue-600 border-transparent">{emp.state}</Badge>}
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">${(emp.base_salary || 0).toLocaleString()}</TableCell>
+                      <TableCell className="text-gray-500">
+                        {emp.jurisdiction === 'US' ? (
+                          <span>{emp.retirement_rate ? `401(k) ${emp.retirement_rate}%` : 'No 401(k)'}</span>
+                        ) : (
+                          <span>{SUPER_LABELS[emp.jurisdiction]} {emp.superannuation_rate || SUPER_DEFAULTS[emp.jurisdiction]}%</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={emp.is_active !== false ? 'success' : 'secondary'}>
+                          {emp.is_active !== false ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+                  {employees.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center text-gray-400 py-8">No employees yet</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </Card>
+          </motion.div>
+        </TabsContent>
 
-      {/* Leave */}
-      {tab === 'leave' && (
-        <div className="bg-white rounded-xl border overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Employee</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Annual Leave</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Sick Leave</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Personal Leave</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Long Service</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map(emp => {
-                const leave = emp.leave_balances || {};
-                return (
-                  <tr key={emp.id || emp.employee_code} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium">{emp.full_name}</td>
-                    <td className="px-4 py-3">{leave.annual ?? 20} days</td>
-                    <td className="px-4 py-3">{leave.sick ?? 10} days</td>
-                    <td className="px-4 py-3">{leave.personal ?? 5} days</td>
-                    <td className="px-4 py-3">{leave.long_service ?? 0} days</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+        {/* Pay Runs Tab */}
+        <TabsContent value="pay-runs">
+          {!selectedPayRun && (
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="space-y-4"
+            >
+              <motion.div variants={itemVariants}>
+                <PayRunCreator onCreated={(pr) => { setPayRuns(prev => [pr, ...prev]); toast.success('Pay run created'); }} />
+              </motion.div>
+              {payRuns.map(pr => (
+                <motion.div key={pr.id} variants={itemVariants}>
+                  <Card className="p-5 flex items-center justify-between">
+                    <div>
+                      <p className="font-semibold">{pr.pay_period_start} — {pr.pay_period_end}</p>
+                      <p className="text-sm text-gray-500">{pr.employee_count || pr.employees_processed || '—'} employees</p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <p className="font-semibold">${(pr.total_net || 0).toLocaleString()}</p>
+                        <p className="text-xs text-gray-400">Net pay</p>
+                      </div>
+                      <Badge variant={payRunStatusVariant(pr.status)}>{pr.status}</Badge>
+                      {pr.status === 'draft' && (
+                        <Button size="sm" onClick={() => processPayRun(pr.id)}>
+                          Process
+                        </Button>
+                      )}
+                      {pr.status === 'processing' && (
+                        <Button size="sm" variant="success" onClick={() => approvePayRun(pr.id)}>
+                          Approve
+                        </Button>
+                      )}
+                      {pr.payslips && pr.payslips.length > 0 && (
+                        <Button size="sm" variant="secondary" onClick={() => setSelectedPayRun(pr)}>
+                          View Payslips
+                        </Button>
+                      )}
+                    </div>
+                  </Card>
+                </motion.div>
+              ))}
+              {payRuns.length === 0 && (
+                <motion.div variants={itemVariants}>
+                  <Card className="p-8 text-center bg-gray-50">
+                    <p className="text-gray-500 font-medium">No pay runs yet</p>
+                    <p className="text-gray-400 text-sm mt-1">Create your first pay run above.</p>
+                  </Card>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Payslip Detail View */}
+          {selectedPayRun && (
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.3 }}>
+              <Button variant="ghost" size="sm" onClick={() => setSelectedPayRun(null)} className="mb-4">
+                <ArrowLeft className="h-4 w-4" />
+                Back to pay runs
+              </Button>
+              <Card className="p-6 mb-4">
+                <CardTitle className="mb-2">Pay Run: {selectedPayRun.pay_period_start} — {selectedPayRun.pay_period_end}</CardTitle>
+                <div className="flex gap-6 text-sm text-gray-500">
+                  <span>Gross: <strong className="text-gray-900">${(selectedPayRun.total_gross || 0).toLocaleString()}</strong></span>
+                  <span>Tax: <strong className="text-gray-900">${(selectedPayRun.total_tax || 0).toLocaleString()}</strong></span>
+                  <span>Super/401k: <strong className="text-gray-900">${(selectedPayRun.total_super || 0).toLocaleString()}</strong></span>
+                  <span>Net: <strong className="text-green-600">${(selectedPayRun.total_net || 0).toLocaleString()}</strong></span>
+                </div>
+              </Card>
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="space-y-3"
+              >
+                {(selectedPayRun.payslips || []).map(slip => (
+                  <motion.div key={slip.id} variants={itemVariants}>
+                    <Card className="p-5">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <p className="font-semibold">{slip.employee_name}</p>
+                          <div className="flex gap-2 mt-1">
+                            <Badge variant="secondary">{slip.employee_code}</Badge>
+                            <Badge variant="secondary">{slip.jurisdiction}</Badge>
+                            {slip.breakdown?.state && (
+                              <Badge className="bg-blue-50 text-blue-600 border-transparent">{slip.breakdown.state}</Badge>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-green-600">${slip.net_pay?.toLocaleString()}</p>
+                          <p className="text-xs text-gray-400">Net pay</p>
+                        </div>
+                      </div>
+                      {/* Tax breakdown */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2 mt-3 pt-3 border-t border-gray-100">
+                        <div className="bg-gray-50 rounded-lg p-2">
+                          <p className="text-[10px] uppercase text-gray-400">Gross</p>
+                          <p className="text-sm font-semibold">${slip.gross_pay?.toLocaleString()}</p>
+                        </div>
+                        <div className="bg-gray-50 rounded-lg p-2">
+                          <p className="text-[10px] uppercase text-gray-400">Tax</p>
+                          <p className="text-sm font-semibold text-red-600">${slip.tax_withheld?.toLocaleString()}</p>
+                        </div>
+                        {slip.super_contribution > 0 && (
+                          <div className="bg-gray-50 rounded-lg p-2">
+                            <p className="text-[10px] uppercase text-gray-400">{slip.jurisdiction === 'US' ? '401(k)' : slip.jurisdiction === 'NZ' ? 'KiwiSaver' : slip.jurisdiction === 'GB' ? 'Pension' : 'Super'}</p>
+                            <p className="text-sm font-semibold">${slip.super_contribution?.toLocaleString()}</p>
+                          </div>
+                        )}
+                        {Object.entries(slip.breakdown || {}).filter(([k]) => !['state', '401k_rate', 'super_rate', 'kiwisaver_rate', 'pension_rate'].includes(k)).map(([key, val]) => (
+                          <div key={key} className="bg-gray-50 rounded-lg p-2">
+                            <p className="text-[10px] uppercase text-gray-400">{key.replace(/_/g, ' ')}</p>
+                            <p className="text-sm font-semibold">{typeof val === 'number' ? `$${val.toLocaleString()}` : val}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+          )}
+        </TabsContent>
+
+        {/* Leave Tab */}
+        <TabsContent value="leave">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+            <Card className="overflow-hidden">
+              <Table>
+                <TableHeader className="bg-gray-50">
+                  <TableRow>
+                    <TableHead>Employee</TableHead>
+                    <TableHead>Annual Leave</TableHead>
+                    <TableHead>Sick Leave</TableHead>
+                    <TableHead>Personal Leave</TableHead>
+                    <TableHead>Long Service</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {employees.map(emp => {
+                    const leave = emp.leave_balances || {};
+                    return (
+                      <TableRow key={emp.id || emp.employee_code}>
+                        <TableCell className="font-medium">{emp.full_name}</TableCell>
+                        <TableCell>{leave.annual ?? 20} days</TableCell>
+                        <TableCell>{leave.sick ?? 10} days</TableCell>
+                        <TableCell>{leave.personal ?? 5} days</TableCell>
+                        <TableCell>{leave.long_service ?? 0} days</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </Card>
+          </motion.div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
@@ -344,54 +429,118 @@ function AddEmployeeForm({ onCreated }) {
   const isUS = form.jurisdiction === 'US';
 
   return (
-    <div className="bg-white border rounded-xl p-6 mb-6">
-      <h3 className="font-semibold text-lg mb-4">Add Employee</h3>
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input placeholder="Full Name" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm" required />
-        <input placeholder="Email" type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm" required />
-        <input placeholder="Employee Code" value={form.employee_code} onChange={e => setForm(f => ({ ...f, employee_code: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm" />
-        <select value={form.employment_type} onChange={e => setForm(f => ({ ...f, employment_type: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm">
-          {EMPLOYMENT_TYPES.map(t => <option key={t} value={t}>{t.replace('_', ' ')}</option>)}
-        </select>
-        <select value={form.jurisdiction} onChange={e => {
-          const j = e.target.value;
-          setForm(f => ({ ...f, jurisdiction: j, superannuation_rate: SUPER_DEFAULTS[j], state: '', retirement_rate: '' }));
-        }} className="border rounded-lg px-3 py-2 text-sm">
-          {JURISDICTIONS.map(j => <option key={j} value={j}>{j === 'AU' ? 'Australia' : j === 'NZ' ? 'New Zealand' : j === 'GB' ? 'United Kingdom' : 'United States'}</option>)}
-        </select>
-        {isUS && (
-          <select value={form.state} onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
-            className="border rounded-lg px-3 py-2 text-sm">
-            <option value="">Select State</option>
-            {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-          </select>
-        )}
-        <input placeholder="Base Salary" type="number" value={form.base_salary} onChange={e => setForm(f => ({ ...f, base_salary: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm" />
-        <select value={form.pay_frequency} onChange={e => setForm(f => ({ ...f, pay_frequency: e.target.value }))}
-          className="border rounded-lg px-3 py-2 text-sm">
-          {PAY_FREQUENCIES.map(f => <option key={f} value={f}>{f}</option>)}
-        </select>
-        {!isUS && (
-          <input placeholder={SUPER_LABELS[form.jurisdiction] || 'Super Rate %'} type="number" step="0.5"
-            value={form.superannuation_rate} onChange={e => setForm(f => ({ ...f, superannuation_rate: e.target.value }))}
-            className="border rounded-lg px-3 py-2 text-sm" />
-        )}
-        {isUS && (
-          <input placeholder="401(k) % (optional)" type="number" step="0.5" min="0" max="100"
-            value={form.retirement_rate} onChange={e => setForm(f => ({ ...f, retirement_rate: e.target.value }))}
-            className="border rounded-lg px-3 py-2 text-sm" />
-        )}
-        <button type="submit" disabled={submitting}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50">
-          {submitting ? 'Adding...' : 'Add Employee'}
-        </button>
-      </form>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Add Employee</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Input
+            placeholder="Full Name"
+            value={form.full_name}
+            onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))}
+            required
+          />
+          <Input
+            placeholder="Email"
+            type="email"
+            value={form.email}
+            onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+            required
+          />
+          <Input
+            placeholder="Employee Code"
+            value={form.employee_code}
+            onChange={e => setForm(f => ({ ...f, employee_code: e.target.value }))}
+          />
+          <Select
+            value={form.employment_type}
+            onValueChange={val => setForm(f => ({ ...f, employment_type: val }))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Employment Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {EMPLOYMENT_TYPES.map(t => (
+                <SelectItem key={t} value={t}>{t.replace('_', ' ')}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={form.jurisdiction}
+            onValueChange={val => {
+              setForm(f => ({ ...f, jurisdiction: val, superannuation_rate: SUPER_DEFAULTS[val], state: '', retirement_rate: '' }));
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Jurisdiction" />
+            </SelectTrigger>
+            <SelectContent>
+              {JURISDICTIONS.map(j => (
+                <SelectItem key={j} value={j}>{JURISDICTION_LABELS[j]}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {isUS && (
+            <Select
+              value={form.state || '_placeholder'}
+              onValueChange={val => setForm(f => ({ ...f, state: val === '_placeholder' ? '' : val }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select State" />
+              </SelectTrigger>
+              <SelectContent>
+                {US_STATES.map(s => (
+                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <Input
+            placeholder="Base Salary"
+            type="number"
+            value={form.base_salary}
+            onChange={e => setForm(f => ({ ...f, base_salary: e.target.value }))}
+          />
+          <Select
+            value={form.pay_frequency}
+            onValueChange={val => setForm(f => ({ ...f, pay_frequency: val }))}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Pay Frequency" />
+            </SelectTrigger>
+            <SelectContent>
+              {PAY_FREQUENCIES.map(freq => (
+                <SelectItem key={freq} value={freq}>{freq}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {!isUS && (
+            <Input
+              placeholder={SUPER_LABELS[form.jurisdiction] || 'Super Rate %'}
+              type="number"
+              step="0.5"
+              value={form.superannuation_rate}
+              onChange={e => setForm(f => ({ ...f, superannuation_rate: e.target.value }))}
+            />
+          )}
+          {isUS && (
+            <Input
+              placeholder="401(k) % (optional)"
+              type="number"
+              step="0.5"
+              min="0"
+              max="100"
+              value={form.retirement_rate}
+              onChange={e => setForm(f => ({ ...f, retirement_rate: e.target.value }))}
+            />
+          )}
+          <Button type="submit" disabled={submitting}>
+            {submitting ? 'Adding...' : 'Add Employee'}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -415,10 +564,14 @@ function PayRunCreator({ onCreated }) {
   };
 
   return (
-    <button onClick={create} disabled={creating}
-      className="w-full py-3 border-2 border-dashed rounded-xl text-gray-500 hover:text-indigo-600 hover:border-indigo-300 transition-colors mb-4">
+    <Button
+      variant="outline"
+      onClick={create}
+      disabled={creating}
+      className="w-full py-3 border-2 border-dashed text-gray-500 hover:text-indigo-600 hover:border-indigo-300"
+    >
       {creating ? 'Creating...' : '+ Create Pay Run for Current Period'}
-    </button>
+    </Button>
   );
 }
 

@@ -1,11 +1,22 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Input } from '@/components/ui/Input';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
 
 const STATUS_COLORS = {
-  draft: 'bg-gray-100 text-gray-700', pending_approval: 'bg-blue-100 text-blue-700', approved: 'bg-indigo-100 text-indigo-700',
-  paid: 'bg-green-100 text-green-700', overdue: 'bg-red-100 text-red-700', voided: 'bg-gray-100 text-gray-400',
-  partially_paid: 'bg-amber-100 text-amber-700',
+  draft: 'bg-gray-100 text-gray-700 border-transparent',
+  pending_approval: 'bg-blue-100 text-blue-700 border-transparent',
+  approved: 'bg-indigo-100 text-indigo-700 border-transparent',
+  paid: 'bg-green-100 text-green-700 border-transparent',
+  overdue: 'bg-red-100 text-red-700 border-transparent',
+  voided: 'bg-gray-100 text-gray-400 border-transparent',
+  partially_paid: 'bg-amber-100 text-amber-700 border-transparent',
 };
 
 const DEMO_BILLS = [
@@ -61,35 +72,44 @@ export default function Bills() {
   if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Bills</h2>
           <p className="text-gray-500 mt-1">Track supplier invoices, approvals, and payments</p>
         </div>
-        <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        <Button onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? 'Cancel' : '+ New Bill'}
-        </button>
+        </Button>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <Card label="Total Bills" value={summary.total} />
-        <Card label="Outstanding" value={`$${summary.outstanding.toLocaleString()}`} color="amber" />
-        <Card label="Overdue" value={`${summary.overdue_count} ($${summary.overdue.toLocaleString()})`} color="red" />
-        <Card label="Awaiting Approval" value={summary.pending} color="blue" />
-        <Card label="Paid This Month" value={`$${summary.paid_month.toLocaleString()}`} color="green" />
+        <StatCard label="Total Bills" value={summary.total} />
+        <StatCard label="Outstanding" value={`$${summary.outstanding.toLocaleString()}`} color="amber" />
+        <StatCard label="Overdue" value={`${summary.overdue_count} ($${summary.overdue.toLocaleString()})`} color="red" />
+        <StatCard label="Awaiting Approval" value={summary.pending} color="blue" />
+        <StatCard label="Paid This Month" value={`$${summary.paid_month.toLocaleString()}`} color="green" />
       </div>
 
       {/* Create */}
       {showCreate && <CreateBillForm onSubmit={(data) => { setBills(prev => [{ id: String(Date.now()), ...data, status: 'draft', amount_paid: 0, amount_due: data.total }, ...prev]); setShowCreate(false); toast.success('Bill created'); }} onCancel={() => setShowCreate(false)} />}
 
       {/* Filters */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="flex gap-1 mb-6 flex-wrap bg-gray-100 rounded-lg p-1 w-fit">
         {['', 'draft', 'pending_approval', 'approved', 'overdue', 'partially_paid', 'paid'].map(s => (
-          <button key={s} onClick={() => setFilterStatus(s)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterStatus === s ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+          <Button
+            key={s}
+            variant="ghost"
+            size="sm"
+            onClick={() => setFilterStatus(s)}
+            className={cn(
+              'rounded-md',
+              filterStatus === s && 'bg-white text-gray-900 shadow-sm hover:bg-white'
+            )}
+          >
             {s ? s.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'All'}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -97,53 +117,73 @@ export default function Bills() {
       {selected && <BillDetail bill={selected} onClose={() => setSelected(null)} onApprove={handleApprove} onPay={handlePay} />}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead><tr className="bg-gray-50 border-b">
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Bill #</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Supplier</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Date</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Due</th>
-            <th className="text-right px-4 py-3 font-semibold text-gray-700">Total</th>
-            <th className="text-right px-4 py-3 font-semibold text-gray-700">Due</th>
-            <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-          </tr></thead>
-          <tbody>
+      <Card className="overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>Bill #</TableHead>
+              <TableHead>Supplier</TableHead>
+              <TableHead className="hidden md:table-cell">Date</TableHead>
+              <TableHead>Due</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead className="text-right">Due</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filtered.map(b => (
-              <tr key={b.id} onClick={() => setSelected(b)} className="border-b hover:bg-gray-50 cursor-pointer transition-colors">
-                <td className="px-4 py-3 font-medium text-indigo-600">{b.bill_number}</td>
-                <td className="px-4 py-3 text-gray-900">{b.supplier_name}</td>
-                <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{b.date}</td>
-                <td className="px-4 py-3 text-gray-500">{b.due_date}</td>
-                <td className="px-4 py-3 text-right font-medium text-gray-900">{b.currency} {Number(b.total).toLocaleString()}</td>
-                <td className="px-4 py-3 text-right font-medium">{b.amount_due > 0 ? <span className="text-amber-600">${Number(b.amount_due).toLocaleString()}</span> : <span className="text-green-600">$0</span>}</td>
-                <td className="px-4 py-3 text-center"><span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[b.status]}`}>{b.status.replace('_', ' ')}</span></td>
-              </tr>
+              <TableRow key={b.id} onClick={() => setSelected(b)} className="cursor-pointer">
+                <TableCell className="font-medium text-indigo-600">{b.bill_number}</TableCell>
+                <TableCell className="text-gray-900">{b.supplier_name}</TableCell>
+                <TableCell className="text-gray-500 hidden md:table-cell">{b.date}</TableCell>
+                <TableCell className="text-gray-500">{b.due_date}</TableCell>
+                <TableCell className="text-right font-medium text-gray-900">{b.currency} {Number(b.total).toLocaleString()}</TableCell>
+                <TableCell className="text-right font-medium">{b.amount_due > 0 ? <span className="text-amber-600">${Number(b.amount_due).toLocaleString()}</span> : <span className="text-green-600">$0</span>}</TableCell>
+                <TableCell className="text-center"><Badge className={STATUS_COLORS[b.status]}>{b.status.replace('_', ' ')}</Badge></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+            {filtered.length === 0 && (
+              <TableRow><TableCell colSpan={7} className="text-center text-gray-400 py-12">No bills found</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
 }
 
-function Card({ label, value, color = 'indigo' }) {
-  const c = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700', red: 'bg-red-50 text-red-700', blue: 'bg-blue-50 text-blue-700' };
-  return <div className={`rounded-xl p-4 ${c[color]}`}><p className="text-xs font-medium opacity-70">{label}</p><p className="text-xl font-bold mt-1">{value}</p></div>;
+function StatCard({ label, value, color = 'indigo' }) {
+  const colors = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700', red: 'bg-red-50 text-red-700', blue: 'bg-blue-50 text-blue-700' };
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
+      <Card className={cn('border-none shadow-none', colors[color])}>
+        <CardContent className="p-4">
+          <p className="text-xs font-medium opacity-70">{label}</p>
+          <p className="text-xl font-bold mt-1">{value}</p>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 }
 
 function BillDetail({ bill: b, onClose, onApprove, onPay }) {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex justify-between items-start mb-6">
           <div>
             <h3 className="text-xl font-bold">{b.bill_number}</h3>
             <p className="text-gray-500">{b.supplier_name} &middot; {b.reference}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[b.status]}`}>{b.status.replace('_', ' ')}</span>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl ml-2">x</button>
+            <Badge className={STATUS_COLORS[b.status]}>{b.status.replace('_', ' ')}</Badge>
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-gray-400 hover:text-gray-600">x</Button>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
@@ -153,20 +193,32 @@ function BillDetail({ bill: b, onClose, onApprove, onPay }) {
           <div><p className="text-gray-500 text-xs">Currency</p><p className="font-medium">{b.currency}</p></div>
         </div>
 
-        <table className="w-full text-sm mb-6">
-          <thead><tr className="border-b"><th className="text-left py-2 text-gray-600">Description</th><th className="text-left py-2 text-gray-600">Account</th><th className="text-right py-2 text-gray-600">Qty</th><th className="text-right py-2 text-gray-600">Price</th><th className="text-right py-2 text-gray-600">Tax</th><th className="text-right py-2 text-gray-600">Amount</th></tr></thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Description</TableHead>
+              <TableHead>Account</TableHead>
+              <TableHead className="text-right">Qty</TableHead>
+              <TableHead className="text-right">Price</TableHead>
+              <TableHead className="text-right">Tax</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {(b.lines || []).map((l, i) => (
-              <tr key={i} className="border-b border-gray-100">
-                <td className="py-2">{l.description}</td><td className="py-2 text-gray-500">{l.account_code}</td>
-                <td className="py-2 text-right">{l.quantity}</td><td className="py-2 text-right">${Number(l.unit_price).toLocaleString()}</td>
-                <td className="py-2 text-right">{l.tax_rate}%</td><td className="py-2 text-right font-medium">${Number(l.amount).toLocaleString()}</td>
-              </tr>
+              <TableRow key={i}>
+                <TableCell>{l.description}</TableCell>
+                <TableCell className="text-gray-500">{l.account_code}</TableCell>
+                <TableCell className="text-right">{l.quantity}</TableCell>
+                <TableCell className="text-right">${Number(l.unit_price).toLocaleString()}</TableCell>
+                <TableCell className="text-right">{l.tax_rate}%</TableCell>
+                <TableCell className="text-right font-medium">${Number(l.amount).toLocaleString()}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-4">
           <div className="text-sm space-y-1 w-48">
             <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>${Number(b.subtotal).toLocaleString()}</span></div>
             <div className="flex justify-between"><span className="text-gray-500">Tax</span><span>${Number(b.tax_amount).toLocaleString()}</span></div>
@@ -177,10 +229,10 @@ function BillDetail({ bill: b, onClose, onApprove, onPay }) {
         </div>
 
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
-          {(b.status === 'draft' || b.status === 'pending_approval') && <button onClick={() => onApprove(b)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Approve</button>}
-          {(b.status === 'approved' || b.status === 'overdue' || b.status === 'partially_paid') && <button onClick={() => onPay(b)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">Mark as Paid</button>}
+          {(b.status === 'draft' || b.status === 'pending_approval') && <Button variant="default" className="bg-blue-600 hover:bg-blue-700" onClick={() => onApprove(b)}>Approve</Button>}
+          {(b.status === 'approved' || b.status === 'overdue' || b.status === 'partially_paid') && <Button variant="success" onClick={() => onPay(b)}>Mark as Paid</Button>}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -202,39 +254,66 @@ function CreateBillForm({ onSubmit, onCancel }) {
   const tax = form.lines.reduce((s, l) => s + l.quantity * l.unit_price * l.tax_rate / 100, 0);
 
   return (
-    <div className="bg-white rounded-xl border p-6 mb-8">
-      <h3 className="font-bold text-lg mb-4">New Bill</h3>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Supplier *</label><input value={form.supplier_name} onChange={e => set('supplier_name', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Bill Number</label><input value={form.bill_number} onChange={e => set('bill_number', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Date</label><input type="date" value={form.date} onChange={e => set('date', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Due Date</label><input type="date" value={form.due_date} onChange={e => set('due_date', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-      </div>
-      <table className="w-full text-sm mb-3">
-        <thead><tr className="border-b"><th className="text-left py-2">Description</th><th className="text-left py-2 w-24">Account</th><th className="text-right py-2 w-16">Qty</th><th className="text-right py-2 w-24">Price</th><th className="text-right py-2 w-16">Tax%</th><th className="text-right py-2 w-24">Amount</th></tr></thead>
-        <tbody>{form.lines.map((l, i) => (
-          <tr key={i} className="border-b border-gray-100">
-            <td className="py-1"><input value={l.description} onChange={e => updateLine(i, 'description', e.target.value)} className="w-full px-2 py-1 border rounded text-sm" /></td>
-            <td className="py-1"><input value={l.account_code} onChange={e => updateLine(i, 'account_code', e.target.value)} className="w-full px-2 py-1 border rounded text-sm" /></td>
-            <td className="py-1"><input type="number" value={l.quantity} onChange={e => updateLine(i, 'quantity', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm text-right" /></td>
-            <td className="py-1"><input type="number" value={l.unit_price} onChange={e => updateLine(i, 'unit_price', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm text-right" /></td>
-            <td className="py-1"><input type="number" value={l.tax_rate} onChange={e => updateLine(i, 'tax_rate', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm text-right" /></td>
-            <td className="py-1 text-right font-medium">${l.amount.toFixed(2)}</td>
-          </tr>
-        ))}</tbody>
-      </table>
-      <button onClick={addLine} className="text-xs text-indigo-600 font-medium hover:underline mb-4">+ Add line</button>
-      <div className="flex justify-between items-end">
-        <div className="flex gap-3">
-          <button onClick={onCancel} className="px-4 py-2 border rounded-lg text-sm">Cancel</button>
-          <button onClick={() => form.supplier_name && onSubmit({ ...form, subtotal, tax_amount: tax, total: subtotal + tax })} disabled={!form.supplier_name} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40">Create Bill</button>
-        </div>
-        <div className="text-sm text-right space-y-1">
-          <div>Subtotal: <span className="font-medium">${subtotal.toFixed(2)}</span></div>
-          <div>Tax: <span className="font-medium">${tax.toFixed(2)}</span></div>
-          <div className="font-bold text-base">Total: ${(subtotal + tax).toFixed(2)}</div>
-        </div>
-      </div>
-    </div>
+    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
+      <Card className="mb-8">
+        <CardContent className="p-6">
+          <h3 className="font-bold text-lg mb-4">New Bill</h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Supplier *</label>
+              <Input value={form.supplier_name} onChange={e => set('supplier_name', e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Bill Number</label>
+              <Input value={form.bill_number} onChange={e => set('bill_number', e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Date</label>
+              <Input type="date" value={form.date} onChange={e => set('date', e.target.value)} />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Due Date</label>
+              <Input type="date" value={form.due_date} onChange={e => set('due_date', e.target.value)} />
+            </div>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Description</TableHead>
+                <TableHead className="w-24">Account</TableHead>
+                <TableHead className="text-right w-16">Qty</TableHead>
+                <TableHead className="text-right w-24">Price</TableHead>
+                <TableHead className="text-right w-16">Tax%</TableHead>
+                <TableHead className="text-right w-24">Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {form.lines.map((l, i) => (
+                <TableRow key={i}>
+                  <TableCell className="p-1"><Input value={l.description} onChange={e => updateLine(i, 'description', e.target.value)} className="h-8" /></TableCell>
+                  <TableCell className="p-1"><Input value={l.account_code} onChange={e => updateLine(i, 'account_code', e.target.value)} className="h-8" /></TableCell>
+                  <TableCell className="p-1"><Input type="number" value={l.quantity} onChange={e => updateLine(i, 'quantity', Number(e.target.value))} className="h-8 text-right" /></TableCell>
+                  <TableCell className="p-1"><Input type="number" value={l.unit_price} onChange={e => updateLine(i, 'unit_price', Number(e.target.value))} className="h-8 text-right" /></TableCell>
+                  <TableCell className="p-1"><Input type="number" value={l.tax_rate} onChange={e => updateLine(i, 'tax_rate', Number(e.target.value))} className="h-8 text-right" /></TableCell>
+                  <TableCell className="p-1 text-right font-medium">${l.amount.toFixed(2)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <Button variant="link" size="sm" onClick={addLine} className="mb-4 mt-2">+ Add line</Button>
+          <div className="flex justify-between items-end">
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={onCancel}>Cancel</Button>
+              <Button onClick={() => form.supplier_name && onSubmit({ ...form, subtotal, tax_amount: tax, total: subtotal + tax })} disabled={!form.supplier_name}>Create Bill</Button>
+            </div>
+            <div className="text-sm text-right space-y-1">
+              <div>Subtotal: <span className="font-medium">${subtotal.toFixed(2)}</span></div>
+              <div>Tax: <span className="font-medium">${tax.toFixed(2)}</span></div>
+              <div className="font-bold text-base">Total: ${(subtotal + tax).toFixed(2)}</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }

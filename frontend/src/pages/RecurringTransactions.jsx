@@ -1,15 +1,30 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { cn } from '@/lib/utils';
 
-const STATUS_COLORS = {
-  active: 'bg-green-100 text-green-700',
-  paused: 'bg-amber-100 text-amber-700',
-  completed: 'bg-gray-100 text-gray-400',
+const STATUS_BADGE = {
+  active: { variant: 'success', label: 'Active' },
+  paused: { variant: 'warning', label: 'Paused' },
+  completed: { variant: 'secondary', label: 'Completed' },
 };
 
 const TYPE_LABELS = { bill: 'Bill', invoice: 'Invoice', journal: 'Journal' };
 const FREQ_LABELS = { weekly: 'Weekly', fortnightly: 'Fortnightly', monthly: 'Monthly', quarterly: 'Quarterly', annually: 'Annually' };
+
+const STAT_COLORS = {
+  indigo: 'bg-indigo-50 text-indigo-700',
+  green: 'bg-green-50 text-green-700',
+  amber: 'bg-amber-50 text-amber-700',
+  blue: 'bg-blue-50 text-blue-700',
+};
 
 const DEMO_RECURRING = [
   { id: '1', name: 'Office Rent', type: 'bill', frequency: 'monthly', amount: 4500, account_code: '4100', supplier: 'CBD Commercial Leasing', start_date: '2025-01-01', end_date: '2027-12-31', next_date: '2026-04-01', status: 'active' },
@@ -73,23 +88,34 @@ export default function RecurringTransactions() {
   if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Recurring Transactions</h2>
           <p className="text-gray-500 mt-1">Automate repeating bills, invoices, and journal entries</p>
         </div>
-        <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        <Button onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? 'Cancel' : '+ New Recurring'}
-        </button>
+        </Button>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card label="Total Active" value={summary.active} />
-        <Card label="Monthly Value" value={`$${Math.round(summary.monthlyValue).toLocaleString()}`} color="green" />
-        <Card label="Next Due Today" value={summary.dueToday} color="blue" />
-        <Card label="Paused" value={summary.paused} color="amber" />
+        {[
+          { label: 'Total Active', value: summary.active, color: 'indigo' },
+          { label: 'Monthly Value', value: `$${Math.round(summary.monthlyValue).toLocaleString()}`, color: 'green' },
+          { label: 'Next Due Today', value: summary.dueToday, color: 'blue' },
+          { label: 'Paused', value: summary.paused, color: 'amber' },
+        ].map((stat, i) => (
+          <motion.div key={stat.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+            <Card className={cn('border-0 shadow-none', STAT_COLORS[stat.color])}>
+              <CardContent className="p-4">
+                <p className="text-xs font-medium opacity-70">{stat.label}</p>
+                <p className="text-xl font-bold mt-1">{stat.value}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
       {/* Create */}
@@ -98,55 +124,62 @@ export default function RecurringTransactions() {
       {/* Filters */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {['', 'active', 'paused', 'completed'].map(s => (
-          <button key={s} onClick={() => setFilterStatus(s)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterStatus === s ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+          <Button
+            key={s}
+            onClick={() => setFilterStatus(s)}
+            variant={filterStatus === s ? 'default' : 'secondary'}
+            size="sm"
+          >
             {s ? s.replace(/\b\w/g, l => l.toUpperCase()) : 'All'}
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead><tr className="bg-gray-50 border-b">
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Name</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Type</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Frequency</th>
-            <th className="text-right px-4 py-3 font-semibold text-gray-700">Amount</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Next Date</th>
-            <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-            <th className="text-center px-4 py-3 font-semibold text-gray-700">Actions</th>
-          </tr></thead>
-          <tbody>
-            {filtered.map(i => (
-              <tr key={i.id} className="border-b hover:bg-gray-50 transition-colors">
-                <td className="px-4 py-3">
-                  <p className="font-medium text-gray-900">{i.name}</p>
-                  <p className="text-xs text-gray-500">{i.supplier}</p>
-                </td>
-                <td className="px-4 py-3 text-gray-600">{TYPE_LABELS[i.type] || i.type}</td>
-                <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{FREQ_LABELS[i.frequency] || i.frequency}</td>
-                <td className="px-4 py-3 text-right font-medium text-gray-900">${Number(i.amount).toLocaleString()}</td>
-                <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{i.next_date}</td>
-                <td className="px-4 py-3 text-center"><span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[i.status]}`}>{i.status}</span></td>
-                <td className="px-4 py-3 text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    {i.status === 'active' && <button onClick={() => handlePause(i)} className="px-2 py-1 text-xs text-amber-600 hover:bg-amber-50 rounded">Pause</button>}
-                    {i.status === 'paused' && <button onClick={() => handleResume(i)} className="px-2 py-1 text-xs text-green-600 hover:bg-green-50 rounded">Resume</button>}
-                    <button onClick={() => handleDelete(i)} className="px-2 py-1 text-xs text-red-600 hover:bg-red-50 rounded">Delete</button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>Name</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead className="hidden md:table-cell">Frequency</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="hidden md:table-cell">Next Date</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.map(i => {
+              const badge = STATUS_BADGE[i.status] || { variant: 'secondary', label: i.status };
+              return (
+                <TableRow key={i.id}>
+                  <TableCell>
+                    <p className="font-medium text-gray-900">{i.name}</p>
+                    <p className="text-xs text-gray-500">{i.supplier}</p>
+                  </TableCell>
+                  <TableCell className="text-gray-600">{TYPE_LABELS[i.type] || i.type}</TableCell>
+                  <TableCell className="text-gray-500 hidden md:table-cell">{FREQ_LABELS[i.frequency] || i.frequency}</TableCell>
+                  <TableCell className="text-right font-medium text-gray-900">${Number(i.amount).toLocaleString()}</TableCell>
+                  <TableCell className="text-gray-500 hidden md:table-cell">{i.next_date}</TableCell>
+                  <TableCell className="text-center">
+                    <Badge variant={badge.variant}>{badge.label}</Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      {i.status === 'active' && <Button variant="ghost" size="sm" onClick={() => handlePause(i)} className="text-amber-600 hover:text-amber-700 hover:bg-amber-50">Pause</Button>}
+                      {i.status === 'paused' && <Button variant="ghost" size="sm" onClick={() => handleResume(i)} className="text-green-600 hover:text-green-700 hover:bg-green-50">Resume</Button>}
+                      <Button variant="ghost" size="sm" onClick={() => handleDelete(i)} className="text-red-600 hover:text-red-700 hover:bg-red-50">Delete</Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
-}
-
-function Card({ label, value, color = 'indigo' }) {
-  const c = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700', red: 'bg-red-50 text-red-700', blue: 'bg-blue-50 text-blue-700' };
-  return <div className={`rounded-xl p-4 ${c[color]}`}><p className="text-xs font-medium opacity-70">{label}</p><p className="text-xl font-bold mt-1">{value}</p></div>;
 }
 
 function CreateForm({ onSubmit, onCancel }) {
@@ -160,32 +193,48 @@ function CreateForm({ onSubmit, onCancel }) {
   };
 
   return (
-    <div className="bg-white rounded-xl border p-6 mb-8">
-      <h3 className="font-bold text-lg mb-4">New Recurring Transaction</h3>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Name *</label><input value={form.name} onChange={e => set('name', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Office Rent" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Type</label>
-          <select value={form.type} onChange={e => set('type', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm">
-            <option value="bill">Bill</option><option value="invoice">Invoice</option><option value="journal">Journal</option>
-          </select>
+    <Card className="mb-8">
+      <CardContent className="p-6">
+        <h3 className="font-bold text-lg mb-4">New Recurring Transaction</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Name *</label><Input value={form.name} onChange={e => set('name', e.target.value)} placeholder="e.g. Office Rent" /></div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Type</label>
+            <Select value={form.type} onValueChange={v => set('type', v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="bill">Bill</SelectItem>
+                <SelectItem value="invoice">Invoice</SelectItem>
+                <SelectItem value="journal">Journal</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-600 block mb-1">Frequency</label>
+            <Select value={form.frequency} onValueChange={v => set('frequency', v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="fortnightly">Fortnightly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="annually">Annually</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Amount *</label><Input type="number" value={form.amount} onChange={e => set('amount', Number(e.target.value))} /></div>
         </div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Frequency</label>
-          <select value={form.frequency} onChange={e => set('frequency', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm">
-            <option value="weekly">Weekly</option><option value="fortnightly">Fortnightly</option><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="annually">Annually</option>
-          </select>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Account Code</label><Input value={form.account_code} onChange={e => set('account_code', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Supplier / Client</label><Input value={form.supplier} onChange={e => set('supplier', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Start Date</label><Input type="date" value={form.start_date} onChange={e => set('start_date', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">End Date</label><Input type="date" value={form.end_date} onChange={e => set('end_date', e.target.value)} /></div>
         </div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Amount *</label><input type="number" value={form.amount} onChange={e => set('amount', Number(e.target.value))} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Account Code</label><input value={form.account_code} onChange={e => set('account_code', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Supplier / Client</label><input value={form.supplier} onChange={e => set('supplier', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Start Date</label><input type="date" value={form.start_date} onChange={e => set('start_date', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">End Date</label><input type="date" value={form.end_date} onChange={e => set('end_date', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-      </div>
-      <div className="flex gap-3">
-        <button onClick={onCancel} className="px-4 py-2 border rounded-lg text-sm">Cancel</button>
-        <button onClick={handleSubmit} disabled={!form.name || !form.amount} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40">Create Recurring</button>
-      </div>
-    </div>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={onCancel}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!form.name || !form.amount}>Create Recurring</Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

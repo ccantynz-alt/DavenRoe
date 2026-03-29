@@ -1,6 +1,32 @@
 import { useState, useEffect } from 'react';
-import { getReviewQueue, reviewTransaction } from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import { getReviewQueue, reviewTransaction } from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent, CardFooter } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Progress } from '@/components/ui/Progress';
+import { cn } from '@/lib/utils';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.06 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: 'easeOut' } },
+};
+
+const FILTER_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'pending_review', label: 'Pending' },
+  { value: 'flagged', label: 'Flagged' },
+];
 
 export default function ReviewQueue() {
   const [filter, setFilter] = useState('all');
@@ -41,7 +67,11 @@ export default function ReviewQueue() {
       : transactions.filter(t => t.status === filter);
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+    >
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Review Queue</h2>
@@ -50,113 +80,144 @@ export default function ReviewQueue() {
           </p>
         </div>
         <div className="flex gap-2">
-          {['all', 'draft', 'pending_review', 'flagged'].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                filter === f
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
+          {FILTER_OPTIONS.map((f) => (
+            <Button
+              key={f.value}
+              size="sm"
+              variant={filter === f.value ? 'default' : 'secondary'}
+              onClick={() => setFilter(f.value)}
             >
-              {f === 'pending_review' ? 'Pending' : f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
+              {f.label}
+            </Button>
           ))}
         </div>
       </div>
 
       {error && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 mb-6">
-          <p className="text-yellow-800 font-medium">{error}</p>
-          <p className="text-yellow-600 text-sm mt-1">Transactions will appear here once the database is connected and data is flowing.</p>
-        </div>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <Card className="border-yellow-200 bg-yellow-50 mb-6">
+            <CardContent className="pt-6">
+              <p className="text-yellow-800 font-medium">{error}</p>
+              <p className="text-yellow-600 text-sm mt-1">Transactions will appear here once the database is connected and data is flowing.</p>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {!loading && !error && filtered.length === 0 && (
-        <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
-          <p className="text-green-800 font-semibold text-lg">All clear</p>
-          <p className="text-green-600 text-sm mt-1">No transactions pending review.</p>
-        </div>
+        <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }}>
+          <Card className="border-green-200 bg-green-50">
+            <CardContent className="pt-8 pb-8 text-center">
+              <p className="text-green-800 font-semibold text-lg">All clear</p>
+              <p className="text-green-600 text-sm mt-1">No transactions pending review.</p>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
-      <div className="space-y-4">
+      <motion.div
+        className="space-y-4"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {filtered.map((txn) => (
-          <TransactionCard key={txn.id} txn={txn} onAction={handleAction} />
+          <motion.div key={txn.id} variants={itemVariants}>
+            <TransactionCard txn={txn} onAction={handleAction} />
+          </motion.div>
         ))}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
+}
+
+function getRiskVariant(score) {
+  if (score < 20) return 'success';
+  if (score < 40) return 'warning';
+  return 'destructive';
+}
+
+function getStatusVariant(status) {
+  if (status === 'draft') return 'secondary';
+  return 'warning';
 }
 
 function TransactionCard({ txn, onAction }) {
   const riskScore = txn.risk_score || 0;
-  const riskBg = riskScore < 20 ? 'bg-green-100 text-green-700'
-    : riskScore < 40 ? 'bg-yellow-100 text-yellow-700'
-    : 'bg-red-100 text-red-700';
-
   const confidence = txn.ai_confidence ? `${(txn.ai_confidence * 100).toFixed(0)}%` : null;
+  const confidenceValue = txn.ai_confidence ? txn.ai_confidence * 100 : 0;
 
   return (
-    <div className="bg-white rounded-xl border p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-sm text-gray-400 font-mono">{txn.transaction_date}</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${riskBg}`}>
-              Risk: {riskScore}
-            </span>
-            {txn.tax_jurisdiction && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
-                {txn.tax_jurisdiction}
-              </span>
+    <Card className="p-0">
+      <CardContent className="pt-6 pb-0">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <span className="text-sm text-gray-400 font-mono">{txn.transaction_date}</span>
+              <Badge variant={getRiskVariant(riskScore)}>
+                Risk: {riskScore}
+              </Badge>
+              {txn.tax_jurisdiction && (
+                <Badge className="border-transparent bg-blue-100 text-blue-700">
+                  {txn.tax_jurisdiction}
+                </Badge>
+              )}
+              <Badge variant="secondary">
+                {txn.source}
+              </Badge>
+              <Badge variant={getStatusVariant(txn.status)}>
+                {txn.status}
+              </Badge>
+            </div>
+            <h3 className="font-semibold text-lg">{txn.description}</h3>
+            {txn.ai_reasoning && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">
+                  AI: {txn.ai_reasoning}
+                </p>
+                {confidence && (
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <Progress value={confidenceValue} className="h-1.5 w-24" />
+                    <span className="text-xs text-gray-400">{confidence} confidence</span>
+                  </div>
+                )}
+              </div>
             )}
-            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
-              {txn.source}
-            </span>
-            <span className={`text-xs px-2 py-0.5 rounded-full ${
-              txn.status === 'draft' ? 'bg-gray-100 text-gray-600' : 'bg-orange-100 text-orange-700'
-            }`}>
-              {txn.status}
-            </span>
+            {txn.reference && (
+              <p className="text-xs text-gray-400 mt-1">Ref: {txn.reference}</p>
+            )}
           </div>
-          <h3 className="font-semibold text-lg">{txn.description}</h3>
-          {txn.ai_reasoning && (
-            <p className="text-sm text-gray-500 mt-1">
-              AI: {txn.ai_reasoning}
-              {confidence && <span className="ml-2 text-gray-400">({confidence} confidence)</span>}
-            </p>
-          )}
-          {txn.reference && (
-            <p className="text-xs text-gray-400 mt-1">Ref: {txn.reference}</p>
-          )}
+          <div className="text-right ml-6">
+            <p className="text-2xl font-bold">${Number(txn.total_amount).toLocaleString('en', { minimumFractionDigits: 2 })}</p>
+            <p className="text-xs text-gray-400">{txn.currency}</p>
+          </div>
         </div>
-        <div className="text-right ml-6">
-          <p className="text-2xl font-bold">${Number(txn.total_amount).toLocaleString('en', { minimumFractionDigits: 2 })}</p>
-          <p className="text-xs text-gray-400">{txn.currency}</p>
-        </div>
-      </div>
+      </CardContent>
 
-      <div className="flex gap-3 mt-4 pt-4 border-t">
-        <button
+      <CardFooter className="gap-3 pt-4 mt-4 border-t">
+        <Button
+          variant="success"
+          size="sm"
           onClick={() => onAction(txn.id, 'approve')}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
         >
           Approve
-        </button>
-        <button
+        </Button>
+        <Button
+          className="bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700"
+          size="sm"
           onClick={() => onAction(txn.id, 'flag')}
-          className="px-4 py-2 bg-yellow-500 text-white rounded-lg text-sm font-medium hover:bg-yellow-600 transition-colors"
         >
           Flag for Review
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="destructive"
+          size="sm"
+          className={cn('ml-auto bg-red-100 text-red-700 hover:bg-red-200 active:bg-red-300')}
           onClick={() => onAction(txn.id, 'void')}
-          className="px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors ml-auto"
         >
           Void
-        </button>
-      </div>
-    </div>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

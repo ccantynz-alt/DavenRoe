@@ -1,4 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: 'easeOut', delay: i * 0.08 },
+  }),
+};
 
 const SECURITY_FEATURES = [
   {
@@ -64,6 +77,12 @@ const COMPLIANCE = [
   { standard: 'PCI DSS', status: 'Delegated to Stripe', description: 'Payment processing handled by PCI Level 1 certified Stripe' },
 ];
 
+function getStatusBadgeVariant(status) {
+  if (status === 'Compliant') return 'success';
+  if (status === 'In Progress') return 'warning';
+  return 'secondary';
+}
+
 export default function SecurityPage({ onBack }) {
   return (
     <div className="bg-white text-gray-900 min-h-screen">
@@ -74,14 +93,14 @@ export default function SecurityPage({ onBack }) {
           </div>
           <span className="text-xl font-semibold tracking-tight">Astra</span>
         </div>
-        <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+        <Button variant="ghost" size="sm" onClick={onBack}>
           &larr; Back to homepage
-        </button>
+        </Button>
       </nav>
 
       <section className="py-24 px-6 lg:px-16">
         <div className="max-w-4xl mx-auto text-center">
-          <FadeIn>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={fadeUp}>
             <p className="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-3">Security</p>
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               Your data. Our obsession.
@@ -89,26 +108,35 @@ export default function SecurityPage({ onBack }) {
             <p className="text-xl text-gray-500 leading-relaxed max-w-3xl mx-auto">
               Financial data is the most sensitive information a business has. We treat it with the gravity it deserves — not as an afterthought, but as the foundation of everything we build.
             </p>
-          </FadeIn>
+          </motion.div>
         </div>
       </section>
 
       <section className="py-20 px-6 lg:px-16 bg-gray-50">
         <div className="max-w-6xl mx-auto">
-          <FadeIn>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={fadeUp}>
             <h2 className="text-3xl font-bold text-center mb-16">Security Architecture</h2>
-          </FadeIn>
+          </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {SECURITY_FEATURES.map((feature, i) => (
-              <FadeIn key={i} delay={i * 80}>
-                <div className="bg-white p-8 rounded-2xl border border-gray-100 hover:shadow-md transition-all h-full">
-                  <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5">
-                    {feature.icon}
-                  </div>
-                  <h3 className="text-lg font-bold mb-3">{feature.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
-                </div>
-              </FadeIn>
+              <motion.div
+                key={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+                variants={fadeUp}
+                custom={i}
+              >
+                <Card className={cn('h-full border-gray-100')}>
+                  <CardContent className="p-8">
+                    <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-5">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-bold mb-3">{feature.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{feature.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -116,54 +144,51 @@ export default function SecurityPage({ onBack }) {
 
       <section className="py-20 px-6 lg:px-16 bg-white">
         <div className="max-w-4xl mx-auto">
-          <FadeIn>
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={fadeUp}>
             <h2 className="text-3xl font-bold text-center mb-12">Compliance</h2>
-          </FadeIn>
+          </motion.div>
           <div className="space-y-4">
             {COMPLIANCE.map((item, i) => (
-              <FadeIn key={i} delay={i * 80}>
-                <div className="flex items-center gap-6 p-6 rounded-xl border border-gray-100 hover:border-indigo-100 transition-colors">
-                  <div className="flex-shrink-0">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700">
-                      {item.status}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900">{item.standard}</h3>
-                    <p className="text-sm text-gray-500">{item.description}</p>
-                  </div>
-                </div>
-              </FadeIn>
+              <motion.div
+                key={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+                variants={fadeUp}
+                custom={i}
+              >
+                <Card className="border-gray-100 hover:border-indigo-100">
+                  <CardContent className="flex items-center gap-6 p-6">
+                    <div className="flex-shrink-0">
+                      <Badge variant={getStatusBadgeVariant(item.status)}>
+                        {item.status}
+                      </Badge>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900">{item.standard}</h3>
+                      <p className="text-sm text-gray-500">{item.description}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       <section className="py-20 px-6 lg:px-16 bg-gray-900 text-white">
-        <div className="max-w-3xl mx-auto text-center">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={fadeUp}
+          className="max-w-3xl mx-auto text-center"
+        >
           <h2 className="text-3xl font-bold mb-4">Security questions?</h2>
           <p className="text-gray-400 mb-2">We welcome security inquiries and responsible disclosure.</p>
           <p className="text-gray-400">Contact us at <span className="text-indigo-400 font-medium">security@astra.ai</span></p>
-        </div>
+        </motion.div>
       </section>
-    </div>
-  );
-}
-
-function FadeIn({ children, delay = 0 }) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setTimeout(() => setVisible(true), delay); observer.disconnect(); } },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [delay]);
-  return (
-    <div ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)', transition: `all 0.6s ease-out ${delay}ms` }}>
-      {children}
     </div>
   );
 }

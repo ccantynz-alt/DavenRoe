@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { cn } from '@/lib/utils';
 
 // All major tax deadlines across US, AU, NZ, GB
 const DEADLINES = [
@@ -55,6 +61,19 @@ const typeIcons = {
   fringe_benefits: '*', payg: '+',
 };
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
+
 export default function ComplianceCalendar() {
   const [filterJurisdiction, setFilterJurisdiction] = useState('all');
   const [filterType, setFilterType] = useState('all');
@@ -80,32 +99,48 @@ export default function ComplianceCalendar() {
     return `${Math.ceil(diff / 30)} months`;
   };
 
-  const urgencyColor = (dateStr) => {
+  const urgencyBadgeVariant = (dateStr) => {
     const diff = Math.ceil((new Date(dateStr) - new Date(today)) / (1000 * 60 * 60 * 24));
-    if (diff < 0) return 'bg-red-500 text-white';
-    if (diff <= 7) return 'bg-red-100 text-red-700';
-    if (diff <= 30) return 'bg-yellow-100 text-yellow-700';
-    return 'bg-green-100 text-green-700';
+    if (diff < 0) return 'destructive';
+    if (diff <= 7) return 'destructive';
+    if (diff <= 30) return 'warning';
+    return 'success';
+  };
+
+  const urgencyBadgeClassName = (dateStr) => {
+    const diff = Math.ceil((new Date(dateStr) - new Date(today)) / (1000 * 60 * 60 * 24));
+    if (diff < 0) return 'bg-red-500 text-white border-red-500';
+    return '';
   };
 
   const types = [...new Set(DEADLINES.map(d => d.type))];
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+    >
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Compliance Calendar</h2>
           <p className="text-gray-500 mt-1">Every tax deadline across all jurisdictions, in one place</p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setView('timeline')}
-            className={`px-3 py-1.5 rounded-lg text-sm ${view === 'timeline' ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}>
+          <Button
+            variant={view === 'timeline' ? 'default' : 'secondary'}
+            size="sm"
+            onClick={() => setView('timeline')}
+          >
             Timeline
-          </button>
-          <button onClick={() => setView('grid')}
-            className={`px-3 py-1.5 rounded-lg text-sm ${view === 'grid' ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}>
+          </Button>
+          <Button
+            variant={view === 'grid' ? 'default' : 'secondary'}
+            size="sm"
+            onClick={() => setView('grid')}
+          >
             By Jurisdiction
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -128,121 +163,183 @@ export default function ComplianceCalendar() {
 
       {/* Overdue Alert */}
       {overdue.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-          <h3 className="font-semibold text-red-800 mb-2">{overdue.length} Overdue Deadline{overdue.length > 1 ? 's' : ''}</h3>
-          <div className="space-y-2">
-            {overdue.map((d, i) => (
-              <div key={i} className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${jurisdictionColors[d.jurisdiction].bg} ${jurisdictionColors[d.jurisdiction].text}`}>
-                    {d.jurisdiction}
-                  </span>
-                  <span className="font-medium text-red-800">{d.name}</span>
-                </div>
-                <span className="text-red-600 font-medium">{daysUntil(d.date)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card className="border-red-200 bg-red-50 mb-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-red-800 text-base">
+                {overdue.length} Overdue Deadline{overdue.length > 1 ? 's' : ''}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableBody>
+                  {overdue.map((d, i) => (
+                    <TableRow key={i} className="border-red-100 hover:bg-red-100/50">
+                      <TableCell className="py-2 px-2 w-16">
+                        <Badge className={cn(jurisdictionColors[d.jurisdiction].bg, jurisdictionColors[d.jurisdiction].text, 'border-transparent')}>
+                          {d.jurisdiction}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="py-2 px-2 font-medium text-red-800">{d.name}</TableCell>
+                      <TableCell className="py-2 px-2 text-right">
+                        <Badge className="bg-red-500 text-white border-red-500">{daysUntil(d.date)}</Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <motion.div
+        className="grid grid-cols-4 gap-4 mb-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
         {['AU', 'US', 'NZ', 'GB'].map(j => {
           const jDeadlines = upcoming.filter(d => d.jurisdiction === j);
           const next = jDeadlines[0];
           const c = jurisdictionColors[j];
           return (
-            <div key={j} className={`rounded-xl border p-4 ${c.bg} ${c.border}`}>
-              <p className={`text-xs font-medium ${c.text}`}>{jurisdictionNames[j]}</p>
-              <p className={`text-2xl font-bold ${c.text}`}>{jDeadlines.length}</p>
-              <p className="text-xs text-gray-500">upcoming deadlines</p>
-              {next && <p className="text-xs mt-2 text-gray-600">Next: {next.name} ({daysUntil(next.date)})</p>}
-            </div>
+            <motion.div key={j} variants={itemVariants}>
+              <Card className={cn(c.bg, c.border)}>
+                <CardContent className="p-4">
+                  <p className={cn('text-xs font-medium', c.text)}>{jurisdictionNames[j]}</p>
+                  <p className={cn('text-2xl font-bold', c.text)}>{jDeadlines.length}</p>
+                  <p className="text-xs text-gray-500">upcoming deadlines</p>
+                  {next && <p className="text-xs mt-2 text-gray-600">Next: {next.name} ({daysUntil(next.date)})</p>}
+                </CardContent>
+              </Card>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
 
       {/* Timeline View */}
       {view === 'timeline' && (
-        <div className="space-y-2">
+        <motion.div
+          className="space-y-2"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {upcoming.map((d, i) => {
             const c = jurisdictionColors[d.jurisdiction];
             return (
-              <div key={i} className="bg-white border rounded-lg p-4 flex items-center justify-between hover:shadow-sm transition-shadow">
-                <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg font-mono ${c.bg} ${c.text}`}>
-                    {typeIcons[d.type] || '$'}
-                  </div>
-                  <div>
-                    <p className="font-medium">{d.name}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${c.bg} ${c.text}`}>{d.jurisdiction}</span>
-                      <span className="text-xs text-gray-400">{d.type.replace(/_/g, ' ')}</span>
-                      <span className="text-xs text-gray-400">{d.recurrence}</span>
+              <motion.div key={i} variants={itemVariants}>
+                <Card className="hover:shadow-md">
+                  <CardContent className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center text-lg font-mono', c.bg, c.text)}>
+                        {typeIcons[d.type] || '$'}
+                      </div>
+                      <div>
+                        <p className="font-medium">{d.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Badge className={cn(c.bg, c.text, 'border-transparent')}>{d.jurisdiction}</Badge>
+                          <span className="text-xs text-gray-400">{d.type.replace(/_/g, ' ')}</span>
+                          <span className="text-xs text-gray-400">{d.recurrence}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-mono text-sm">{d.date}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${urgencyColor(d.date)}`}>
-                    {daysUntil(d.date)}
-                  </span>
-                </div>
-              </div>
+                    <div className="text-right">
+                      <p className="font-mono text-sm">{d.date}</p>
+                      <Badge
+                        variant={urgencyBadgeVariant(d.date)}
+                        className={urgencyBadgeClassName(d.date)}
+                      >
+                        {daysUntil(d.date)}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
 
       {/* Grid View */}
       {view === 'grid' && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           {['AU', 'US', 'NZ', 'GB'].map(j => {
             const jDeadlines = upcoming.filter(d => d.jurisdiction === j);
             const c = jurisdictionColors[j];
             return (
-              <div key={j} className={`border rounded-xl overflow-hidden ${c.border}`}>
-                <div className={`px-4 py-3 ${c.bg}`}>
-                  <h4 className={`font-semibold ${c.text}`}>{jurisdictionNames[j]}</h4>
-                </div>
-                <div className="divide-y">
-                  {jDeadlines.map((d, i) => (
-                    <div key={i} className="px-4 py-3 flex justify-between items-center text-sm">
-                      <div>
-                        <p className="font-medium">{d.name}</p>
-                        <p className="text-xs text-gray-400">{d.type.replace(/_/g, ' ')}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-mono text-xs">{d.date}</p>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${urgencyColor(d.date)}`}>
-                          {daysUntil(d.date)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                  {jDeadlines.length === 0 && (
-                    <div className="px-4 py-6 text-center text-gray-400 text-sm">No upcoming deadlines</div>
-                  )}
-                </div>
-              </div>
+              <motion.div key={j} variants={itemVariants}>
+                <Card className={cn('overflow-hidden', c.border)}>
+                  <CardHeader className={cn('py-3 px-4', c.bg)}>
+                    <CardTitle className={cn('text-base', c.text)}>{jurisdictionNames[j]}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <Table>
+                      <TableBody>
+                        {jDeadlines.map((d, i) => (
+                          <TableRow key={i}>
+                            <TableCell className="py-3 px-4">
+                              <p className="font-medium text-sm">{d.name}</p>
+                              <p className="text-xs text-gray-400">{d.type.replace(/_/g, ' ')}</p>
+                            </TableCell>
+                            <TableCell className="py-3 px-4 text-right">
+                              <p className="font-mono text-xs">{d.date}</p>
+                              <Badge
+                                variant={urgencyBadgeVariant(d.date)}
+                                className={urgencyBadgeClassName(d.date)}
+                              >
+                                {daysUntil(d.date)}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {jDeadlines.length === 0 && (
+                          <TableRow>
+                            <TableCell colSpan={2} className="py-6 text-center text-gray-400 text-sm">
+                              No upcoming deadlines
+                            </TableCell>
+                          </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 function FilterButton({ label, active, onClick, color }) {
   return (
-    <button onClick={onClick}
-      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+    <Button
+      variant={active ? (color ? 'ghost' : 'default') : 'ghost'}
+      size="sm"
+      onClick={onClick}
+      className={cn(
+        'text-xs',
         active
-          ? color ? `${color.bg} ${color.text}` : 'bg-indigo-600 text-white'
+          ? color
+            ? cn(color.bg, color.text, 'hover:opacity-80')
+            : ''
           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-      }`}>
+      )}
+    >
       {label}
-    </button>
+    </Button>
   );
 }

@@ -103,11 +103,90 @@ We compete with: Xero (4.6M subscribers), QuickBooks (7M+), MYOB (AU/NZ leader),
 Our advantages: Multi-agent AI architecture, forensic intelligence, autonomous month-end close, cross-border tax treaty engine, AI command center, native payroll, tax e-filing.
 Our gaps to close: mobile native app (PWA implemented), direct bank feed connections (Plaid/Basiq/TrueLayer integrated).
 
+## Zero Raw HTML Policy (Non-Negotiable — Strict Rule)
+
+> **We only deal in advanced, modern components. No raw HTML. No old tech. No exceptions.**
+> If it's old, we rip it out and put in the new. Best of the best only.
+
+This is a **strict, permanent rule** that applies to ALL code across ALL domains — the main platform, forensic frontend, landing pages, any future projects.
+
+### Banned (Rip Out On Sight)
+
+| Banned | Replace With |
+|--------|-------------|
+| Raw `<button>` | `<Button>` from `@/components/ui/Button` (Radix + CVA variants) |
+| Raw `<input>`, `<textarea>` | `<Input>` from `@/components/ui/Input` (React Hook Form + Zod) |
+| Raw `<select>` | `<Select>` from `@/components/ui/Select` (Radix primitive) |
+| Raw `<table>`, `<tr>`, `<td>` | `<Table>` from `@/components/ui/Table` or TanStack Table |
+| Raw `<dialog>`, modal divs | `<Dialog>` from `@/components/ui/Dialog` (Radix primitive) |
+| Raw `<div>` as card/container | `<Card>` from `@/components/ui/Card` (semantic component) |
+| Raw `<div>` as tabs | `<Tabs>` from `@/components/ui/Tabs` (Radix primitive) |
+| Raw `<details>`/`<summary>` | `<Accordion>` from `@/components/ui/Accordion` (Radix primitive) |
+| Raw tooltips/title attr | `<Tooltip>` from `@/components/ui/Tooltip` (Radix primitive) |
+| Raw dropdown divs | `<DropdownMenu>` from `@/components/ui/DropdownMenu` (Radix primitive) |
+| Raw toggle/checkbox switches | `<Switch>` from `@/components/ui/Switch` (Radix primitive) |
+| Raw progress bars | `<Progress>` from `@/components/ui/Progress` (Radix primitive) |
+| Raw `<span>` as status pill | `<Badge>` from `@/components/ui/Badge` (CVA variants) |
+| CSS `@keyframes` only | Framer Motion `<motion.div>` for all animations |
+| Raw `useState` forms | React Hook Form + Zod schema validation |
+| Raw `fetch`/`axios` in components | TanStack Query `useQuery`/`useMutation` hooks |
+| React Context for global state | Zustand stores in `@/stores/` |
+| Manual CSS class conditionals | `cn()` from `@/lib/utils` (clsx + tailwind-merge) |
+| `window.confirm()` / `window.alert()` | `<AlertDialog>` from Radix / `sonner` toast |
+| No charts (just text/numbers) | Recharts (`<LineChart>`, `<BarChart>`, `<PieChart>`, etc.) |
+
+### Required Stack (Best of the Best)
+
+| Category | Required Library | Why |
+|----------|-----------------|-----|
+| **UI Primitives** | Radix UI | Accessible, unstyled, composable — used by Vercel, Stripe, Linear |
+| **Component Variants** | class-variance-authority (CVA) | Type-safe variant system for components |
+| **Class Merging** | tailwind-merge + clsx via `cn()` | Conflict-free Tailwind class composition |
+| **Animations** | Framer Motion | Layout animations, gestures, spring physics, exit animations |
+| **Charts** | Recharts | React-native D3 charts, composable, responsive |
+| **Data Fetching** | TanStack Query | Smart caching, background refetch, optimistic updates, deduplication |
+| **Data Tables** | TanStack Table | Sorting, filtering, pagination, column resizing, virtualization |
+| **Forms** | React Hook Form + Zod | Performance-first forms with schema validation |
+| **State Management** | Zustand | Tiny, fast, middleware (persist, devtools), no boilerplate |
+| **Toasts** | Sonner | Beautiful, accessible, stackable notifications |
+| **Command Palette** | cmdk | Vercel-style cmd+k, fuzzy search, keyboard navigation |
+| **CSS Framework** | Tailwind CSS v4 | CSS-first config, @theme tokens, 10x faster builds |
+| **Build Tool** | Vite 6 | Instant HMR, Rollup 4, code splitting |
+| **Runtime** | React 19 | Server components, Actions, use() hook, improved hydration |
+
+### Enforcement
+
+1. **Every new component** MUST use the `@/components/ui/` library. No raw HTML elements for interactive UI.
+2. **Every existing page** being touched MUST be upgraded to use modern components. No partial upgrades.
+3. **Every form** MUST use React Hook Form + Zod. No manual `useState` per field.
+4. **Every data fetch** MUST use TanStack Query. No raw axios/fetch in components.
+5. **Every animation** MUST use Framer Motion. No CSS-only animations for interactive elements.
+6. **Every chart/graph** MUST use Recharts. No text-only financial data displays.
+7. **If you see raw HTML** while working on something else, **stop and replace it.** This is a fix-on-sight rule, same as broken links.
+8. **Code reviews** must reject any PR that introduces raw HTML elements for interactive UI.
+
+### Import Convention
+
+All UI imports use the `@/` alias:
+```jsx
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { cn } from '@/lib/utils';
+import { useAppStore } from '@/stores/appStore';
+import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+```
+
+> **Old is unacceptable. If it exists, rip it out. Replace with the best.**
+> This is not a suggestion. This is law.
+
+---
+
 ## Tech Stack
 
-- **Frontend**: React 18 + Vite + Tailwind CSS + React Router 6
-- **Backend**: FastAPI + SQLAlchemy (async) + Neon PostgreSQL
-- **AI**: Anthropic Claude API (claude-sonnet-4-20250514)
+- **Frontend**: React 19 + Vite 6 + Tailwind CSS v4 + React Router 7 + Radix UI + Framer Motion + TanStack Query + Zustand + Recharts
+- **Backend**: FastAPI + SQLAlchemy (async) + Neon PostgreSQL + PyJWT
+- **AI**: Anthropic Claude API (claude-sonnet-4-20250514) — Anthropic SDK 0.49+
 - **Banking**: Plaid (US/CA), Basiq (AU/NZ), TrueLayer (UK/EU)
 - **Payments**: Stripe
 - **Email**: Mailgun

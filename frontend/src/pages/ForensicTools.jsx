@@ -1,6 +1,14 @@
 import { useState } from 'react';
-import { useToast } from '../components/Toast';
-import ProprietaryNotice from '../components/ProprietaryNotice';
+import { motion } from 'framer-motion';
+import { useToast } from '@/components/Toast';
+import ProprietaryNotice from '@/components/ProprietaryNotice';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { Progress } from '@/components/ui/Progress';
+import { cn } from '@/lib/utils';
 
 // ─── Demo Data ──────────────────────────────────────────────────────────────────
 
@@ -52,33 +60,48 @@ const CASH_FLOW_DATA = [
   { month: 'Mar 2026', inflow: 203000, outflow: 289000, net: -86000, anomaly: true, reason: 'Three payments totalling $112,000 to newly added vendors — all just below $10K reporting threshold (structured as 12 payments)' },
 ];
 
+// ─── Animation Variants ─────────────────────────────────────────────────────────
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.35, ease: 'easeOut' },
+};
+
+const staggerContainer = {
+  animate: { transition: { staggerChildren: 0.06 } },
+};
+
+const staggerItem = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
+
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
-function riskBadge(level) {
-  const styles = {
-    Critical: 'bg-red-100 text-red-800 border border-red-200',
-    High: 'bg-orange-100 text-orange-800 border border-orange-200',
-    Medium: 'bg-amber-100 text-amber-800 border border-amber-200',
-    Low: 'bg-gray-100 text-gray-600 border border-gray-200',
-  };
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${styles[level] || styles.Low}`}>
-      {level}
-    </span>
-  );
+const RISK_BADGE_MAP = {
+  Critical: { variant: 'destructive', className: 'border border-red-200' },
+  High: { variant: 'warning', className: 'bg-orange-100 text-orange-800 border border-orange-200' },
+  Medium: { variant: 'warning', className: 'border border-amber-200' },
+  Low: { variant: 'outline', className: 'border-gray-200 text-gray-600' },
+};
+
+function RiskBadge({ level }) {
+  const config = RISK_BADGE_MAP[level] || RISK_BADGE_MAP.Low;
+  return <Badge variant={config.variant} className={config.className}>{level}</Badge>;
 }
 
-function riskScoreBar(score) {
-  let color = 'bg-green-400';
-  if (score >= 80) color = 'bg-red-500';
-  else if (score >= 60) color = 'bg-orange-500';
-  else if (score >= 40) color = 'bg-amber-500';
-  else if (score >= 20) color = 'bg-green-500';
+function RiskScoreBar({ score }) {
+  let colorClass = 'bg-green-400';
+  if (score >= 80) colorClass = 'bg-red-500';
+  else if (score >= 60) colorClass = 'bg-orange-500';
+  else if (score >= 40) colorClass = 'bg-amber-500';
+  else if (score >= 20) colorClass = 'bg-green-500';
 
   return (
     <div className="flex items-center gap-2">
-      <div className="w-24 bg-gray-200 rounded-full h-2">
-        <div className={`${color} h-2 rounded-full transition-all`} style={{ width: `${score}%` }} />
+      <div className="relative w-24 h-2 overflow-hidden rounded-full bg-gray-200">
+        <div className={cn('h-full rounded-full transition-all', colorClass)} style={{ width: `${score}%` }} />
       </div>
       <span className="text-sm font-mono font-semibold text-gray-700">{score}</span>
     </div>
@@ -93,21 +116,25 @@ function fmt(n) {
 
 function SummaryCards({ flags, critical, high, lastScan }) {
   const cards = [
-    { label: 'Total Flags', value: flags, color: 'text-blue-600', bg: 'bg-blue-50 border-blue-200' },
-    { label: 'Critical Risks', value: critical, color: 'text-red-600', bg: 'bg-red-50 border-red-200' },
-    { label: 'High Risks', value: high, color: 'text-orange-600', bg: 'bg-orange-50 border-orange-200' },
-    { label: 'Last Scan', value: lastScan, color: 'text-green-600', bg: 'bg-green-50 border-green-200' },
+    { label: 'Total Flags', value: flags, color: 'text-blue-600', border: 'border-blue-200', bg: 'bg-blue-50' },
+    { label: 'Critical Risks', value: critical, color: 'text-red-600', border: 'border-red-200', bg: 'bg-red-50' },
+    { label: 'High Risks', value: high, color: 'text-orange-600', border: 'border-orange-200', bg: 'bg-orange-50' },
+    { label: 'Last Scan', value: lastScan, color: 'text-green-600', border: 'border-green-200', bg: 'bg-green-50' },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" variants={staggerContainer} initial="initial" animate="animate">
       {cards.map((c) => (
-        <div key={c.label} className={`${c.bg} border rounded-xl p-5`}>
-          <p className="text-sm font-medium text-gray-500">{c.label}</p>
-          <p className={`text-2xl font-bold mt-1 ${c.color}`}>{c.value}</p>
-        </div>
+        <motion.div key={c.label} variants={staggerItem}>
+          <Card className={cn('hover:shadow-md', c.border, c.bg)}>
+            <CardContent className="p-5">
+              <p className="text-sm font-medium text-gray-500">{c.label}</p>
+              <p className={cn('text-2xl font-bold mt-1', c.color)}>{c.value}</p>
+            </CardContent>
+          </Card>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 
@@ -158,47 +185,43 @@ function TransactionPatternScanner({ toast }) {
           <h3 className="text-lg font-semibold text-gray-900">Transaction Pattern Scanner</h3>
           <p className="text-sm text-gray-500 mt-1">Detects round amounts, threshold structuring, weekend activity, and duplicate payments</p>
         </div>
-        <button
-          onClick={runAnalysis}
-          disabled={scanning}
-          className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <Button onClick={runAnalysis} disabled={scanning}>
           {scanning ? 'Scanning...' : 'Run Analysis'}
-        </button>
+        </Button>
       </div>
 
       {scanning && <ScanSpinner message="Analysing 2,847 transactions across all entities..." />}
 
       {results && !scanning && (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Transaction ID</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Date</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Vendor</th>
-                <th className="text-right py-3 px-4 font-semibold text-gray-600">Amount</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Pattern Type</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Risk</th>
-              </tr>
-            </thead>
-            <tbody>
+        <motion.div {...fadeInUp}>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Transaction ID</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Vendor</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead>Pattern Type</TableHead>
+                <TableHead>Risk</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {results.map((txn) => (
-                <tr key={txn.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                  <td className="py-3 px-4 font-mono text-blue-600 font-medium">{txn.id}</td>
-                  <td className="py-3 px-4 text-gray-700">{txn.date}</td>
-                  <td className="py-3 px-4 text-gray-900 font-medium">{txn.vendor}</td>
-                  <td className="py-3 px-4 text-right font-mono text-gray-900">${fmt(txn.amount)}</td>
-                  <td className="py-3 px-4">
+                <TableRow key={txn.id}>
+                  <TableCell className="font-mono text-blue-600 font-medium">{txn.id}</TableCell>
+                  <TableCell className="text-gray-700">{txn.date}</TableCell>
+                  <TableCell className="text-gray-900 font-medium">{txn.vendor}</TableCell>
+                  <TableCell className="text-right font-mono text-gray-900">${fmt(txn.amount)}</TableCell>
+                  <TableCell>
                     <span className="text-gray-700">{txn.type}</span>
                     <p className="text-xs text-gray-400 mt-0.5 max-w-xs">{txn.pattern}</p>
-                  </td>
-                  <td className="py-3 px-4">{riskBadge(txn.risk)}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell><RiskBadge level={txn.risk} /></TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </motion.div>
       )}
 
       {!results && !scanning && <EmptyState message='Click "Run Analysis" to scan transactions for suspicious patterns' />}
@@ -226,56 +249,50 @@ function VendorRiskMatrix({ toast }) {
           <h3 className="text-lg font-semibold text-gray-900">Vendor Risk Matrix</h3>
           <p className="text-sm text-gray-500 mt-1">Evaluates vendors for ghost vendor indicators, address anomalies, and payment pattern irregularities</p>
         </div>
-        <button
-          onClick={runAnalysis}
-          disabled={scanning}
-          className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <Button onClick={runAnalysis} disabled={scanning}>
           {scanning ? 'Analysing...' : 'Run Analysis'}
-        </button>
+        </Button>
       </div>
 
       {scanning && <ScanSpinner message="Cross-referencing 142 vendors against risk indicators..." />}
 
       {results && !scanning && (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Vendor</th>
-                <th className="text-right py-3 px-4 font-semibold text-gray-600">Total Spend</th>
-                <th className="text-right py-3 px-4 font-semibold text-gray-600">Txns</th>
-                <th className="text-right py-3 px-4 font-semibold text-gray-600">Avg Amount</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Risk Score</th>
-                <th className="text-left py-3 px-4 font-semibold text-gray-600">Flags</th>
-              </tr>
-            </thead>
-            <tbody>
+        <motion.div {...fadeInUp}>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Vendor</TableHead>
+                <TableHead className="text-right">Total Spend</TableHead>
+                <TableHead className="text-right">Txns</TableHead>
+                <TableHead className="text-right">Avg Amount</TableHead>
+                <TableHead>Risk Score</TableHead>
+                <TableHead>Flags</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {results.map((v) => (
-                <tr key={v.vendor} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${v.riskScore >= 70 ? 'bg-red-50/40' : ''}`}>
-                  <td className="py-3 px-4 text-gray-900 font-medium">{v.vendor}</td>
-                  <td className="py-3 px-4 text-right font-mono text-gray-900">${fmt(v.totalSpend)}</td>
-                  <td className="py-3 px-4 text-right text-gray-700">{v.txnCount}</td>
-                  <td className="py-3 px-4 text-right font-mono text-gray-700">${fmt(v.avgAmount)}</td>
-                  <td className="py-3 px-4">{riskScoreBar(v.riskScore)}</td>
-                  <td className="py-3 px-4">
+                <TableRow key={v.vendor} className={cn(v.riskScore >= 70 && 'bg-red-50/40')}>
+                  <TableCell className="text-gray-900 font-medium">{v.vendor}</TableCell>
+                  <TableCell className="text-right font-mono text-gray-900">${fmt(v.totalSpend)}</TableCell>
+                  <TableCell className="text-right text-gray-700">{v.txnCount}</TableCell>
+                  <TableCell className="text-right font-mono text-gray-700">${fmt(v.avgAmount)}</TableCell>
+                  <TableCell><RiskScoreBar score={v.riskScore} /></TableCell>
+                  <TableCell>
                     {v.flags.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
                         {v.flags.map((f, i) => (
-                          <span key={i} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700 border border-red-200">
-                            {f}
-                          </span>
+                          <Badge key={i} variant="destructive" className="border border-red-200">{f}</Badge>
                         ))}
                       </div>
                     ) : (
                       <span className="text-xs text-gray-400">No flags</span>
                     )}
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
+        </motion.div>
       )}
 
       {!results && !scanning && <EmptyState message='Click "Run Analysis" to evaluate vendor risk profiles' />}
@@ -303,44 +320,44 @@ function JournalEntryTester({ toast }) {
           <h3 className="text-lg font-semibold text-gray-900">Journal Entry Tester</h3>
           <p className="text-sm text-gray-500 mt-1">Identifies irregular journal entries: after-hours postings, unusual users, back-dated entries, and period-close manipulation</p>
         </div>
-        <button
-          onClick={runAnalysis}
-          disabled={scanning}
-          className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <Button onClick={runAnalysis} disabled={scanning}>
           {scanning ? 'Testing...' : 'Run Analysis'}
-        </button>
+        </Button>
       </div>
 
       {scanning && <ScanSpinner message="Testing 1,204 journal entries against 12 irregularity rules..." />}
 
       {results && !scanning && (
-        <div className="space-y-4">
+        <motion.div className="space-y-4" variants={staggerContainer} initial="initial" animate="animate">
           {results.map((entry) => (
-            <div key={entry.entryId} className={`border rounded-lg p-4 ${
-              entry.severity === 'Critical' ? 'border-red-200 bg-red-50/50' :
-              entry.severity === 'High' ? 'border-orange-200 bg-orange-50/30' :
-              entry.severity === 'Medium' ? 'border-amber-200 bg-amber-50/30' :
-              'border-gray-200 bg-gray-50/30'
-            }`}>
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="font-mono text-sm font-semibold text-blue-600">{entry.entryId}</span>
-                    {riskBadge(entry.severity)}
-                    <span className="text-xs px-2 py-0.5 rounded bg-gray-200 text-gray-600 font-medium">{entry.type}</span>
+            <motion.div key={entry.entryId} variants={staggerItem}>
+              <Card className={cn(
+                entry.severity === 'Critical' ? 'border-red-200 bg-red-50/50' :
+                entry.severity === 'High' ? 'border-orange-200 bg-orange-50/30' :
+                entry.severity === 'Medium' ? 'border-amber-200 bg-amber-50/30' :
+                'border-gray-200 bg-gray-50/30'
+              )}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="font-mono text-sm font-semibold text-blue-600">{entry.entryId}</span>
+                        <RiskBadge level={entry.severity} />
+                        <Badge variant="secondary">{entry.type}</Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-gray-500 mb-2 flex-wrap">
+                        <span>Date: {entry.date}</span>
+                        <span>Posted by: <span className="font-medium text-gray-700">{entry.postedBy}</span></span>
+                        <span>Amount: <span className="font-mono font-semibold text-gray-900">${fmt(entry.amount)}</span></span>
+                      </div>
+                      <p className="text-sm text-gray-700 leading-relaxed">{entry.explanation}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-2 flex-wrap">
-                    <span>Date: {entry.date}</span>
-                    <span>Posted by: <span className="font-medium text-gray-700">{entry.postedBy}</span></span>
-                    <span>Amount: <span className="font-mono font-semibold text-gray-900">${fmt(entry.amount)}</span></span>
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">{entry.explanation}</p>
-                </div>
-              </div>
-            </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
 
       {!results && !scanning && <EmptyState message='Click "Run Analysis" to test journal entries for irregularities' />}
@@ -370,19 +387,15 @@ function CashFlowAnomalyDetector({ toast }) {
           <h3 className="text-lg font-semibold text-gray-900">Cash Flow Anomaly Detector</h3>
           <p className="text-sm text-gray-500 mt-1">Identifies months with cash flow deviating more than 2 standard deviations from the rolling mean</p>
         </div>
-        <button
-          onClick={runAnalysis}
-          disabled={scanning}
-          className="px-5 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
+        <Button onClick={runAnalysis} disabled={scanning}>
           {scanning ? 'Detecting...' : 'Run Analysis'}
-        </button>
+        </Button>
       </div>
 
       {scanning && <ScanSpinner message="Analysing 12 months of cash flow data across all bank accounts..." />}
 
       {results && !scanning && (
-        <div>
+        <motion.div {...fadeInUp}>
           {/* Visual bar chart */}
           <div className="mb-8">
             <div className="flex items-end gap-1.5 h-48 px-2">
@@ -395,14 +408,14 @@ function CashFlowAnomalyDetector({ toast }) {
                       <div className="w-full flex flex-col items-center justify-start" style={{ height: '100%' }}>
                         <div className="flex-1" />
                         <div
-                          className={`w-full rounded-t ${d.anomaly ? 'bg-red-500' : 'bg-red-300'}`}
+                          className={cn('w-full rounded-t', d.anomaly ? 'bg-red-500' : 'bg-red-300')}
                           style={{ height: `${height}%`, minHeight: '4px' }}
                         />
                       </div>
                     ) : (
                       <div className="w-full flex flex-col items-center justify-end" style={{ height: '100%' }}>
                         <div
-                          className={`w-full rounded-t ${d.anomaly ? 'bg-red-500' : 'bg-blue-500'}`}
+                          className={cn('w-full rounded-t', d.anomaly ? 'bg-red-500' : 'bg-blue-500')}
                           style={{ height: `${height}%`, minHeight: '4px' }}
                         />
                       </div>
@@ -434,45 +447,39 @@ function CashFlowAnomalyDetector({ toast }) {
           </div>
 
           {/* Detail table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Month</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-600">Inflow</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-600">Outflow</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-600">Net</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Status</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-600">Finding</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.map((d) => (
-                  <tr key={d.month} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${d.anomaly ? 'bg-red-50/50' : ''}`}>
-                    <td className="py-3 px-4 font-medium text-gray-900">{d.month}</td>
-                    <td className="py-3 px-4 text-right font-mono text-green-700">${d.inflow.toLocaleString()}</td>
-                    <td className="py-3 px-4 text-right font-mono text-red-600">${d.outflow.toLocaleString()}</td>
-                    <td className={`py-3 px-4 text-right font-mono font-semibold ${d.net >= 0 ? 'text-green-700' : 'text-red-600'}`}>
-                      {d.net >= 0 ? '' : '-'}${Math.abs(d.net).toLocaleString()}
-                    </td>
-                    <td className="py-3 px-4">
-                      {d.anomaly ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800 border border-red-200">
-                          Anomaly
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
-                          Normal
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-xs text-gray-500 max-w-sm">{d.reason || '\u2014'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Month</TableHead>
+                <TableHead className="text-right">Inflow</TableHead>
+                <TableHead className="text-right">Outflow</TableHead>
+                <TableHead className="text-right">Net</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Finding</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {results.map((d) => (
+                <TableRow key={d.month} className={cn(d.anomaly && 'bg-red-50/50')}>
+                  <TableCell className="font-medium text-gray-900">{d.month}</TableCell>
+                  <TableCell className="text-right font-mono text-green-700">${d.inflow.toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-mono text-red-600">${d.outflow.toLocaleString()}</TableCell>
+                  <TableCell className={cn('text-right font-mono font-semibold', d.net >= 0 ? 'text-green-700' : 'text-red-600')}>
+                    {d.net >= 0 ? '' : '-'}${Math.abs(d.net).toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    {d.anomaly ? (
+                      <Badge variant="destructive" className="border border-red-200">Anomaly</Badge>
+                    ) : (
+                      <Badge variant="success" className="border border-green-200">Normal</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-xs text-gray-500 max-w-sm">{d.reason || '\u2014'}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </motion.div>
       )}
 
       {!results && !scanning && <EmptyState message='Click "Run Analysis" to detect cash flow anomalies over the trailing 12 months' />}
@@ -481,13 +488,6 @@ function CashFlowAnomalyDetector({ toast }) {
 }
 
 // ─── Main Page ──────────────────────────────────────────────────────────────────
-
-const TABS = [
-  { id: 'patterns', label: 'Transaction Patterns' },
-  { id: 'vendors', label: 'Vendor Risk Matrix' },
-  { id: 'journals', label: 'Journal Entry Tester' },
-  { id: 'cashflow', label: 'Cash Flow Anomalies' },
-];
 
 export default function ForensicTools() {
   const [activeTab, setActiveTab] = useState('patterns');
@@ -498,15 +498,15 @@ export default function ForensicTools() {
   const highCount = FLAGGED_TRANSACTIONS.filter(t => t.risk === 'High').length + JOURNAL_ENTRY_FINDINGS.filter(e => e.severity === 'High').length + CASH_FLOW_DATA.filter(d => d.anomaly).length;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-3xl font-bold">Forensic Accounting Tools</h2>
-        <button
+        <Button
+          variant="outline"
           onClick={() => toast.info('Forensic report generation will export all findings to PDF.')}
-          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors border border-gray-200"
         >
           Export Report
-        </button>
+        </Button>
       </div>
       <p className="text-gray-500 mb-8">Advanced fraud detection and financial irregularity analysis — powered by Astra AI</p>
 
@@ -517,33 +517,42 @@ export default function ForensicTools() {
         lastScan="2026-03-25 09:14 AM"
       />
 
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="flex gap-0 -mb-px">
-          {TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
-                activeTab === tab.id
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="w-full justify-start rounded-none border-b border-gray-200 bg-transparent p-0 h-auto mb-6">
+          <TabsTrigger value="patterns" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-3">
+            Transaction Patterns
+          </TabsTrigger>
+          <TabsTrigger value="vendors" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-3">
+            Vendor Risk Matrix
+          </TabsTrigger>
+          <TabsTrigger value="journals" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-3">
+            Journal Entry Tester
+          </TabsTrigger>
+          <TabsTrigger value="cashflow" className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-3">
+            Cash Flow Anomalies
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Tab Content */}
-      <div className="bg-white border rounded-xl p-6">
-        {activeTab === 'patterns' && <TransactionPatternScanner toast={toast} />}
-        {activeTab === 'vendors' && <VendorRiskMatrix toast={toast} />}
-        {activeTab === 'journals' && <JournalEntryTester toast={toast} />}
-        {activeTab === 'cashflow' && <CashFlowAnomalyDetector toast={toast} />}
-      </div>
+        <Card>
+          <CardContent className="p-6">
+            <TabsContent value="patterns" className="mt-0">
+              <TransactionPatternScanner toast={toast} />
+            </TabsContent>
+            <TabsContent value="vendors" className="mt-0">
+              <VendorRiskMatrix toast={toast} />
+            </TabsContent>
+            <TabsContent value="journals" className="mt-0">
+              <JournalEntryTester toast={toast} />
+            </TabsContent>
+            <TabsContent value="cashflow" className="mt-0">
+              <CashFlowAnomalyDetector toast={toast} />
+            </TabsContent>
+          </CardContent>
+        </Card>
+      </Tabs>
+
       <ProprietaryNotice />
-    </div>
+    </motion.div>
   );
 }

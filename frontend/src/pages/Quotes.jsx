@@ -1,14 +1,30 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { cn } from '@/lib/utils';
 
-const STATUS_COLORS = {
-  draft: 'bg-gray-100 text-gray-700',
-  sent: 'bg-blue-100 text-blue-700',
-  accepted: 'bg-green-100 text-green-700',
-  declined: 'bg-red-100 text-red-700',
-  expired: 'bg-amber-100 text-amber-700',
-  converted: 'bg-purple-100 text-purple-700',
+const STATUS_BADGE = {
+  draft: { variant: 'secondary', label: 'Draft' },
+  sent: { variant: 'default', label: 'Sent', className: 'bg-blue-100 text-blue-700 border-transparent' },
+  accepted: { variant: 'success', label: 'Accepted' },
+  declined: { variant: 'destructive', label: 'Declined' },
+  expired: { variant: 'warning', label: 'Expired' },
+  converted: { variant: 'default', label: 'Converted', className: 'bg-purple-100 text-purple-700 border-transparent' },
+};
+
+const STAT_COLORS = {
+  indigo: 'bg-indigo-50 text-indigo-700',
+  green: 'bg-green-50 text-green-700',
+  amber: 'bg-amber-50 text-amber-700',
+  blue: 'bg-blue-50 text-blue-700',
+  gray: 'bg-gray-50 text-gray-700',
+  purple: 'bg-purple-50 text-purple-700',
 };
 
 const DEMO_QUOTES = [
@@ -69,25 +85,36 @@ export default function Quotes() {
   if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Quotes & Estimates</h2>
           <p className="text-gray-500 mt-1">Create, send, and track quotes for your clients</p>
         </div>
-        <button onClick={() => setShowCreate(!showCreate)} className="px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+        <Button onClick={() => setShowCreate(!showCreate)}>
           {showCreate ? 'Cancel' : '+ New Quote'}
-        </button>
+        </Button>
       </div>
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
-        <Card label="Total Quotes" value={summary.total} />
-        <Card label="Draft" value={summary.draft} color="gray" />
-        <Card label="Sent" value={summary.sent} color="blue" />
-        <Card label="Accepted" value={summary.accepted} color="green" />
-        <Card label="Converted" value={summary.converted} color="purple" />
-        <Card label="Total Value" value={`$${summary.total_value.toLocaleString()}`} color="indigo" />
+        {[
+          { label: 'Total Quotes', value: summary.total, color: 'indigo' },
+          { label: 'Draft', value: summary.draft, color: 'gray' },
+          { label: 'Sent', value: summary.sent, color: 'blue' },
+          { label: 'Accepted', value: summary.accepted, color: 'green' },
+          { label: 'Converted', value: summary.converted, color: 'purple' },
+          { label: 'Total Value', value: `$${summary.total_value.toLocaleString()}`, color: 'indigo' },
+        ].map((stat, i) => (
+          <motion.div key={stat.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+            <Card className={cn('border-0 shadow-none', STAT_COLORS[stat.color])}>
+              <CardContent className="p-4">
+                <p className="text-xs font-medium opacity-70">{stat.label}</p>
+                <p className="text-xl font-bold mt-1">{stat.value}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
       {/* Create */}
@@ -96,9 +123,14 @@ export default function Quotes() {
       {/* Filters */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {['', 'draft', 'sent', 'accepted', 'declined', 'expired', 'converted'].map(s => (
-          <button key={s} onClick={() => setFilterStatus(s)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterStatus === s ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+          <Button
+            key={s}
+            onClick={() => setFilterStatus(s)}
+            variant={filterStatus === s ? 'default' : 'secondary'}
+            size="sm"
+          >
             {s ? s.replace(/\b\w/g, l => l.toUpperCase()) : 'All'}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -106,54 +138,67 @@ export default function Quotes() {
       {selected && <QuoteDetail quote={selected} onClose={() => setSelected(null)} onSend={handleSend} onAccept={handleAccept} onConvert={handleConvert} />}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead><tr className="bg-gray-50 border-b">
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Quote #</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Client</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Date</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Expiry</th>
-            <th className="text-right px-4 py-3 font-semibold text-gray-700">Total</th>
-            <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-          </tr></thead>
-          <tbody>
-            {filtered.map(q => (
-              <tr key={q.id} onClick={() => setSelected(q)} className="border-b hover:bg-gray-50 cursor-pointer transition-colors">
-                <td className="px-4 py-3 font-medium text-indigo-600">{q.quote_number}</td>
-                <td className="px-4 py-3 text-gray-900">{q.client_name}</td>
-                <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{q.date}</td>
-                <td className="px-4 py-3 text-gray-500">{q.expiry_date || '—'}</td>
-                <td className="px-4 py-3 text-right font-medium text-gray-900">${Number(q.total).toLocaleString()}</td>
-                <td className="px-4 py-3 text-center"><span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[q.status]}`}>{q.status}</span></td>
-              </tr>
-            ))}
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>Quote #</TableHead>
+              <TableHead>Client</TableHead>
+              <TableHead className="hidden md:table-cell">Date</TableHead>
+              <TableHead>Expiry</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.map(q => {
+              const badge = STATUS_BADGE[q.status] || { variant: 'secondary', label: q.status };
+              return (
+                <TableRow key={q.id} onClick={() => setSelected(q)} className="cursor-pointer">
+                  <TableCell className="font-medium text-indigo-600">{q.quote_number}</TableCell>
+                  <TableCell className="text-gray-900">{q.client_name}</TableCell>
+                  <TableCell className="text-gray-500 hidden md:table-cell">{q.date}</TableCell>
+                  <TableCell className="text-gray-500">{q.expiry_date || '—'}</TableCell>
+                  <TableCell className="text-right font-medium text-gray-900">${Number(q.total).toLocaleString()}</TableCell>
+                  <TableCell className="text-center">
+                    <Badge variant={badge.variant} className={badge.className}>{badge.label}</Badge>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
             {filtered.length === 0 && (
-              <tr><td colSpan="6" className="px-4 py-12 text-center text-gray-400">No quotes found matching this filter.</td></tr>
+              <TableRow>
+                <TableCell colSpan={6} className="text-center text-gray-400 py-12">No quotes found matching this filter.</TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
 }
 
-function Card({ label, value, color = 'indigo' }) {
-  const c = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700', red: 'bg-red-50 text-red-700', blue: 'bg-blue-50 text-blue-700', gray: 'bg-gray-50 text-gray-700', purple: 'bg-purple-50 text-purple-700' };
-  return <div className={`rounded-xl p-4 ${c[color]}`}><p className="text-xs font-medium opacity-70">{label}</p><p className="text-xl font-bold mt-1">{value}</p></div>;
-}
-
 function QuoteDetail({ quote: q, onClose, onSend, onAccept, onConvert }) {
+  const badge = STATUS_BADGE[q.status] || { variant: 'secondary', label: q.status };
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex justify-between items-start mb-6">
           <div>
             <h3 className="text-xl font-bold">{q.quote_number}</h3>
             <p className="text-gray-500">{q.title} &middot; {q.client_name}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[q.status]}`}>{q.status}</span>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl ml-2">&times;</button>
+            <Badge variant={badge.variant} className={badge.className}>{badge.label}</Badge>
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-gray-400 hover:text-gray-600">
+              <span className="text-xl leading-none">&times;</span>
+            </Button>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
@@ -163,22 +208,30 @@ function QuoteDetail({ quote: q, onClose, onSend, onAccept, onConvert }) {
           <div><p className="text-gray-500 text-xs">Status</p><p className="font-medium capitalize">{q.status}{q.converted_to ? ` → ${q.converted_to}` : ''}</p></div>
         </div>
 
-        <table className="w-full text-sm mb-6">
-          <thead><tr className="border-b"><th className="text-left py-2 text-gray-600">Description</th><th className="text-right py-2 text-gray-600">Qty</th><th className="text-right py-2 text-gray-600">Price</th><th className="text-right py-2 text-gray-600">Tax</th><th className="text-right py-2 text-gray-600">Amount</th></tr></thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left">Description</TableHead>
+              <TableHead className="text-right">Qty</TableHead>
+              <TableHead className="text-right">Price</TableHead>
+              <TableHead className="text-right">Tax</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {(q.lines || []).map((l, i) => (
-              <tr key={i} className="border-b border-gray-100">
-                <td className="py-2">{l.description}</td>
-                <td className="py-2 text-right">{l.quantity}</td>
-                <td className="py-2 text-right">${Number(l.unit_price).toLocaleString()}</td>
-                <td className="py-2 text-right">{l.tax_rate}%</td>
-                <td className="py-2 text-right font-medium">${Number(l.amount).toLocaleString()}</td>
-              </tr>
+              <TableRow key={i}>
+                <TableCell>{l.description}</TableCell>
+                <TableCell className="text-right">{l.quantity}</TableCell>
+                <TableCell className="text-right">${Number(l.unit_price).toLocaleString()}</TableCell>
+                <TableCell className="text-right">{l.tax_rate}%</TableCell>
+                <TableCell className="text-right font-medium">${Number(l.amount).toLocaleString()}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-4">
           <div className="text-sm space-y-1 w-48">
             <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>${Number(q.subtotal).toLocaleString()}</span></div>
             <div className="flex justify-between"><span className="text-gray-500">Tax</span><span>${Number(q.tax_amount).toLocaleString()}</span></div>
@@ -194,11 +247,11 @@ function QuoteDetail({ quote: q, onClose, onSend, onAccept, onConvert }) {
         )}
 
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
-          {q.status === 'draft' && <button onClick={() => onSend(q)} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Send to Client</button>}
-          {q.status === 'sent' && <button onClick={() => onAccept(q)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">Mark as Accepted</button>}
-          {(q.status === 'accepted' || q.status === 'sent') && <button onClick={() => onConvert(q)} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700">Convert to Invoice</button>}
+          {q.status === 'draft' && <Button onClick={() => onSend(q)} className="bg-blue-600 hover:bg-blue-700 text-white">Send to Client</Button>}
+          {q.status === 'sent' && <Button variant="success" onClick={() => onAccept(q)}>Mark as Accepted</Button>}
+          {(q.status === 'accepted' || q.status === 'sent') && <Button onClick={() => onConvert(q)} className="bg-purple-600 hover:bg-purple-700 text-white">Convert to Invoice</Button>}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -221,49 +274,64 @@ function CreateQuoteForm({ onSubmit, onCancel, nextNumber }) {
   const tax = form.lines.reduce((s, l) => s + l.quantity * l.unit_price * l.tax_rate / 100, 0);
 
   return (
-    <div className="bg-white rounded-xl border p-6 mb-8">
-      <h3 className="font-bold text-lg mb-4">New Quote</h3>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Client Name *</label><input value={form.client_name} onChange={e => set('client_name', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Acme Corp" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Quote Number</label><input value={form.quote_number} onChange={e => set('quote_number', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Date</label><input type="date" value={form.date} onChange={e => set('date', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Expiry Date</label><input type="date" value={form.expiry_date} onChange={e => set('expiry_date', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" /></div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Title / Description</label><input value={form.title} onChange={e => set('title', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="e.g. Website Redesign Proposal" /></div>
-      </div>
-
-      <table className="w-full text-sm mb-3">
-        <thead><tr className="border-b"><th className="text-left py-2">Description</th><th className="text-right py-2 w-16">Qty</th><th className="text-right py-2 w-24">Price</th><th className="text-right py-2 w-16">Tax%</th><th className="text-right py-2 w-24">Amount</th><th className="w-8"></th></tr></thead>
-        <tbody>{form.lines.map((l, i) => (
-          <tr key={i} className="border-b border-gray-100">
-            <td className="py-1"><input value={l.description} onChange={e => updateLine(i, 'description', e.target.value)} className="w-full px-2 py-1 border rounded text-sm" placeholder="Line item description" /></td>
-            <td className="py-1"><input type="number" value={l.quantity} onChange={e => updateLine(i, 'quantity', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm text-right" /></td>
-            <td className="py-1"><input type="number" value={l.unit_price} onChange={e => updateLine(i, 'unit_price', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm text-right" /></td>
-            <td className="py-1"><input type="number" value={l.tax_rate} onChange={e => updateLine(i, 'tax_rate', Number(e.target.value))} className="w-full px-2 py-1 border rounded text-sm text-right" /></td>
-            <td className="py-1 text-right font-medium">${l.amount.toFixed(2)}</td>
-            <td className="py-1 text-center"><button onClick={() => removeLine(i)} className="text-gray-400 hover:text-red-500 text-sm">&times;</button></td>
-          </tr>
-        ))}</tbody>
-      </table>
-      <button onClick={addLine} className="text-xs text-indigo-600 font-medium hover:underline mb-4">+ Add line</button>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Notes</label><textarea value={form.notes} onChange={e => set('notes', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" rows="2" placeholder="Additional notes for the client" /></div>
-        <div><label className="text-xs font-medium text-gray-600 block mb-1">Terms & Conditions</label><textarea value={form.terms} onChange={e => set('terms', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" rows="2" placeholder="Payment terms, validity period, etc." /></div>
-      </div>
-
-      <div className="flex justify-between items-end">
-        <div className="flex gap-3">
-          <button onClick={onCancel} className="px-4 py-2 border rounded-lg text-sm">Cancel</button>
-          <button onClick={() => form.client_name && onSubmit({ ...form, subtotal, tax_amount: tax, total: subtotal + tax })} disabled={!form.client_name} className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-40">Create Quote</button>
+    <Card className="mb-8">
+      <CardContent className="p-6">
+        <h3 className="font-bold text-lg mb-4">New Quote</h3>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Client Name *</label><Input value={form.client_name} onChange={e => set('client_name', e.target.value)} placeholder="e.g. Acme Corp" /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Quote Number</label><Input value={form.quote_number} onChange={e => set('quote_number', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Date</label><Input type="date" value={form.date} onChange={e => set('date', e.target.value)} /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Expiry Date</label><Input type="date" value={form.expiry_date} onChange={e => set('expiry_date', e.target.value)} /></div>
         </div>
-        <div className="text-sm text-right space-y-1">
-          <div>Subtotal: <span className="font-medium">${subtotal.toFixed(2)}</span></div>
-          <div>Tax: <span className="font-medium">${tax.toFixed(2)}</span></div>
-          <div className="font-bold text-base">Total: ${(subtotal + tax).toFixed(2)}</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Title / Description</label><Input value={form.title} onChange={e => set('title', e.target.value)} placeholder="e.g. Website Redesign Proposal" /></div>
         </div>
-      </div>
-    </div>
+
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left">Description</TableHead>
+              <TableHead className="text-right w-16">Qty</TableHead>
+              <TableHead className="text-right w-24">Price</TableHead>
+              <TableHead className="text-right w-16">Tax%</TableHead>
+              <TableHead className="text-right w-24">Amount</TableHead>
+              <TableHead className="w-8"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {form.lines.map((l, i) => (
+              <TableRow key={i}>
+                <TableCell className="py-1"><Input value={l.description} onChange={e => updateLine(i, 'description', e.target.value)} placeholder="Line item description" className="h-8 text-sm" /></TableCell>
+                <TableCell className="py-1"><Input type="number" value={l.quantity} onChange={e => updateLine(i, 'quantity', Number(e.target.value))} className="h-8 text-sm text-right" /></TableCell>
+                <TableCell className="py-1"><Input type="number" value={l.unit_price} onChange={e => updateLine(i, 'unit_price', Number(e.target.value))} className="h-8 text-sm text-right" /></TableCell>
+                <TableCell className="py-1"><Input type="number" value={l.tax_rate} onChange={e => updateLine(i, 'tax_rate', Number(e.target.value))} className="h-8 text-sm text-right" /></TableCell>
+                <TableCell className="py-1 text-right font-medium">${l.amount.toFixed(2)}</TableCell>
+                <TableCell className="py-1 text-center">
+                  <Button variant="ghost" size="sm" onClick={() => removeLine(i)} className="text-gray-400 hover:text-red-500 h-8 w-8 p-0">&times;</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Button variant="link" size="sm" onClick={addLine} className="mb-4">+ Add line</Button>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Notes</label><textarea value={form.notes} onChange={e => set('notes', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20" rows="2" placeholder="Additional notes for the client" /></div>
+          <div><label className="text-xs font-medium text-gray-600 block mb-1">Terms & Conditions</label><textarea value={form.terms} onChange={e => set('terms', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20" rows="2" placeholder="Payment terms, validity period, etc." /></div>
+        </div>
+
+        <div className="flex justify-between items-end">
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={onCancel}>Cancel</Button>
+            <Button onClick={() => form.client_name && onSubmit({ ...form, subtotal, tax_amount: tax, total: subtotal + tax })} disabled={!form.client_name}>Create Quote</Button>
+          </div>
+          <div className="text-sm text-right space-y-1">
+            <div>Subtotal: <span className="font-medium">${subtotal.toFixed(2)}</span></div>
+            <div>Tax: <span className="font-medium">${tax.toFixed(2)}</span></div>
+            <div className="font-bold text-base">Total: ${(subtotal + tax).toFixed(2)}</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

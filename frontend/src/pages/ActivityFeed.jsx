@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 import api from '../services/api';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { cn } from '@/lib/utils';
 
 const ACTION_STYLES = {
   create: { bg: 'bg-green-100', text: 'text-green-700', dot: 'bg-green-500', label: 'Created', icon: '+' },
@@ -43,6 +50,8 @@ function formatFullTime(ts) {
   });
 }
 
+const ALL_VALUE = '__all__';
+
 const DEMO_ENTRIES = [
   { id: '1', timestamp: new Date().toISOString(), user_name: 'Sarah Chen', action: 'approve', resource_type: 'transaction', resource_id: 'TXN-4821', entity_id: 'ent-001', description: 'Approved batch of 12 vendor payments totaling $34,560' },
   { id: '2', timestamp: new Date(Date.now() - 300000).toISOString(), user_name: 'James Wilson', action: 'create', resource_type: 'invoice', resource_id: 'INV-1094', entity_id: 'ent-002', description: 'Created invoice for Meridian Consulting - Q1 advisory fees' },
@@ -57,6 +66,24 @@ const DEMO_ENTRIES = [
   { id: '11', timestamp: new Date(Date.now() - 28800000).toISOString(), user_name: 'James Wilson', action: 'import', resource_type: 'transaction', resource_id: 'BATCH-41', entity_id: 'ent-002', description: 'Imported 247 bank transactions from ANZ feed' },
   { id: '12', timestamp: new Date(Date.now() - 43200000).toISOString(), user_name: 'Priya Sharma', action: 'review', resource_type: 'transaction', resource_id: 'TXN-4810', entity_id: 'ent-003', description: 'Flagged unusual $18,200 payment to unknown vendor for review' },
 ];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 8 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+};
 
 export default function ActivityFeed() {
   const [entries, setEntries] = useState([]);
@@ -111,81 +138,119 @@ export default function ActivityFeed() {
   const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0);
   const todayCount = entries.filter((e) => new Date(e.timestamp) >= todayStart).length;
 
+  const handleActionChange = (value) => {
+    setFilterAction(value === ALL_VALUE ? '' : value);
+    setDisplayCount(20);
+  };
+
+  const handleResourceChange = (value) => {
+    setFilterResource(value === ALL_VALUE ? '' : value);
+    setDisplayCount(20);
+  };
+
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div>
+      <motion.div initial="hidden" animate="visible" variants={fadeIn}>
         <h1 className="text-2xl font-bold text-gray-900">Activity Feed</h1>
         <p className="text-gray-500 mt-1">Real-time timeline of all actions across your practice.</p>
-      </div>
+      </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-2xl font-bold text-indigo-600">{entries.length}</p>
-          <p className="text-xs text-gray-500 mt-1">Total Events</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-2xl font-bold text-green-600">{todayCount}</p>
-          <p className="text-xs text-gray-500 mt-1">Today</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-2xl font-bold text-blue-600">{uniqueUsers.length}</p>
-          <p className="text-xs text-gray-500 mt-1">Team Members</p>
-        </div>
-        <div className="bg-white border border-gray-200 rounded-xl p-4">
-          <p className="text-2xl font-bold text-purple-600">{entries.filter((e) => e.action === 'approve').length}</p>
-          <p className="text-xs text-gray-500 mt-1">Approvals</p>
-        </div>
-      </div>
+      <motion.div
+        className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+      >
+        <motion.div variants={itemVariants}>
+          <Card className="hover:shadow-sm">
+            <CardContent className="p-4">
+              <p className="text-2xl font-bold text-indigo-600">{entries.length}</p>
+              <p className="text-xs text-gray-500 mt-1">Total Events</p>
+            </CardContent>
+          </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <Card className="hover:shadow-sm">
+            <CardContent className="p-4">
+              <p className="text-2xl font-bold text-green-600">{todayCount}</p>
+              <p className="text-xs text-gray-500 mt-1">Today</p>
+            </CardContent>
+          </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <Card className="hover:shadow-sm">
+            <CardContent className="p-4">
+              <p className="text-2xl font-bold text-blue-600">{uniqueUsers.length}</p>
+              <p className="text-xs text-gray-500 mt-1">Team Members</p>
+            </CardContent>
+          </Card>
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <Card className="hover:shadow-sm">
+            <CardContent className="p-4">
+              <p className="text-2xl font-bold text-purple-600">{entries.filter((e) => e.action === 'approve').length}</p>
+              <p className="text-xs text-gray-500 mt-1">Approvals</p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-wrap gap-3 items-center">
-        <span className="text-sm font-medium text-gray-700">Filter:</span>
-        <select
-          value={filterAction}
-          onChange={(e) => { setFilterAction(e.target.value); setDisplayCount(20); }}
-          className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-        >
-          <option value="">All Actions</option>
-          <option value="create">Created</option>
-          <option value="update">Updated</option>
-          <option value="delete">Deleted</option>
-          <option value="approve">Approved</option>
-          <option value="review">Reviewed</option>
-          <option value="export">Exported</option>
-          <option value="import">Imported</option>
-        </select>
-        <select
-          value={filterResource}
-          onChange={(e) => { setFilterResource(e.target.value); setDisplayCount(20); }}
-          className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-        >
-          <option value="">All Types</option>
-          <option value="transaction">Transactions</option>
-          <option value="invoice">Invoices</option>
-          <option value="client">Clients</option>
-          <option value="document">Documents</option>
-          <option value="report">Reports</option>
-          <option value="tax">Tax</option>
-          <option value="user">Users</option>
-        </select>
-        <input
-          type="text"
-          value={filterUser}
-          onChange={(e) => { setFilterUser(e.target.value); setDisplayCount(20); }}
-          placeholder="Search by user..."
-          className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none w-48"
-        />
-        {(filterAction || filterResource || filterUser) && (
-          <button
-            onClick={() => { setFilterAction(''); setFilterResource(''); setFilterUser(''); setDisplayCount(20); }}
-            className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-          >
-            Clear filters
-          </button>
-        )}
-      </div>
+      <motion.div initial="hidden" animate="visible" variants={fadeIn}>
+        <Card>
+          <CardContent className="p-4 flex flex-wrap gap-3 items-center">
+            <span className="text-sm font-medium text-gray-700">Filter:</span>
+            <Select value={filterAction || ALL_VALUE} onValueChange={handleActionChange}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="All Actions" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_VALUE}>All Actions</SelectItem>
+                <SelectItem value="create">Created</SelectItem>
+                <SelectItem value="update">Updated</SelectItem>
+                <SelectItem value="delete">Deleted</SelectItem>
+                <SelectItem value="approve">Approved</SelectItem>
+                <SelectItem value="review">Reviewed</SelectItem>
+                <SelectItem value="export">Exported</SelectItem>
+                <SelectItem value="import">Imported</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterResource || ALL_VALUE} onValueChange={handleResourceChange}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="All Types" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_VALUE}>All Types</SelectItem>
+                <SelectItem value="transaction">Transactions</SelectItem>
+                <SelectItem value="invoice">Invoices</SelectItem>
+                <SelectItem value="client">Clients</SelectItem>
+                <SelectItem value="document">Documents</SelectItem>
+                <SelectItem value="report">Reports</SelectItem>
+                <SelectItem value="tax">Tax</SelectItem>
+                <SelectItem value="user">Users</SelectItem>
+              </SelectContent>
+            </Select>
+            <Input
+              type="text"
+              value={filterUser}
+              onChange={(e) => { setFilterUser(e.target.value); setDisplayCount(20); }}
+              placeholder="Search by user..."
+              className="w-48 h-10"
+            />
+            {(filterAction || filterResource || filterUser) && (
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => { setFilterAction(''); setFilterResource(''); setFilterUser(''); setDisplayCount(20); }}
+              >
+                Clear filters
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Timeline */}
       {loading ? (
@@ -201,57 +266,77 @@ export default function ActivityFeed() {
           ))}
         </div>
       ) : visible.length === 0 ? (
-        <div className="text-center py-16">
+        <motion.div
+          className="text-center py-16"
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+        >
           <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-2xl mx-auto mb-4 text-gray-400">~</div>
           <h3 className="text-lg font-semibold text-gray-900 mb-1">No activity found</h3>
           <p className="text-sm text-gray-500">Try adjusting your filters to see more results.</p>
-        </div>
+        </motion.div>
       ) : (
         <div className="relative">
           {/* Timeline vertical line */}
           <div className="absolute left-5 top-0 bottom-0 w-px bg-gray-200" />
 
-          <div className="space-y-1">
+          <motion.div
+            className="space-y-1"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+          >
             {visible.map((entry, idx) => {
               const style = getStyle(entry.action);
               return (
-                <div key={entry.id || idx} className="relative flex gap-4 group">
+                <motion.div
+                  key={entry.id || idx}
+                  className="relative flex gap-4 group"
+                  variants={itemVariants}
+                >
                   {/* Avatar / timeline dot */}
                   <div className="relative z-10 shrink-0">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold ${style.bg} ${style.text}`}>
+                    <div className={cn(
+                      'w-10 h-10 rounded-full flex items-center justify-center text-xs font-bold',
+                      style.bg,
+                      style.text
+                    )}>
                       {getInitials(entry.user_name)}
                     </div>
                   </div>
 
                   {/* Content card */}
-                  <div className="flex-1 bg-white border border-gray-200 rounded-xl p-4 mb-2 hover:shadow-sm transition-shadow group-hover:border-gray-300">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold text-gray-900">{entry.user_name || 'System'}</span>
-                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${style.bg} ${style.text}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
-                            {style.label}
-                          </span>
-                          {entry.resource_type && (
-                            <span className="text-xs text-gray-400 font-medium capitalize">{entry.resource_type}</span>
+                  <Card className="flex-1 mb-2 hover:shadow-sm group-hover:border-gray-300">
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-semibold text-gray-900">{entry.user_name || 'System'}</span>
+                            <Badge className={cn(style.bg, style.text, 'border-transparent gap-1')}>
+                              <span className={cn('w-1.5 h-1.5 rounded-full', style.dot)} />
+                              {style.label}
+                            </Badge>
+                            {entry.resource_type && (
+                              <span className="text-xs text-gray-400 font-medium capitalize">{entry.resource_type}</span>
+                            )}
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">{entry.description}</p>
+                          {entry.resource_id && (
+                            <p className="text-xs text-gray-400 mt-1 font-mono">{entry.resource_id}</p>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">{entry.description}</p>
-                        {entry.resource_id && (
-                          <p className="text-xs text-gray-400 mt-1 font-mono">{entry.resource_id}</p>
-                        )}
+                        <div className="text-right shrink-0">
+                          <p className="text-xs text-gray-500 font-medium">{formatTime(entry.timestamp)}</p>
+                          <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">{formatFullTime(entry.timestamp)}</p>
+                        </div>
                       </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-xs text-gray-500 font-medium">{formatTime(entry.timestamp)}</p>
-                        <p className="text-xs text-gray-400 mt-0.5 hidden sm:block">{formatFullTime(entry.timestamp)}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           {/* Infinite scroll sentinel */}
           {displayCount < filtered.length && (
@@ -272,14 +357,20 @@ export default function ActivityFeed() {
       )}
 
       {/* Hash Chain Verification */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <h3 className="font-semibold text-gray-900 mb-2">Audit Integrity</h3>
-        <p className="text-sm text-gray-500 mb-4">
-          Every audit entry is linked to the previous via SHA-256 hash chain.
-          Tampering with any entry breaks the chain and is detected immediately.
-        </p>
-        <VerifyButton />
-      </div>
+      <motion.div initial="hidden" animate="visible" variants={fadeIn}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Audit Integrity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-500 mb-4">
+              Every audit entry is linked to the previous via SHA-256 hash chain.
+              Tampering with any entry breaks the chain and is detected immediately.
+            </p>
+            <VerifyButton />
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
@@ -302,17 +393,25 @@ function VerifyButton() {
 
   return (
     <div>
-      <button
+      <Button
         onClick={verify}
         disabled={checking}
-        className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
       >
         {checking ? 'Verifying...' : 'Verify Hash Chain'}
-      </button>
+      </Button>
       {result && (
-        <div className={`mt-3 p-3 rounded-lg text-sm font-medium ${result.valid ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-          {result.valid ? '\u2713 ' : '! '}{result.message} ({result.entries_checked} entries checked)
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <Badge
+            variant={result.valid ? 'success' : 'destructive'}
+            className="mt-3 px-3 py-2 text-sm"
+          >
+            {result.valid ? '\u2713 ' : '! '}{result.message} ({result.entries_checked} entries checked)
+          </Badge>
+        </motion.div>
       )}
     </div>
   );

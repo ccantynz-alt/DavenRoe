@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Badge } from '@/components/ui/Badge';
+import { cn } from '@/lib/utils';
 
 const STATUS_COLORS = {
-  draft: 'bg-gray-100 text-gray-700',
-  issued: 'bg-blue-100 text-blue-700',
-  applied: 'bg-green-100 text-green-700',
-  refunded: 'bg-purple-100 text-purple-700',
-  voided: 'bg-gray-100 text-gray-400',
+  draft: 'bg-gray-100 text-gray-700 border-transparent',
+  issued: 'bg-blue-100 text-blue-700 border-transparent',
+  applied: 'bg-green-100 text-green-700 border-transparent',
+  refunded: 'bg-purple-100 text-purple-700 border-transparent',
+  voided: 'bg-gray-100 text-gray-400 border-transparent',
 };
 
 const DEMO_CREDIT_NOTES = [
@@ -68,7 +74,7 @@ export default function CreditNotes() {
   if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Credit Notes</h2>
@@ -78,22 +84,31 @@ export default function CreditNotes() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card label="Total Credit Notes" value={summary.total} />
-        <Card label="Issued" value={summary.issued} color="blue" />
-        <Card label="Applied" value={summary.applied} color="green" />
-        <Card label="Remaining Credit" value={`$${summary.remaining.toLocaleString()}`} color="amber" />
+        <StatCard label="Total Credit Notes" value={summary.total} />
+        <StatCard label="Issued" value={summary.issued} color="blue" />
+        <StatCard label="Applied" value={summary.applied} color="green" />
+        <StatCard label="Remaining Credit" value={`$${summary.remaining.toLocaleString()}`} color="amber" />
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-6 flex-wrap">
+      <div className="flex gap-1 mb-6 flex-wrap bg-gray-100 rounded-lg p-1 w-fit">
         {[
           { key: '', label: 'All' },
           { key: 'receivable', label: 'Receivable (Customer)' },
           { key: 'payable', label: 'Payable (Supplier)' },
         ].map(f => (
-          <button key={f.key} onClick={() => setFilterType(f.key)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterType === f.key ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+          <Button
+            key={f.key}
+            variant="ghost"
+            size="sm"
+            onClick={() => setFilterType(f.key)}
+            className={cn(
+              'rounded-md',
+              filterType === f.key && 'bg-white text-gray-900 shadow-sm hover:bg-white'
+            )}
+          >
             {f.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -101,55 +116,75 @@ export default function CreditNotes() {
       {selected && <CNDetail note={selected} onClose={() => setSelected(null)} onApply={handleApply} onRefund={handleRefund} />}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead><tr className="bg-gray-50 border-b">
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">CN #</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Type</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Client / Supplier</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Original Invoice</th>
-            <th className="text-right px-4 py-3 font-semibold text-gray-700">Amount</th>
-            <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-          </tr></thead>
-          <tbody>
+      <Card className="overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>CN #</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Client / Supplier</TableHead>
+              <TableHead className="hidden md:table-cell">Original Invoice</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filtered.map(n => (
-              <tr key={n.id} onClick={() => setSelected(n)} className="border-b hover:bg-gray-50 cursor-pointer transition-colors">
-                <td className="px-4 py-3 font-medium text-indigo-600">{n.cn_number}</td>
-                <td className="px-4 py-3">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${n.type === 'receivable' ? 'bg-sky-100 text-sky-700' : 'bg-orange-100 text-orange-700'}`}>
+              <TableRow key={n.id} onClick={() => setSelected(n)} className="cursor-pointer">
+                <TableCell className="font-medium text-indigo-600">{n.cn_number}</TableCell>
+                <TableCell>
+                  <Badge className={cn(n.type === 'receivable' ? 'bg-sky-100 text-sky-700' : 'bg-orange-100 text-orange-700', 'border-transparent')}>
                     {n.type === 'receivable' ? 'Receivable' : 'Payable'}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-gray-900">{n.client}</td>
-                <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{n.original_invoice}</td>
-                <td className="px-4 py-3 text-right font-medium text-gray-900">{n.currency} {Number(n.total).toLocaleString()}</td>
-                <td className="px-4 py-3 text-center"><span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[n.status]}`}>{n.status}</span></td>
-              </tr>
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-gray-900">{n.client}</TableCell>
+                <TableCell className="text-gray-500 hidden md:table-cell">{n.original_invoice}</TableCell>
+                <TableCell className="text-right font-medium text-gray-900">{n.currency} {Number(n.total).toLocaleString()}</TableCell>
+                <TableCell className="text-center"><Badge className={STATUS_COLORS[n.status]}>{n.status}</Badge></TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+            {filtered.length === 0 && (
+              <TableRow><TableCell colSpan={6} className="text-center text-gray-400 py-12">No credit notes found</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
 }
 
-function Card({ label, value, color = 'indigo' }) {
-  const c = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700', red: 'bg-red-50 text-red-700', blue: 'bg-blue-50 text-blue-700' };
-  return <div className={`rounded-xl p-4 ${c[color]}`}><p className="text-xs font-medium opacity-70">{label}</p><p className="text-xl font-bold mt-1">{value}</p></div>;
+function StatCard({ label, value, color = 'indigo' }) {
+  const colors = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700', red: 'bg-red-50 text-red-700', blue: 'bg-blue-50 text-blue-700' };
+  return (
+    <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }}>
+      <Card className={cn('border-none shadow-none', colors[color])}>
+        <CardContent className="p-4">
+          <p className="text-xs font-medium opacity-70">{label}</p>
+          <p className="text-xl font-bold mt-1">{value}</p>
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
 }
 
 function CNDetail({ note: n, onClose, onApply, onRefund }) {
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex justify-between items-start mb-6">
           <div>
             <h3 className="text-xl font-bold">{n.cn_number}</h3>
             <p className="text-gray-500">{n.client} &middot; {n.type === 'receivable' ? 'Customer Credit' : 'Supplier Credit'}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[n.status]}`}>{n.status}</span>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl ml-2">x</button>
+            <Badge className={STATUS_COLORS[n.status]}>{n.status}</Badge>
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-gray-400 hover:text-gray-600">x</Button>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-sm">
@@ -159,28 +194,30 @@ function CNDetail({ note: n, onClose, onApply, onRefund }) {
           <div><p className="text-gray-500 text-xs">Reason</p><p className="font-medium text-xs">{n.reason}</p></div>
         </div>
 
-        <table className="w-full text-sm mb-6">
-          <thead><tr className="border-b">
-            <th className="text-left py-2 text-gray-600">Description</th>
-            <th className="text-right py-2 text-gray-600">Qty</th>
-            <th className="text-right py-2 text-gray-600">Unit Price</th>
-            <th className="text-right py-2 text-gray-600">Tax</th>
-            <th className="text-right py-2 text-gray-600">Amount</th>
-          </tr></thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Description</TableHead>
+              <TableHead className="text-right">Qty</TableHead>
+              <TableHead className="text-right">Unit Price</TableHead>
+              <TableHead className="text-right">Tax</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {(n.lines || []).map((l, i) => (
-              <tr key={i} className="border-b border-gray-100">
-                <td className="py-2">{l.description}</td>
-                <td className="py-2 text-right">{l.quantity}</td>
-                <td className="py-2 text-right">${Number(l.unit_price).toLocaleString()}</td>
-                <td className="py-2 text-right">{l.tax_rate}%</td>
-                <td className="py-2 text-right font-medium">${Number(l.amount).toLocaleString()}</td>
-              </tr>
+              <TableRow key={i}>
+                <TableCell>{l.description}</TableCell>
+                <TableCell className="text-right">{l.quantity}</TableCell>
+                <TableCell className="text-right">${Number(l.unit_price).toLocaleString()}</TableCell>
+                <TableCell className="text-right">{l.tax_rate}%</TableCell>
+                <TableCell className="text-right font-medium">${Number(l.amount).toLocaleString()}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end mt-4">
           <div className="text-sm space-y-1 w-48">
             <div className="flex justify-between"><span className="text-gray-500">Subtotal</span><span>${Number(n.subtotal).toLocaleString()}</span></div>
             <div className="flex justify-between"><span className="text-gray-500">Tax</span><span>${Number(n.tax_amount).toLocaleString()}</span></div>
@@ -191,12 +228,12 @@ function CNDetail({ note: n, onClose, onApply, onRefund }) {
         <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
           {n.status === 'issued' && (
             <>
-              <button onClick={() => onApply(n)} className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">Apply to Invoice</button>
-              <button onClick={() => onRefund(n)} className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700">Refund</button>
+              <Button variant="success" onClick={() => onApply(n)}>Apply to Invoice</Button>
+              <Button variant="default" className="bg-purple-600 hover:bg-purple-700" onClick={() => onRefund(n)}>Refund</Button>
             </>
           )}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

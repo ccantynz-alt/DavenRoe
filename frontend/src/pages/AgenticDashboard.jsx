@@ -1,5 +1,13 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import ProprietaryNotice from '../components/ProprietaryNotice';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { cn } from '@/lib/utils';
 
 const AGENTS = [
   // Tier 1: Conductor
@@ -192,7 +200,7 @@ const AGENTS = [
     tier: 'collaborator',
     description: 'Tracks client engagement, flags "going cold" clients, suggests touchpoints, drafts catch-up emails. Knows when you last spoke to every client.',
     status: 'available',
-    icon: '♥',
+    icon: '\u2665',
     tasksToday: 15,
   },
   {
@@ -201,7 +209,7 @@ const AGENTS = [
     tier: 'collaborator',
     description: 'Continuously analyses expenses for savings: unused subscriptions, overpriced vendors, tax deduction opportunities, cash timing improvements.',
     status: 'available',
-    icon: '↑↑',
+    icon: '\u2191\u2191',
     tasksToday: 7,
   },
   {
@@ -210,7 +218,7 @@ const AGENTS = [
     tier: 'automator',
     description: 'Watches ATO, IRD, HMRC, IRS for rule changes. Auto-updates tax tables, alerts affected clients, and adjusts compliance calendar.',
     status: 'available',
-    icon: '⚡',
+    icon: '\u26A1',
     tasksToday: 3,
   },
   {
@@ -219,7 +227,7 @@ const AGENTS = [
     tier: 'automator',
     description: 'Drafts professional client emails: year-end summaries, tax reminders, fee proposals, meeting follow-ups. Matches your tone and style.',
     status: 'available',
-    icon: '✉',
+    icon: '\u2709',
     tasksToday: 11,
   },
 ];
@@ -276,7 +284,7 @@ const AUTOMATIONS = [
   {
     id: 'document_chase_all',
     name: 'Chase All Missing Documents',
-    description: 'Send polite → firm → urgent emails for all missing source documents across all clients',
+    description: 'Send polite \u2192 firm \u2192 urgent emails for all missing source documents across all clients',
     steps: ['Scan missing docs', 'Identify clients', 'Draft emails', 'Send reminders', 'Log activity'],
     estimatedTime: '1-2 min',
     agents: ['document_chaser'],
@@ -303,6 +311,20 @@ const TIER_COLORS = {
   conductor: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200', label: 'Conductor' },
   automator: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200', label: 'Automator' },
   collaborator: { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-200', label: 'Collaborator' },
+};
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.05, duration: 0.4, ease: 'easeOut' },
+  }),
+};
+
+const staggerContainer = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05 } },
 };
 
 export default function AgenticDashboard() {
@@ -350,298 +372,354 @@ export default function AgenticDashboard() {
 
   return (
     <div>
-      <div className="mb-8">
+      <motion.div
+        className="mb-8"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+      >
         <h2 className="text-3xl font-bold mb-2">Agentic AI</h2>
         <p className="text-gray-500">
           Autonomous agents that work for you — not tools you operate
         </p>
-      </div>
+      </motion.div>
 
       {/* Orchestrator Input */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-6 mb-8 text-white">
-        <div className="flex items-center gap-2 mb-3">
-          <span className="text-lg font-mono">{'{}'}</span>
-          <h3 className="font-semibold text-lg">Orchestrator</h3>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-purple-600 text-purple-100">
-            conductor
-          </span>
-        </div>
-        <p className="text-gray-400 text-sm mb-4">
-          Describe what you need in plain English. The orchestrator dispatches the right agents.
-        </p>
-        <div className="flex gap-3">
-          <input
-            type="text"
-            value={orchestratorInput}
-            onChange={(e) => setOrchestratorInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleOrchestrate()}
-            placeholder="e.g., Run month-end close and check compliance for all jurisdictions..."
-            className="flex-1 px-4 py-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 border border-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none"
-          />
-          <button
-            onClick={handleOrchestrate}
-            disabled={loading}
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 rounded-lg font-medium transition-colors"
-          >
-            {loading ? 'Running...' : 'Execute'}
-          </button>
-        </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        <Card className="bg-gradient-to-r from-gray-900 to-gray-800 border-gray-700 mb-8">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-mono text-white">{'{}'}</span>
+              <CardTitle className="text-white">Orchestrator</CardTitle>
+              <Badge className="bg-purple-600 text-purple-100 border-purple-500">
+                conductor
+              </Badge>
+            </div>
+            <CardDescription className="text-gray-400">
+              Describe what you need in plain English. The orchestrator dispatches the right agents.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3">
+              <Input
+                type="text"
+                value={orchestratorInput}
+                onChange={(e) => setOrchestratorInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleOrchestrate()}
+                placeholder="e.g., Run month-end close and check compliance for all jurisdictions..."
+                className="flex-1 bg-gray-700 text-white placeholder-gray-400 border-gray-600 focus:border-purple-500 focus:ring-purple-500/20"
+              />
+              <Button
+                onClick={handleOrchestrate}
+                disabled={loading}
+                className="bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 text-white"
+              >
+                {loading ? 'Running...' : 'Execute'}
+              </Button>
+            </div>
 
-        {orchestratorResult && (
-          <div className="mt-4 bg-gray-700/50 rounded-lg p-4">
-            <p className="text-xs text-gray-400 mb-2 font-mono">ORCHESTRATOR RESULT</p>
-            <pre className="text-sm text-gray-200 overflow-auto max-h-60">
-              {JSON.stringify(orchestratorResult, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
+            {orchestratorResult && (
+              <div className="mt-4 bg-gray-700/50 rounded-lg p-4">
+                <p className="text-xs text-gray-400 mb-2 font-mono">ORCHESTRATOR RESULT</p>
+                <pre className="text-sm text-gray-200 overflow-auto max-h-60">
+                  {JSON.stringify(orchestratorResult, null, 2)}
+                </pre>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1 w-fit">
-        {['agents', 'automations', 'monitor'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              activeTab === tab
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="agents">Agents</TabsTrigger>
+          <TabsTrigger value="automations">Automations</TabsTrigger>
+          <TabsTrigger value="monitor">Monitor</TabsTrigger>
+        </TabsList>
 
-      {/* Agents Tab */}
-      {activeTab === 'agents' && (
-        <div>
+        {/* Agents Tab */}
+        <TabsContent value="agents">
           <div className="flex items-center gap-4 mb-4">
             <h3 className="font-semibold text-lg">Agent Fleet</h3>
             <div className="flex gap-2">
               {Object.entries(TIER_COLORS).map(([tier, colors]) => (
-                <span
+                <Badge
                   key={tier}
-                  className={`text-xs px-2 py-0.5 rounded-full ${colors.bg} ${colors.text}`}
+                  className={cn(colors.bg, colors.text, 'border-transparent')}
                 >
                   {tier}
-                </span>
+                </Badge>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {AGENTS.map((agent) => {
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {AGENTS.map((agent, index) => {
               const colors = TIER_COLORS[agent.tier];
               return (
-                <div
-                  key={agent.id}
-                  className={`bg-white rounded-xl border p-5 hover:shadow-md transition-all cursor-default`}
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xl font-mono text-gray-400">{agent.icon}</span>
-                    <span
-                      className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-medium ${colors.bg} ${colors.text}`}
-                    >
-                      {agent.tier}
-                    </span>
-                  </div>
-                  <h4 className="font-semibold mb-1">{agent.name}</h4>
-                  <p className="text-sm text-gray-500 mb-3">{agent.description}</p>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-green-500" />
-                    <span className="text-xs text-green-700 font-medium">{agent.status}</span>
-                  </div>
-                </div>
+                <motion.div key={agent.id} variants={fadeInUp} custom={index}>
+                  <Card className="cursor-default h-full">
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-mono text-gray-400">{agent.icon}</span>
+                        <Badge
+                          className={cn(
+                            colors.bg,
+                            colors.text,
+                            'border-transparent text-[10px] uppercase tracking-wider'
+                          )}
+                        >
+                          {agent.tier}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-base">{agent.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-500 mb-3">{agent.description}</p>
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-2 h-2 rounded-full bg-green-500" />
+                        <Badge variant="success" className="border-transparent text-xs font-medium">
+                          {agent.status}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               );
             })}
-          </div>
-        </div>
-      )}
+          </motion.div>
+        </TabsContent>
 
-      {/* Automations Tab */}
-      {activeTab === 'automations' && (
-        <div>
+        {/* Automations Tab */}
+        <TabsContent value="automations">
           <h3 className="font-semibold text-lg mb-4">Pre-Built Automations</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {AUTOMATIONS.map((auto) => (
-              <div key={auto.id} className="bg-white rounded-xl border p-6">
-                <h4 className="font-semibold text-lg mb-1">{auto.name}</h4>
-                <p className="text-sm text-gray-500 mb-4">{auto.description}</p>
-
-                <div className="mb-4">
-                  <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
-                    Pipeline Steps
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {auto.steps.map((step, i) => (
-                      <span
-                        key={i}
-                        className="text-xs px-2 py-1 rounded bg-gray-100 text-gray-600"
-                      >
-                        {i + 1}. {step}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">Est. {auto.estimatedTime}</span>
-                  <button
-                    onClick={() => handleRunAutomation(auto.id)}
-                    disabled={activeAutomation === auto.id}
-                    className="px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
-                  >
-                    {activeAutomation === auto.id ? 'Running...' : 'Run'}
-                  </button>
-                </div>
-              </div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {AUTOMATIONS.map((auto, index) => (
+              <motion.div key={auto.id} variants={fadeInUp} custom={index}>
+                <Card className="h-full flex flex-col">
+                  <CardHeader>
+                    <CardTitle>{auto.name}</CardTitle>
+                    <CardDescription>{auto.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+                      Pipeline Steps
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {auto.steps.map((step, i) => (
+                        <Badge key={i} variant="secondary" className="border-transparent">
+                          {i + 1}. {step}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <CardFooter className="justify-between">
+                    <span className="text-xs text-gray-400">Est. {auto.estimatedTime}</span>
+                    <Button
+                      size="sm"
+                      onClick={() => handleRunAutomation(auto.id)}
+                      disabled={activeAutomation === auto.id}
+                    >
+                      {activeAutomation === auto.id ? 'Running...' : 'Run'}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
           {automationResult && (
-            <div className="mt-6 bg-white rounded-xl border p-6">
-              <h4 className="font-semibold mb-3">Automation Result</h4>
-              <pre className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4 overflow-auto max-h-96">
-                {JSON.stringify(automationResult, null, 2)}
-              </pre>
-            </div>
+            <motion.div
+              className="mt-6"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card>
+                <CardHeader>
+                  <CardTitle>Automation Result</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <pre className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4 overflow-auto max-h-96">
+                    {JSON.stringify(automationResult, null, 2)}
+                  </pre>
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
-        </div>
-      )}
+        </TabsContent>
 
-      {/* Monitor Tab */}
-      {activeTab === 'monitor' && (
-        <div>
+        {/* Monitor Tab */}
+        <TabsContent value="monitor">
           <h3 className="font-semibold text-lg mb-4">Real-Time Agent Monitor</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <MonitorCard
-              label="Agents Online"
-              value={AGENTS.length.toString()}
-              note="All agents operational"
-              accent="green"
-            />
-            <MonitorCard
-              label="Jurisdictions Watched"
-              value="4"
-              note="US, AU, NZ, GB compliance tracked"
-              accent="blue"
-            />
-            <MonitorCard
-              label="Forecast Horizon"
-              value="13 wk"
-              note="Rolling cash flow projection"
-              accent="purple"
-            />
-          </div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6"
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div variants={fadeInUp} custom={0}>
+              <MonitorCard
+                label="Agents Online"
+                value={AGENTS.length.toString()}
+                note="All agents operational"
+                accent="green"
+              />
+            </motion.div>
+            <motion.div variants={fadeInUp} custom={1}>
+              <MonitorCard
+                label="Jurisdictions Watched"
+                value="4"
+                note="US, AU, NZ, GB compliance tracked"
+                accent="blue"
+              />
+            </motion.div>
+            <motion.div variants={fadeInUp} custom={2}>
+              <MonitorCard
+                label="Forecast Horizon"
+                value="13 wk"
+                note="Rolling cash flow projection"
+                accent="purple"
+              />
+            </motion.div>
+          </motion.div>
 
-          <div className="bg-white rounded-xl border p-6">
-            <h4 className="font-semibold mb-4">Agent Architecture</h4>
-            <div className="space-y-4">
-              <TierRow
-                tier="Conductor"
-                description="Parses natural language, plans multi-agent workflows, aggregates results"
-                agents={['Orchestrator']}
-                color="purple"
-              />
-              <TierRow
-                tier="Automators"
-                description="End-to-end process execution — these run entire workflows autonomously"
-                agents={['Month-End Close', 'Compliance Monitor', 'Categorizer', 'Audit Shield']}
-                color="blue"
-              />
-              <TierRow
-                tier="Collaborators"
-                description="AI + human working together — these draft, you review"
-                agents={['Cash Flow Forecaster', 'Simple-Speak', 'Forensic Engine']}
-                color="emerald"
-              />
-            </div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Agent Architecture</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <TierRow
+                  tier="Conductor"
+                  description="Parses natural language, plans multi-agent workflows, aggregates results"
+                  agents={['Orchestrator']}
+                  color="purple"
+                />
+                <TierRow
+                  tier="Automators"
+                  description="End-to-end process execution — these run entire workflows autonomously"
+                  agents={['Month-End Close', 'Compliance Monitor', 'Categorizer', 'Audit Shield']}
+                  color="blue"
+                />
+                <TierRow
+                  tier="Collaborators"
+                  description="AI + human working together — these draft, you review"
+                  agents={['Cash Flow Forecaster', 'Simple-Speak', 'Forensic Engine']}
+                  color="emerald"
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
 
-          <div className="mt-6 bg-white rounded-xl border p-6">
-            <h4 className="font-semibold mb-4">Capability Matrix</h4>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-2 pr-4 font-medium text-gray-500">Capability</th>
-                    <th className="text-center py-2 px-3 font-medium text-gray-500">Astra</th>
-                    <th className="text-center py-2 px-3 font-medium text-gray-500">Xero</th>
-                    <th className="text-center py-2 px-3 font-medium text-gray-500">QuickBooks</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-600">
-                  {[
-                    ['Autonomous Month-End Close', true, false, false],
-                    ['Multi-Agent Orchestration', true, false, false],
-                    ['Predictive Cash Forecasting', true, true, true],
-                    ['Multi-Jurisdiction Compliance', true, false, false],
-                    ['Treaty-Aware Tax Engine', true, false, false],
-                    ['Real-Time Forensic Analysis', true, false, false],
-                    ['AI Transaction Categorization', true, true, true],
-                    ['Natural Language Queries', true, true, true],
-                    ['12 Specialist Toolkits', true, false, false],
-                    ['Immutable Audit Trail', true, false, false],
-                  ].map(([cap, astra, xero, qb], i) => (
-                    <tr key={i} className="border-b border-gray-100">
-                      <td className="py-2 pr-4">{cap}</td>
-                      <td className="text-center py-2 px-3">{astra ? '\u2705' : '\u274C'}</td>
-                      <td className="text-center py-2 px-3">{xero ? '\u2705' : '\u274C'}</td>
-                      <td className="text-center py-2 px-3">{qb ? '\u2705' : '\u274C'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <Card>
+              <CardHeader>
+                <CardTitle>Capability Matrix</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Capability</TableHead>
+                      <TableHead className="text-center">Astra</TableHead>
+                      <TableHead className="text-center">Xero</TableHead>
+                      <TableHead className="text-center">QuickBooks</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[
+                      ['Autonomous Month-End Close', true, false, false],
+                      ['Multi-Agent Orchestration', true, false, false],
+                      ['Predictive Cash Forecasting', true, true, true],
+                      ['Multi-Jurisdiction Compliance', true, false, false],
+                      ['Treaty-Aware Tax Engine', true, false, false],
+                      ['Real-Time Forensic Analysis', true, false, false],
+                      ['AI Transaction Categorization', true, true, true],
+                      ['Natural Language Queries', true, true, true],
+                      ['12 Specialist Toolkits', true, false, false],
+                      ['Immutable Audit Trail', true, false, false],
+                    ].map(([cap, astra, xero, qb], i) => (
+                      <TableRow key={i}>
+                        <TableCell>{cap}</TableCell>
+                        <TableCell className="text-center">{astra ? '\u2705' : '\u274C'}</TableCell>
+                        <TableCell className="text-center">{xero ? '\u2705' : '\u274C'}</TableCell>
+                        <TableCell className="text-center">{qb ? '\u2705' : '\u274C'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
 
 function MonitorCard({ label, value, note, accent }) {
-  const colors = {
-    green: 'border-green-200',
-    blue: 'border-blue-200',
-    purple: 'border-purple-200',
+  const borderColors = {
+    green: 'border-green-300',
+    blue: 'border-blue-300',
+    purple: 'border-purple-300',
   };
 
   return (
-    <div className={`bg-white rounded-xl border-2 ${colors[accent]} p-6`}>
-      <p className="text-sm text-gray-500 mb-1">{label}</p>
-      <p className="text-3xl font-bold mb-1">{value}</p>
-      <p className="text-xs text-gray-400">{note}</p>
-    </div>
+    <Card className={cn('border-2', borderColors[accent])}>
+      <CardContent className="pt-6">
+        <p className="text-sm text-gray-500 mb-1">{label}</p>
+        <p className="text-3xl font-bold mb-1">{value}</p>
+        <p className="text-xs text-gray-400">{note}</p>
+      </CardContent>
+    </Card>
   );
 }
 
 function TierRow({ tier, description, agents, color }) {
-  const colors = {
-    purple: 'bg-purple-100 text-purple-700 border-purple-200',
-    blue: 'bg-blue-100 text-blue-700 border-blue-200',
-    emerald: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+  const colorMap = {
+    purple: { badge: 'bg-purple-100 text-purple-700', border: 'border-purple-200' },
+    blue: { badge: 'bg-blue-100 text-blue-700', border: 'border-blue-200' },
+    emerald: { badge: 'bg-emerald-100 text-emerald-700', border: 'border-emerald-200' },
   };
 
+  const colors = colorMap[color];
+
   return (
-    <div className={`rounded-lg border p-4 ${colors[color].split(' ').slice(2).join(' ')}`}>
+    <div className={cn('rounded-lg border p-4', colors.border)}>
       <div className="flex items-center gap-3 mb-2">
-        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[color]}`}>
-          {tier}
-        </span>
+        <Badge className={cn(colors.badge, 'border-transparent')}>{tier}</Badge>
         <span className="text-sm text-gray-500">{description}</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {agents.map((agent) => (
-          <span
-            key={agent}
-            className="text-sm px-3 py-1 rounded-md bg-white border font-medium"
-          >
+          <Badge key={agent} variant="outline" className="text-sm px-3 py-1 font-medium bg-white">
             {agent}
-          </span>
+          </Badge>
         ))}
       </div>
       <ProprietaryNotice />

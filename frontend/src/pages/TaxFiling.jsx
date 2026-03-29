@@ -1,7 +1,16 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import api from '../services/api';
 import { useToast } from '../components/Toast';
 import LegalDisclaimer from '../components/LegalDisclaimer';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Progress } from '@/components/ui/Progress';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { cn } from '@/lib/utils';
 
 const RETURN_TYPES = [
   { value: 'BAS', label: 'BAS', jurisdiction: 'AU', description: 'Business Activity Statement', authority: 'ATO' },
@@ -19,17 +28,23 @@ const PERIODS = [
 
 const STATUS_STEPS = ['draft', 'validated', 'ready', 'lodged'];
 
-const STATUS_COLORS = {
-  draft: 'bg-gray-100 text-gray-700',
-  validated: 'bg-blue-100 text-blue-700',
-  ready: 'bg-amber-100 text-amber-700',
-  lodged: 'bg-green-100 text-green-700',
+const STATUS_BADGE_VARIANT = {
+  draft: 'secondary',
+  validated: 'default',
+  ready: 'warning',
+  lodged: 'success',
 };
 
 const SEVERITY_STYLES = {
   pass: { bg: 'bg-emerald-50 border-emerald-200', icon: 'text-emerald-600', label: 'Pass' },
   warning: { bg: 'bg-amber-50 border-amber-200', icon: 'text-amber-600', label: 'Warning' },
   fail: { bg: 'bg-red-50 border-red-200', icon: 'text-red-600', label: 'Fail' },
+};
+
+const fadeUp = {
+  initial: { opacity: 0, y: 16 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.35, ease: 'easeOut' },
 };
 
 function currentYear() {
@@ -155,445 +170,478 @@ export default function TaxFiling() {
 
   const selectedTypeInfo = RETURN_TYPES.find(t => t.value === returnType);
 
+  const statusProgress = activeReturn
+    ? ((STATUS_STEPS.indexOf(activeReturn.status) + 1) / STATUS_STEPS.length) * 100
+    : 0;
+
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <motion.div className="flex items-center justify-between mb-8" {...fadeUp}>
         <div>
           <h2 className="text-3xl font-bold text-gray-900">Tax Filing</h2>
           <p className="text-gray-500 mt-1">Generate, validate, and lodge tax returns across jurisdictions</p>
           <LegalDisclaimer type="tax_filing" className="mt-3" />
         </div>
-      </div>
+      </motion.div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-xl border p-5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Next Deadline</p>
-          {nextDeadline ? (
-            <div>
-              <p className="text-lg font-bold text-gray-900">{nextDeadline.due_date}</p>
-              <p className="text-sm text-gray-500 mt-0.5">{nextDeadline.return_type} \u2014 {nextDeadline.jurisdiction}</p>
-              <span className={`inline-block mt-2 text-xs font-medium px-2 py-0.5 rounded-full ${
-                nextDeadline.urgency === 'critical' ? 'bg-red-100 text-red-700' :
-                nextDeadline.urgency === 'urgent' ? 'bg-amber-100 text-amber-700' :
-                'bg-blue-100 text-blue-700'
-              }`}>
-                {nextDeadline.days_remaining} days remaining
-              </span>
-            </div>
-          ) : (
-            <p className="text-lg font-bold text-gray-400">No upcoming</p>
-          )}
-        </div>
+      <motion.div
+        className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.05 }}
+      >
+        <Card>
+          <CardContent className="pt-5">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Next Deadline</p>
+            {nextDeadline ? (
+              <div>
+                <p className="text-lg font-bold text-gray-900">{nextDeadline.due_date}</p>
+                <p className="text-sm text-gray-500 mt-0.5">{nextDeadline.return_type} &mdash; {nextDeadline.jurisdiction}</p>
+                <Badge
+                  variant={
+                    nextDeadline.urgency === 'critical' ? 'destructive' :
+                    nextDeadline.urgency === 'urgent' ? 'warning' :
+                    'default'
+                  }
+                  className="mt-2"
+                >
+                  {nextDeadline.days_remaining} days remaining
+                </Badge>
+              </div>
+            ) : (
+              <p className="text-lg font-bold text-gray-400">No upcoming</p>
+            )}
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl border border-l-4 border-l-amber-500 p-5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Returns Pending</p>
-          <p className="text-2xl font-bold text-gray-900">{pendingReturns}</p>
-          <p className="text-sm text-gray-500 mt-0.5">Awaiting validation or lodgement</p>
-        </div>
+        <Card className="border-l-4 border-l-amber-500">
+          <CardContent className="pt-5">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Returns Pending</p>
+            <p className="text-2xl font-bold text-gray-900">{pendingReturns}</p>
+            <p className="text-sm text-gray-500 mt-0.5">Awaiting validation or lodgement</p>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl border border-l-4 border-l-green-500 p-5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Filed This Year</p>
-          <p className="text-2xl font-bold text-gray-900">{filedThisYear}</p>
-          <p className="text-sm text-gray-500 mt-0.5">Successfully lodged</p>
-        </div>
+        <Card className="border-l-4 border-l-green-500">
+          <CardContent className="pt-5">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Filed This Year</p>
+            <p className="text-2xl font-bold text-gray-900">{filedThisYear}</p>
+            <p className="text-sm text-gray-500 mt-0.5">Successfully lodged</p>
+          </CardContent>
+        </Card>
 
-        <div className="bg-white rounded-xl border border-l-4 border-l-indigo-500 p-5">
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Jurisdictions</p>
-          <p className="text-2xl font-bold text-gray-900">4</p>
-          <p className="text-sm text-gray-500 mt-0.5">AU, NZ, GB, US</p>
-        </div>
-      </div>
+        <Card className="border-l-4 border-l-indigo-500">
+          <CardContent className="pt-5">
+            <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Jurisdictions</p>
+            <p className="text-2xl font-bold text-gray-900">4</p>
+            <p className="text-sm text-gray-500 mt-0.5">AU, NZ, GB, US</p>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1 w-fit">
-        {[
-          { key: 'generate', label: 'Generate Return' },
-          { key: 'preview', label: 'Return Preview' },
-          { key: 'history', label: 'Filing History' },
-          { key: 'deadlines', label: 'Deadlines' },
-        ].map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-              activeTab === tab.key
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="generate">Generate Return</TabsTrigger>
+          <TabsTrigger value="preview">Return Preview</TabsTrigger>
+          <TabsTrigger value="history">Filing History</TabsTrigger>
+          <TabsTrigger value="deadlines">Deadlines</TabsTrigger>
+        </TabsList>
 
-      {/* Generate Tab */}
-      {activeTab === 'generate' && (
-        <div className="bg-white rounded-xl border p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-6">Generate Tax Return</h3>
-
-          {/* Return Type Selector */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">Return Type</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-              {RETURN_TYPES.map(type => (
-                <button
-                  key={type.value}
-                  onClick={() => setReturnType(type.value)}
-                  className={`text-left p-4 rounded-xl border-2 transition-all ${
-                    returnType === type.value
-                      ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600'
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-bold text-gray-900">{type.label}</span>
-                    <span className="text-xs font-medium px-2 py-0.5 bg-gray-100 text-gray-600 rounded">{type.jurisdiction}</span>
-                  </div>
-                  <p className="text-xs text-gray-500">{type.description}</p>
-                  <p className="text-xs text-gray-400 mt-1">Authority: {type.authority}</p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Period & Year */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Period</label>
-              <select
-                value={period}
-                onChange={e => setPeriod(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                {PERIODS.map(p => (
-                  <option key={p.value} value={p.value}>{p.label}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
-              <select
-                value={year}
-                onChange={e => setYear(Number(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                {[currentYear() - 1, currentYear(), currentYear() + 1].map(y => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Selected Summary */}
-          <div className="bg-gray-50 rounded-lg p-4 mb-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-700">
-                  {selectedTypeInfo?.description} \u2014 {period} {year}
-                </p>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  Jurisdiction: {selectedTypeInfo?.jurisdiction} | Authority: {selectedTypeInfo?.authority}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleGenerate}
-            disabled={generating}
-            className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {generating ? 'Generating...' : 'Generate Return'}
-          </button>
-        </div>
-      )}
-
-      {/* Preview Tab */}
-      {activeTab === 'preview' && (
-        <div>
-          {!activeReturn ? (
-            <div className="bg-white rounded-xl border p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl text-gray-400">%</span>
-              </div>
-              <p className="text-gray-600 font-medium">No return selected</p>
-              <p className="text-gray-400 text-sm mt-1">Generate a new return or select one from filing history.</p>
-              <button
-                onClick={() => setActiveTab('generate')}
-                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
-              >
-                Generate Return
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {/* Status Tracker */}
-              <div className="bg-white rounded-xl border p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {RETURN_TYPES.find(t => t.value === activeReturn.return_type)?.label || activeReturn.return_type} \u2014 {activeReturn.period_start} to {activeReturn.period_end}
-                  </h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[activeReturn.status] || STATUS_COLORS.draft}`}>
-                    {activeReturn.status.charAt(0).toUpperCase() + activeReturn.status.slice(1)}
-                  </span>
-                </div>
-
-                {/* Progress Steps */}
-                <div className="flex items-center gap-2 mb-6">
-                  {STATUS_STEPS.map((step, i) => {
-                    const currentIdx = STATUS_STEPS.indexOf(activeReturn.status);
-                    const isComplete = i <= currentIdx;
-                    const isCurrent = i === currentIdx;
-                    return (
-                      <div key={step} className="flex items-center gap-2 flex-1">
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                          isComplete
-                            ? isCurrent ? 'bg-indigo-600 text-white' : 'bg-green-500 text-white'
-                            : 'bg-gray-200 text-gray-500'
-                        }`}>
-                          {isComplete && !isCurrent ? (
-                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                          ) : (
-                            i + 1
-                          )}
-                        </div>
-                        <span className={`text-xs font-medium capitalize ${isComplete ? 'text-gray-900' : 'text-gray-400'}`}>
-                          {step}
-                        </span>
-                        {i < STATUS_STEPS.length - 1 && (
-                          <div className={`flex-1 h-0.5 ${i < currentIdx ? 'bg-green-500' : 'bg-gray-200'}`} />
+        {/* Generate Tab */}
+        <TabsContent value="generate">
+          <motion.div {...fadeUp}>
+            <Card>
+              <CardHeader>
+                <CardTitle>Generate Tax Return</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Return Type Selector */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">Return Type</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {RETURN_TYPES.map(type => (
+                      <button
+                        key={type.value}
+                        onClick={() => setReturnType(type.value)}
+                        className={cn(
+                          'text-left p-4 rounded-xl border-2 transition-all',
+                          returnType === type.value
+                            ? 'border-indigo-600 bg-indigo-50 ring-1 ring-indigo-600'
+                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                         )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Actions */}
-                <div className="flex gap-3">
-                  {activeReturn.status === 'draft' && (
-                    <button
-                      onClick={handleValidate}
-                      disabled={validating}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
-                    >
-                      {validating ? 'Validating...' : 'Run Validation'}
-                    </button>
-                  )}
-                  {(activeReturn.status === 'validated' || activeReturn.status === 'ready') && (
-                    <>
-                      <button
-                        onClick={handleValidate}
-                        disabled={validating}
-                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
                       >
-                        {validating ? 'Re-validating...' : 'Re-validate'}
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-bold text-gray-900">{type.label}</span>
+                          <Badge variant="secondary">{type.jurisdiction}</Badge>
+                        </div>
+                        <p className="text-xs text-gray-500">{type.description}</p>
+                        <p className="text-xs text-gray-400 mt-1">Authority: {type.authority}</p>
                       </button>
-                      <button
-                        onClick={handleLodge}
-                        disabled={lodging}
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors disabled:opacity-50"
-                      >
-                        {lodging ? 'Lodging...' : 'Lodge Return'}
-                      </button>
-                    </>
-                  )}
-                  {activeReturn.status === 'lodged' && (
-                    <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-4 py-2 rounded-lg">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                      Lodged on {activeReturn.lodged_at ? new Date(activeReturn.lodged_at).toLocaleDateString() : 'N/A'}
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Line Items */}
-              <div className="bg-white rounded-xl border p-6">
-                <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Line Items</h4>
-                <ReturnLineItems returnData={activeReturn} />
-              </div>
-
-              {/* Totals */}
-              <div className="bg-white rounded-xl border p-6">
-                <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">Totals</h4>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {Object.entries(activeReturn.totals).map(([key, val]) => (
-                    <div key={key} className="bg-gray-50 rounded-lg p-4">
-                      <p className="text-xs text-gray-500 mb-1">{formatLabel(key)}</p>
-                      <p className="text-lg font-bold text-gray-900">{formatCurrency(val)}</p>
-                    </div>
-                  ))}
+                {/* Period & Year */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Period</label>
+                    <Select value={period} onValueChange={setPeriod}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PERIODS.map(p => (
+                          <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+                    <Select value={String(year)} onValueChange={v => setYear(Number(v))}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {[currentYear() - 1, currentYear(), currentYear() + 1].map(y => (
+                          <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-              </div>
 
-              {/* Validation Results */}
-              {validationResults && (
-                <div className="bg-white rounded-xl border p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Validation Results</h4>
-                    <div className="flex gap-3 text-xs font-medium">
-                      <span className="text-emerald-600">{validationResults.pass_count} passed</span>
-                      <span className="text-amber-600">{validationResults.warning_count} warnings</span>
-                      <span className="text-red-600">{validationResults.fail_count} failed</span>
+                {/* Selected Summary */}
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-700">
+                        {selectedTypeInfo?.description} &mdash; {period} {year}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        Jurisdiction: {selectedTypeInfo?.jurisdiction} | Authority: {selectedTypeInfo?.authority}
+                      </p>
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    {validationResults.validations.map((v, i) => {
-                      const style = SEVERITY_STYLES[v.severity] || SEVERITY_STYLES.pass;
-                      return (
-                        <div key={i} className={`${style.bg} border rounded-lg p-3`}>
-                          <div className="flex items-start gap-3">
-                            <span className={`text-lg ${style.icon} shrink-0 mt-0.5`}>
-                              {v.severity === 'pass' ? (
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                              ) : v.severity === 'warning' ? (
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </div>
+
+                <Button onClick={handleGenerate} disabled={generating}>
+                  {generating ? 'Generating...' : 'Generate Return'}
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </TabsContent>
+
+        {/* Preview Tab */}
+        <TabsContent value="preview">
+          <motion.div {...fadeUp}>
+            {!activeReturn ? (
+              <Card>
+                <CardContent className="pt-6 pb-8 text-center">
+                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-2xl text-gray-400">%</span>
+                  </div>
+                  <p className="text-gray-600 font-medium">No return selected</p>
+                  <p className="text-gray-400 text-sm mt-1">Generate a new return or select one from filing history.</p>
+                  <Button className="mt-4" onClick={() => setActiveTab('generate')}>
+                    Generate Return
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="space-y-6">
+                {/* Status Tracker */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>
+                        {RETURN_TYPES.find(t => t.value === activeReturn.return_type)?.label || activeReturn.return_type} &mdash; {activeReturn.period_start} to {activeReturn.period_end}
+                      </CardTitle>
+                      <Badge variant={STATUS_BADGE_VARIANT[activeReturn.status] || 'secondary'}>
+                        {activeReturn.status.charAt(0).toUpperCase() + activeReturn.status.slice(1)}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    {/* Progress Steps */}
+                    <div className="flex items-center gap-2 mb-2">
+                      {STATUS_STEPS.map((step, i) => {
+                        const currentIdx = STATUS_STEPS.indexOf(activeReturn.status);
+                        const isComplete = i <= currentIdx;
+                        const isCurrent = i === currentIdx;
+                        return (
+                          <div key={step} className="flex items-center gap-2 flex-1">
+                            <div className={cn(
+                              'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0',
+                              isComplete
+                                ? isCurrent ? 'bg-indigo-600 text-white' : 'bg-green-500 text-white'
+                                : 'bg-gray-200 text-gray-500'
+                            )}>
+                              {isComplete && !isCurrent ? (
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
                               ) : (
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
+                                i + 1
                               )}
-                            </span>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-gray-900">{v.check}</p>
-                              <p className="text-sm text-gray-600 mt-0.5">{v.message}</p>
                             </div>
+                            <span className={cn(
+                              'text-xs font-medium capitalize',
+                              isComplete ? 'text-gray-900' : 'text-gray-400'
+                            )}>
+                              {step}
+                            </span>
+                            {i < STATUS_STEPS.length - 1 && (
+                              <div className={cn('flex-1 h-0.5', i < currentIdx ? 'bg-green-500' : 'bg-gray-200')} />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <Progress value={statusProgress} className="mb-6 h-1.5" />
+
+                    {/* Actions */}
+                    <div className="flex gap-3">
+                      {activeReturn.status === 'draft' && (
+                        <Button
+                          variant="default"
+                          onClick={handleValidate}
+                          disabled={validating}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          {validating ? 'Validating...' : 'Run Validation'}
+                        </Button>
+                      )}
+                      {(activeReturn.status === 'validated' || activeReturn.status === 'ready') && (
+                        <>
+                          <Button variant="secondary" onClick={handleValidate} disabled={validating}>
+                            {validating ? 'Re-validating...' : 'Re-validate'}
+                          </Button>
+                          <Button variant="success" onClick={handleLodge} disabled={lodging}>
+                            {lodging ? 'Lodging...' : 'Lodge Return'}
+                          </Button>
+                        </>
+                      )}
+                      {activeReturn.status === 'lodged' && (
+                        <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-4 py-2 rounded-lg">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          Lodged on {activeReturn.lodged_at ? new Date(activeReturn.lodged_at).toLocaleDateString() : 'N/A'}
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Line Items */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm uppercase tracking-wider">Line Items</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ReturnLineItems returnData={activeReturn} />
+                  </CardContent>
+                </Card>
+
+                {/* Totals */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm uppercase tracking-wider">Totals</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      {Object.entries(activeReturn.totals).map(([key, val]) => (
+                        <div key={key} className="bg-gray-50 rounded-lg p-4">
+                          <p className="text-xs text-gray-500 mb-1">{formatLabel(key)}</p>
+                          <p className="text-lg font-bold text-gray-900">{formatCurrency(val)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Validation Results */}
+                {validationResults && (
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-sm uppercase tracking-wider">Validation Results</CardTitle>
+                        <div className="flex gap-3">
+                          <Badge variant="success">{validationResults.pass_count} passed</Badge>
+                          <Badge variant="warning">{validationResults.warning_count} warnings</Badge>
+                          <Badge variant="destructive">{validationResults.fail_count} failed</Badge>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {validationResults.validations.map((v, i) => {
+                          const style = SEVERITY_STYLES[v.severity] || SEVERITY_STYLES.pass;
+                          return (
+                            <div key={i} className={cn(style.bg, 'border rounded-lg p-3')}>
+                              <div className="flex items-start gap-3">
+                                <span className={cn('text-lg shrink-0 mt-0.5', style.icon)}>
+                                  {v.severity === 'pass' ? (
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                  ) : v.severity === 'warning' ? (
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                    </svg>
+                                  ) : (
+                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                      <path strokeLinecap="round" strokeLinejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                  )}
+                                </span>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-medium text-gray-900">{v.check}</p>
+                                  <p className="text-sm text-gray-600 mt-0.5">{v.message}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+            )}
+          </motion.div>
+        </TabsContent>
+
+        {/* History Tab */}
+        <TabsContent value="history">
+          <motion.div {...fadeUp}>
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle>Filing History</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                {loading ? (
+                  <div className="text-center text-gray-400 py-12">Loading filing history...</div>
+                ) : returns.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-xl text-gray-400">%</span>
+                    </div>
+                    <p className="text-gray-600 font-medium">No returns generated yet</p>
+                    <p className="text-gray-400 text-sm mt-1">Generate your first tax return to see it here.</p>
+                    <Button className="mt-3" size="sm" onClick={() => setActiveTab('generate')}>
+                      Generate Return
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {returns.map(r => (
+                      <div
+                        key={r.id}
+                        className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors"
+                        onClick={() => loadReturn(r.id)}
+                      >
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className={cn(
+                            'w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold',
+                            r.jurisdiction === 'AU' ? 'bg-blue-100 text-blue-700' :
+                            r.jurisdiction === 'NZ' ? 'bg-emerald-100 text-emerald-700' :
+                            r.jurisdiction === 'GB' ? 'bg-purple-100 text-purple-700' :
+                            'bg-red-100 text-red-700'
+                          )}>
+                            {r.jurisdiction}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-900">
+                              {RETURN_TYPES.find(t => t.value === r.return_type)?.label || r.return_type}
+                            </p>
+                            <p className="text-xs text-gray-500">{r.period_start} to {r.period_end}</p>
                           </div>
                         </div>
-                      );
-                    })}
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <p className="text-sm font-semibold text-gray-900">
+                              {formatCurrency(Object.values(r.totals)[Object.values(r.totals).length - 1])}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {new Date(r.generated_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                          <Badge variant={STATUS_BADGE_VARIANT[r.status] || 'secondary'}>
+                            {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      )}
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        </TabsContent>
 
-      {/* History Tab */}
-      {activeTab === 'history' && (
-        <div className="bg-white rounded-xl border">
-          <div className="px-6 py-4 border-b">
-            <h3 className="text-lg font-semibold text-gray-900">Filing History</h3>
-          </div>
-          {loading ? (
-            <div className="text-center text-gray-400 py-12">Loading filing history...</div>
-          ) : returns.length === 0 ? (
-            <div className="p-8 text-center">
-              <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3">
-                <span className="text-xl text-gray-400">%</span>
-              </div>
-              <p className="text-gray-600 font-medium">No returns generated yet</p>
-              <p className="text-gray-400 text-sm mt-1">Generate your first tax return to see it here.</p>
-              <button
-                onClick={() => setActiveTab('generate')}
-                className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
-              >
-                Generate Return
-              </button>
-            </div>
-          ) : (
-            <div className="divide-y">
-              {returns.map(r => (
-                <div
-                  key={r.id}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors"
-                  onClick={() => loadReturn(r.id)}
-                >
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold ${
-                      r.jurisdiction === 'AU' ? 'bg-blue-100 text-blue-700' :
-                      r.jurisdiction === 'NZ' ? 'bg-emerald-100 text-emerald-700' :
-                      r.jurisdiction === 'GB' ? 'bg-purple-100 text-purple-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {r.jurisdiction}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900">
-                        {RETURN_TYPES.find(t => t.value === r.return_type)?.label || r.return_type}
-                      </p>
-                      <p className="text-xs text-gray-500">{r.period_start} to {r.period_end}</p>
-                    </div>
+        {/* Deadlines Tab */}
+        <TabsContent value="deadlines">
+          <motion.div {...fadeUp}>
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle>Upcoming Filing Deadlines</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                {loading ? (
+                  <div className="text-center text-gray-400 py-12">Loading deadlines...</div>
+                ) : deadlines.length === 0 ? (
+                  <div className="p-8 text-center">
+                    <p className="text-gray-600 font-medium">No upcoming deadlines</p>
+                    <p className="text-gray-400 text-sm mt-1">All returns are up to date.</p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">
-                        {formatCurrency(Object.values(r.totals)[Object.values(r.totals).length - 1])}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(r.generated_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${STATUS_COLORS[r.status] || STATUS_COLORS.draft}`}>
-                      {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
-                    </span>
+                ) : (
+                  <div className="divide-y">
+                    {deadlines.map((d, i) => (
+                      <div key={i} className="px-6 py-4 flex items-center justify-between">
+                        <div className="flex items-center gap-4 min-w-0">
+                          <div className={cn(
+                            'w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold',
+                            d.jurisdiction === 'AU' ? 'bg-blue-100 text-blue-700' :
+                            d.jurisdiction === 'NZ' ? 'bg-emerald-100 text-emerald-700' :
+                            d.jurisdiction === 'GB' ? 'bg-purple-100 text-purple-700' :
+                            'bg-red-100 text-red-700'
+                          )}>
+                            {d.jurisdiction}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-900">{d.description}</p>
+                            <p className="text-xs text-gray-500">Authority: {d.authority}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <p className="text-sm font-semibold text-gray-900">{d.due_date}</p>
+                            <Badge
+                              variant={
+                                d.urgency === 'critical' ? 'destructive' :
+                                d.urgency === 'urgent' ? 'warning' :
+                                'default'
+                              }
+                            >
+                              {d.days_remaining} days
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Deadlines Tab */}
-      {activeTab === 'deadlines' && (
-        <div className="bg-white rounded-xl border">
-          <div className="px-6 py-4 border-b">
-            <h3 className="text-lg font-semibold text-gray-900">Upcoming Filing Deadlines</h3>
-          </div>
-          {loading ? (
-            <div className="text-center text-gray-400 py-12">Loading deadlines...</div>
-          ) : deadlines.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="text-gray-600 font-medium">No upcoming deadlines</p>
-              <p className="text-gray-400 text-sm mt-1">All returns are up to date.</p>
-            </div>
-          ) : (
-            <div className="divide-y">
-              {deadlines.map((d, i) => (
-                <div key={i} className="px-6 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold ${
-                      d.jurisdiction === 'AU' ? 'bg-blue-100 text-blue-700' :
-                      d.jurisdiction === 'NZ' ? 'bg-emerald-100 text-emerald-700' :
-                      d.jurisdiction === 'GB' ? 'bg-purple-100 text-purple-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {d.jurisdiction}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-900">{d.description}</p>
-                      <p className="text-xs text-gray-500">Authority: {d.authority}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">{d.due_date}</p>
-                      <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${
-                        d.urgency === 'critical' ? 'bg-red-100 text-red-700' :
-                        d.urgency === 'urgent' ? 'bg-amber-100 text-amber-700' :
-                        'bg-blue-100 text-blue-700'
-                      }`}>
-                        {d.days_remaining} days
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
@@ -677,35 +725,33 @@ function SalesTaxUSLineItems({ items }) {
   return (
     <div>
       {states.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-gray-50">
-                <th className="text-left py-3 px-4 font-medium text-gray-600">State</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Gross Sales</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Exempt</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Taxable</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Rate</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Tax Due</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {states.map((s, i) => (
-                <tr key={i} className="hover:bg-gray-50">
-                  <td className="py-3 px-4">
-                    <span className="font-medium text-gray-900">{s.state}</span>
-                    <span className="text-gray-400 ml-1 text-xs">({s.state_code})</span>
-                  </td>
-                  <td className="text-right py-3 px-4 text-gray-700">{formatCurrency(s.gross_sales)}</td>
-                  <td className="text-right py-3 px-4 text-gray-500">{formatCurrency(s.exempt_sales)}</td>
-                  <td className="text-right py-3 px-4 font-medium text-gray-900">{formatCurrency(s.taxable_sales)}</td>
-                  <td className="text-right py-3 px-4 text-gray-600">{(parseFloat(s.combined_rate) * 100).toFixed(2)}%</td>
-                  <td className="text-right py-3 px-4 font-semibold text-gray-900">{formatCurrency(s.tax_due)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>State</TableHead>
+              <TableHead className="text-right">Gross Sales</TableHead>
+              <TableHead className="text-right">Exempt</TableHead>
+              <TableHead className="text-right">Taxable</TableHead>
+              <TableHead className="text-right">Rate</TableHead>
+              <TableHead className="text-right">Tax Due</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {states.map((s, i) => (
+              <TableRow key={i}>
+                <TableCell>
+                  <span className="font-medium text-gray-900">{s.state}</span>
+                  <span className="text-gray-400 ml-1 text-xs">({s.state_code})</span>
+                </TableCell>
+                <TableCell className="text-right text-gray-700">{formatCurrency(s.gross_sales)}</TableCell>
+                <TableCell className="text-right text-gray-500">{formatCurrency(s.exempt_sales)}</TableCell>
+                <TableCell className="text-right font-medium text-gray-900">{formatCurrency(s.taxable_sales)}</TableCell>
+                <TableCell className="text-right text-gray-600">{(parseFloat(s.combined_rate) * 100).toFixed(2)}%</TableCell>
+                <TableCell className="text-right font-semibold text-gray-900">{formatCurrency(s.tax_due)}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
       <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
         <div className="bg-gray-50 rounded-lg p-3">

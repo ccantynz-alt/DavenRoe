@@ -1,11 +1,27 @@
-import { useState, useEffect, useRef } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { Progress } from '@/components/ui/Progress';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/Dialog';
 
 const STATUS_COLORS = {
   planning: 'bg-gray-100 text-gray-700', active: 'bg-blue-100 text-blue-700',
   on_hold: 'bg-amber-100 text-amber-700', completed: 'bg-green-100 text-green-700',
   cancelled: 'bg-red-100 text-red-700',
+};
+
+const STATUS_BADGE_VARIANT = {
+  planning: 'secondary', active: 'default', on_hold: 'warning',
+  completed: 'success', cancelled: 'destructive',
 };
 
 const TASK_STATUS = { todo: 'To Do', in_progress: 'In Progress', review: 'Review', done: 'Done' };
@@ -14,9 +30,8 @@ const TASK_COLORS = {
   review: 'bg-amber-50 border-amber-200', done: 'bg-green-50 border-green-200',
 };
 
-const PRIORITY_COLORS = {
-  low: 'bg-gray-100 text-gray-600', medium: 'bg-blue-100 text-blue-600',
-  high: 'bg-orange-100 text-orange-700', urgent: 'bg-red-100 text-red-700',
+const PRIORITY_VARIANT = {
+  low: 'secondary', medium: 'outline', high: 'warning', urgent: 'destructive',
 };
 
 const DEMO_PROJECTS = [
@@ -120,24 +135,28 @@ const DEMO_PROJECTS = [
   },
 ];
 
-const Card = ({ label, value, sub, color = 'text-gray-900' }) => (
-  <div className="bg-white border rounded-xl p-4">
+const StatCard = ({ label, value, sub, color = 'text-gray-900' }) => (
+  <Card className="p-4">
     <p className="text-xs text-gray-500 mb-1">{label}</p>
-    <p className={`text-xl font-bold ${color}`}>{value}</p>
+    <p className={cn('text-xl font-bold', color)}>{value}</p>
     {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
-  </div>
+  </Card>
 );
 
 const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n);
 const pct = (a, b) => b ? Math.round((a / b) * 100) : 0;
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 12 },
+  visible: (i = 0) => ({ opacity: 1, y: 0, transition: { delay: i * 0.04, duration: 0.3, ease: 'easeOut' } }),
+};
+
 export default function ProjectManagement() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('list'); // list | kanban
   const [filterStatus, setFilterStatus] = useState('');
   const [selected, setSelected] = useState(null);
-  const [taskView, setTaskView] = useState('kanban'); // kanban | list inside project detail
+  const [taskView, setTaskView] = useState('kanban');
   const [showCreate, setShowCreate] = useState(false);
   const [dragTask, setDragTask] = useState(null);
   const toast = useToast();
@@ -227,252 +246,273 @@ export default function ProjectManagement() {
     const profitMargin = proj.revenue ? pct(proj.revenue - proj.spent, proj.revenue) : 0;
 
     return (
-      <div className="space-y-6">
+      <motion.div className="space-y-6" initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.04 } } }}>
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <motion.div variants={fadeUp} className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 text-xl">&larr;</button>
+            <Button variant="ghost" size="icon" onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 text-xl">
+              &larr;
+            </Button>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{proj.name}</h1>
               <p className="text-sm text-gray-500">{proj.client} &middot; {proj.start_date} — {proj.due_date}</p>
             </div>
-            <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[proj.status]}`}>
-              {proj.status.replace('_', ' ')}
-            </span>
+            <Badge variant={STATUS_BADGE_VARIANT[proj.status]}>{proj.status.replace('_', ' ')}</Badge>
           </div>
           <div className="flex gap-2">
             {proj.status === 'planning' && (
-              <button onClick={() => handleStatusChange(proj.id, 'active')}
-                className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-                Start Project
-              </button>
+              <Button size="sm" onClick={() => handleStatusChange(proj.id, 'active')}>Start Project</Button>
             )}
             {proj.status === 'active' && (
               <>
-                <button onClick={() => handleStatusChange(proj.id, 'on_hold')}
-                  className="px-3 py-1.5 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium hover:bg-amber-200">
+                <Button variant="outline" size="sm" className="bg-amber-100 text-amber-700 border-amber-200 hover:bg-amber-200" onClick={() => handleStatusChange(proj.id, 'on_hold')}>
                   Put On Hold
-                </button>
-                <button onClick={() => handleStatusChange(proj.id, 'completed')}
-                  className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">
-                  Mark Complete
-                </button>
+                </Button>
+                <Button variant="success" size="sm" onClick={() => handleStatusChange(proj.id, 'completed')}>Mark Complete</Button>
               </>
             )}
             {proj.status === 'on_hold' && (
-              <button onClick={() => handleStatusChange(proj.id, 'active')}
-                className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-                Resume Project
-              </button>
+              <Button size="sm" onClick={() => handleStatusChange(proj.id, 'active')}>Resume Project</Button>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        {proj.description && <p className="text-sm text-gray-600 -mt-2">{proj.description}</p>}
+        {proj.description && <motion.p variants={fadeUp} className="text-sm text-gray-600 -mt-2">{proj.description}</motion.p>}
 
         {/* Summary row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-          <Card label="Budget" value={fmt(proj.budget)} />
-          <Card label="Spent" value={fmt(proj.spent)} sub={`${budgetPct}% of budget`} color={budgetPct > 90 ? 'text-red-600' : budgetPct > 70 ? 'text-amber-600' : 'text-gray-900'} />
-          <Card label="Revenue" value={fmt(proj.revenue)} color="text-green-600" />
-          <Card label="Profit Margin" value={`${profitMargin}%`} color={profitMargin < 0 ? 'text-red-600' : profitMargin < 20 ? 'text-amber-600' : 'text-green-600'} />
-          <Card label="Billable Hours" value={proj.billable_hours} sub={`${proj.non_billable_hours}h non-billable`} />
-          <Card label="Tasks Done" value={`${taskDone}/${taskTotal}`} sub={`${pct(taskDone, taskTotal)}% complete`} />
-        </div>
+        <motion.div variants={fadeUp} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <StatCard label="Budget" value={fmt(proj.budget)} />
+          <StatCard label="Spent" value={fmt(proj.spent)} sub={`${budgetPct}% of budget`} color={budgetPct > 90 ? 'text-red-600' : budgetPct > 70 ? 'text-amber-600' : 'text-gray-900'} />
+          <StatCard label="Revenue" value={fmt(proj.revenue)} color="text-green-600" />
+          <StatCard label="Profit Margin" value={`${profitMargin}%`} color={profitMargin < 0 ? 'text-red-600' : profitMargin < 20 ? 'text-amber-600' : 'text-green-600'} />
+          <StatCard label="Billable Hours" value={proj.billable_hours} sub={`${proj.non_billable_hours}h non-billable`} />
+          <StatCard label="Tasks Done" value={`${taskDone}/${taskTotal}`} sub={`${pct(taskDone, taskTotal)}% complete`} />
+        </motion.div>
 
         {/* Budget burn bar */}
-        <div className="bg-white border rounded-xl p-4">
-          <div className="flex justify-between text-xs text-gray-500 mb-2">
-            <span>Budget Utilisation</span>
-            <span>{fmt(proj.spent)} of {fmt(proj.budget)} ({budgetPct}%)</span>
-          </div>
-          <div className="w-full bg-gray-100 rounded-full h-3">
-            <div className={`h-3 rounded-full transition-all ${budgetPct > 90 ? 'bg-red-500' : budgetPct > 70 ? 'bg-amber-500' : 'bg-blue-500'}`}
-              style={{ width: `${Math.min(budgetPct, 100)}%` }} />
-          </div>
-        </div>
+        <motion.div variants={fadeUp}>
+          <Card className="p-4">
+            <div className="flex justify-between text-xs text-gray-500 mb-2">
+              <span>Budget Utilisation</span>
+              <span>{fmt(proj.spent)} of {fmt(proj.budget)} ({budgetPct}%)</span>
+            </div>
+            <Progress
+              value={Math.min(budgetPct, 100)}
+              className="h-3"
+              indicatorClassName={cn(
+                budgetPct > 90 ? 'bg-red-500' : budgetPct > 70 ? 'bg-amber-500' : 'bg-blue-500'
+              )}
+            />
+          </Card>
+        </motion.div>
 
         {/* Milestones */}
         {proj.milestones.length > 0 && (
-          <div className="bg-white border rounded-xl p-4">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="font-semibold text-gray-900">Milestones</h3>
-              <span className="text-xs text-gray-500">{milestonePct}% complete</span>
-            </div>
-            <div className="w-full bg-gray-100 rounded-full h-2 mb-4">
-              <div className="h-2 rounded-full bg-green-500 transition-all" style={{ width: `${milestonePct}%` }} />
-            </div>
-            <div className="space-y-2">
-              {proj.milestones.map(m => (
-                <div key={m.id} className="flex items-center justify-between py-1.5">
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => {
-                      const updated = { ...proj, milestones: proj.milestones.map(mm => mm.id === m.id ? { ...mm, done: !mm.done } : mm) };
-                      setSelected(updated);
-                      setProjects(prev => prev.map(p => p.id === proj.id ? updated : p));
-                    }}
-                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${m.done ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300'}`}>
-                      {m.done && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
-                    </button>
-                    <span className={`text-sm ${m.done ? 'text-gray-400 line-through' : 'text-gray-700'}`}>{m.name}</span>
-                  </div>
-                  <span className={`text-xs ${m.done ? 'text-green-600' : new Date(m.due) < new Date() ? 'text-red-600' : 'text-gray-400'}`}>
-                    {m.done ? 'Done' : m.due}
-                  </span>
+          <motion.div variants={fadeUp}>
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-center">
+                  <CardTitle>Milestones</CardTitle>
+                  <span className="text-xs text-gray-500">{milestonePct}% complete</span>
                 </div>
-              ))}
-            </div>
-          </div>
+              </CardHeader>
+              <CardContent>
+                <Progress value={milestonePct} className="h-2 mb-4" indicatorClassName="bg-green-500" />
+                <div className="space-y-2">
+                  {proj.milestones.map(m => (
+                    <div key={m.id} className="flex items-center justify-between py-1.5">
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => {
+                          const updated = { ...proj, milestones: proj.milestones.map(mm => mm.id === m.id ? { ...mm, done: !mm.done } : mm) };
+                          setSelected(updated);
+                          setProjects(prev => prev.map(p => p.id === proj.id ? updated : p));
+                        }}
+                          className={cn(
+                            'w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors',
+                            m.done ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300'
+                          )}>
+                          {m.done && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                        </button>
+                        <span className={cn('text-sm', m.done ? 'text-gray-400 line-through' : 'text-gray-700')}>{m.name}</span>
+                      </div>
+                      <span className={cn('text-xs', m.done ? 'text-green-600' : new Date(m.due) < new Date() ? 'text-red-600' : 'text-gray-400')}>
+                        {m.done ? 'Done' : m.due}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         )}
 
         {/* Tasks section */}
-        <div className="bg-white border rounded-xl p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-gray-900">Tasks</h3>
-            <div className="flex gap-2">
-              <button onClick={() => setTaskView('kanban')}
-                className={`px-3 py-1 text-xs rounded-lg font-medium ${taskView === 'kanban' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
-                Kanban
-              </button>
-              <button onClick={() => setTaskView('list')}
-                className={`px-3 py-1 text-xs rounded-lg font-medium ${taskView === 'list' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
-                List
-              </button>
-            </div>
-          </div>
-
-          {taskView === 'kanban' ? (
-            <div className="grid grid-cols-4 gap-3">
-              {Object.entries(TASK_STATUS).map(([key, label]) => {
-                const colTasks = proj.tasks.filter(t => t.status === key);
-                return (
-                  <div key={key} className={`rounded-xl border p-3 min-h-[200px] ${TASK_COLORS[key]}`}
-                    onDragOver={handleDragOver} onDrop={() => handleDrop(key)}>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-xs font-semibold text-gray-600 uppercase">{label}</span>
-                      <span className="text-xs bg-white rounded-full px-2 py-0.5 text-gray-500">{colTasks.length}</span>
-                    </div>
-                    <div className="space-y-2">
-                      {colTasks.map(t => (
-                        <div key={t.id} draggable onDragStart={() => handleDragStart(t)}
-                          className="bg-white rounded-lg border p-3 shadow-sm cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow">
-                          <p className="text-sm font-medium text-gray-800 mb-1.5">{t.title}</p>
-                          <div className="flex items-center justify-between">
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${PRIORITY_COLORS[t.priority]}`}>{t.priority}</span>
-                            <span className="text-[10px] text-gray-400">{t.assignee}</span>
-                          </div>
-                          {t.hours > 0 && <p className="text-[10px] text-gray-400 mt-1">{t.hours}h logged</p>}
+        <motion.div variants={fadeUp}>
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-center">
+                <CardTitle>Tasks</CardTitle>
+                <Tabs value={taskView} onValueChange={setTaskView}>
+                  <TabsList className="h-8">
+                    <TabsTrigger value="kanban" className="text-xs px-3 py-1">Kanban</TabsTrigger>
+                    <TabsTrigger value="list" className="text-xs px-3 py-1">List</TabsTrigger>
+                  </TabsList>
+                </Tabs>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {taskView === 'kanban' ? (
+                <div className="grid grid-cols-4 gap-3">
+                  {Object.entries(TASK_STATUS).map(([key, label]) => {
+                    const colTasks = proj.tasks.filter(t => t.status === key);
+                    return (
+                      <div key={key} className={cn('rounded-xl border p-3 min-h-[200px]', TASK_COLORS[key])}
+                        onDragOver={handleDragOver} onDrop={() => handleDrop(key)}>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-xs font-semibold text-gray-600 uppercase">{label}</span>
+                          <Badge variant="secondary" className="text-xs px-2 py-0.5">{colTasks.length}</Badge>
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-left text-xs text-gray-500 border-b">
-                    <th className="pb-2 font-medium">Task</th>
-                    <th className="pb-2 font-medium">Assignee</th>
-                    <th className="pb-2 font-medium">Priority</th>
-                    <th className="pb-2 font-medium">Status</th>
-                    <th className="pb-2 font-medium">Hours</th>
-                    <th className="pb-2 font-medium">Due</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {proj.tasks.map(t => (
-                    <tr key={t.id} className="border-b last:border-0 hover:bg-gray-50">
-                      <td className="py-2.5 font-medium text-gray-800">{t.title}</td>
-                      <td className="py-2.5 text-gray-500">{t.assignee}</td>
-                      <td className="py-2.5">
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${PRIORITY_COLORS[t.priority]}`}>{t.priority}</span>
-                      </td>
-                      <td className="py-2.5">
-                        <select value={t.status} onChange={e => handleTaskStatusChange(proj.id, t.id, e.target.value)}
-                          className="text-xs border rounded px-2 py-1 bg-white">
-                          {Object.entries(TASK_STATUS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-                        </select>
-                      </td>
-                      <td className="py-2.5 text-gray-500">{t.hours || '—'}</td>
-                      <td className={`py-2.5 ${new Date(t.due) < new Date() && t.status !== 'done' ? 'text-red-600' : 'text-gray-500'}`}>{t.due}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                        <div className="space-y-2">
+                          {colTasks.map(t => (
+                            <motion.div
+                              key={t.id}
+                              draggable
+                              onDragStart={() => handleDragStart(t)}
+                              layout
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="bg-white rounded-lg border p-3 shadow-sm cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
+                            >
+                              <p className="text-sm font-medium text-gray-800 mb-1.5">{t.title}</p>
+                              <div className="flex items-center justify-between">
+                                <Badge variant={PRIORITY_VARIANT[t.priority]} className="text-[10px] px-1.5 py-0.5">{t.priority}</Badge>
+                                <span className="text-[10px] text-gray-400">{t.assignee}</span>
+                              </div>
+                              {t.hours > 0 && <p className="text-[10px] text-gray-400 mt-1">{t.hours}h logged</p>}
+                            </motion.div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Task</TableHead>
+                      <TableHead>Assignee</TableHead>
+                      <TableHead>Priority</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Hours</TableHead>
+                      <TableHead>Due</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {proj.tasks.map(t => (
+                      <TableRow key={t.id}>
+                        <TableCell className="font-medium text-gray-800">{t.title}</TableCell>
+                        <TableCell className="text-gray-500">{t.assignee}</TableCell>
+                        <TableCell>
+                          <Badge variant={PRIORITY_VARIANT[t.priority]} className="text-[10px] px-1.5 py-0.5">{t.priority}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Select value={t.status} onValueChange={(val) => handleTaskStatusChange(proj.id, t.id, val)}>
+                            <SelectTrigger className="h-7 w-[120px] text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.entries(TASK_STATUS).map(([k, v]) => (
+                                <SelectItem key={k} value={k}>{v}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                        <TableCell className="text-gray-500">{t.hours || '—'}</TableCell>
+                        <TableCell className={cn(new Date(t.due) < new Date() && t.status !== 'done' ? 'text-red-600' : 'text-gray-500')}>{t.due}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Profitability summary */}
-        <div className="bg-white border rounded-xl p-4">
-          <h3 className="font-semibold text-gray-900 mb-3">Profitability</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div>
-              <p className="text-xs text-gray-500">Revenue</p>
-              <p className="text-lg font-bold text-green-600">{fmt(proj.revenue)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Costs</p>
-              <p className="text-lg font-bold text-red-600">{fmt(proj.spent)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Profit</p>
-              <p className={`text-lg font-bold ${proj.revenue - proj.spent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {fmt(proj.revenue - proj.spent)}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">Effective Rate</p>
-              <p className="text-lg font-bold text-gray-900">
-                {proj.billable_hours ? fmt(Math.round(proj.revenue / proj.billable_hours)) + '/hr' : '—'}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+        <motion.div variants={fadeUp}>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle>Profitability</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <p className="text-xs text-gray-500">Revenue</p>
+                  <p className="text-lg font-bold text-green-600">{fmt(proj.revenue)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Costs</p>
+                  <p className="text-lg font-bold text-red-600">{fmt(proj.spent)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Profit</p>
+                  <p className={cn('text-lg font-bold', proj.revenue - proj.spent >= 0 ? 'text-green-600' : 'text-red-600')}>
+                    {fmt(proj.revenue - proj.spent)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">Effective Rate</p>
+                  <p className="text-lg font-bold text-gray-900">
+                    {proj.billable_hours ? fmt(Math.round(proj.revenue / proj.billable_hours)) + '/hr' : '—'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </motion.div>
     );
   }
 
   // Main list view
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <motion.div className="space-y-6" initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.04 } } }}>
+      <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
           <p className="text-sm text-gray-500 mt-0.5">Track budgets, tasks, milestones, and profitability</p>
         </div>
-        <button onClick={() => setShowCreate(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-          + New Project
-        </button>
-      </div>
+        <Button onClick={() => setShowCreate(true)}>+ New Project</Button>
+      </motion.div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        <Card label="Total Projects" value={summary.total} />
-        <Card label="Active" value={summary.active} color="text-blue-600" />
-        <Card label="Total Budget" value={fmt(summary.total_budget)} />
-        <Card label="Total Spent" value={fmt(summary.total_spent)} sub={`${pct(summary.total_spent, summary.total_budget)}% utilised`} />
-        <Card label="Total Revenue" value={fmt(summary.total_revenue)} color="text-green-600" />
-        <Card label="Net Profit" value={fmt(summary.profit)} color={summary.profit >= 0 ? 'text-green-600' : 'text-red-600'} />
-      </div>
+      <motion.div variants={fadeUp} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <StatCard label="Total Projects" value={summary.total} />
+        <StatCard label="Active" value={summary.active} color="text-blue-600" />
+        <StatCard label="Total Budget" value={fmt(summary.total_budget)} />
+        <StatCard label="Total Spent" value={fmt(summary.total_spent)} sub={`${pct(summary.total_spent, summary.total_budget)}% utilised`} />
+        <StatCard label="Total Revenue" value={fmt(summary.total_revenue)} color="text-green-600" />
+        <StatCard label="Net Profit" value={fmt(summary.profit)} color={summary.profit >= 0 ? 'text-green-600' : 'text-red-600'} />
+      </motion.div>
 
       {/* Filters */}
-      <div className="flex gap-2 flex-wrap">
+      <motion.div variants={fadeUp} className="flex gap-2 flex-wrap">
         {['', 'planning', 'active', 'on_hold', 'completed', 'cancelled'].map(s => (
-          <button key={s} onClick={() => setFilterStatus(s)}
-            className={`px-3 py-1.5 text-xs rounded-lg font-medium transition ${filterStatus === s ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
+          <Button
+            key={s}
+            variant={filterStatus === s ? 'default' : 'secondary'}
+            size="sm"
+            onClick={() => setFilterStatus(s)}
+          >
             {s ? s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'All'}
-          </button>
+          </Button>
         ))}
-      </div>
+      </motion.div>
 
       {/* Project cards */}
       <div className="space-y-3">
-        {filtered.map(proj => {
+        {filtered.map((proj, index) => {
           const budgetPct = pct(proj.spent, proj.budget);
           const taskDone = proj.tasks.filter(t => t.status === 'done').length;
           const taskTotal = proj.tasks.length;
@@ -481,130 +521,137 @@ export default function ProjectManagement() {
           const milestoneTotal = proj.milestones.length;
 
           return (
-            <div key={proj.id} onClick={() => setSelected(proj)}
-              className="bg-white border rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer">
-              <div className="flex items-start justify-between mb-3">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-900">{proj.name}</h3>
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_COLORS[proj.status]}`}>
-                      {proj.status.replace('_', ' ')}
-                    </span>
+            <motion.div key={proj.id} custom={index} variants={fadeUp}>
+              <Card
+                className="p-5 cursor-pointer"
+                onClick={() => setSelected(proj)}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-semibold text-gray-900">{proj.name}</h3>
+                      <Badge variant={STATUS_BADGE_VARIANT[proj.status]} className="text-[10px]">
+                        {proj.status.replace('_', ' ')}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-500">{proj.client} &middot; {proj.start_date} — {proj.due_date}</p>
                   </div>
-                  <p className="text-sm text-gray-500">{proj.client} &middot; {proj.start_date} — {proj.due_date}</p>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-gray-900">{fmt(proj.budget)}</p>
+                    <p className="text-xs text-gray-400">budget</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-gray-900">{fmt(proj.budget)}</p>
-                  <p className="text-xs text-gray-400">budget</p>
-                </div>
-              </div>
 
-              {/* Progress bars */}
-              <div className="grid grid-cols-3 gap-4 mb-3">
-                <div>
-                  <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Budget</span>
-                    <span>{budgetPct}%</span>
+                {/* Progress bars */}
+                <div className="grid grid-cols-3 gap-4 mb-3">
+                  <div>
+                    <div className="flex justify-between text-[10px] text-gray-500 mb-1">
+                      <span>Budget</span>
+                      <span>{budgetPct}%</span>
+                    </div>
+                    <Progress
+                      value={Math.min(budgetPct, 100)}
+                      className="h-1.5"
+                      indicatorClassName={cn(
+                        budgetPct > 90 ? 'bg-red-500' : budgetPct > 70 ? 'bg-amber-500' : 'bg-blue-500'
+                      )}
+                    />
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div className={`h-1.5 rounded-full ${budgetPct > 90 ? 'bg-red-500' : budgetPct > 70 ? 'bg-amber-500' : 'bg-blue-500'}`}
-                      style={{ width: `${Math.min(budgetPct, 100)}%` }} />
+                  <div>
+                    <div className="flex justify-between text-[10px] text-gray-500 mb-1">
+                      <span>Tasks</span>
+                      <span>{taskDone}/{taskTotal}</span>
+                    </div>
+                    <Progress value={taskPct} className="h-1.5" indicatorClassName="bg-green-500" />
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-[10px] text-gray-500 mb-1">
+                      <span>Milestones</span>
+                      <span>{milestoneDone}/{milestoneTotal}</span>
+                    </div>
+                    <Progress value={pct(milestoneDone, milestoneTotal)} className="h-1.5" indicatorClassName="bg-purple-500" />
                   </div>
                 </div>
-                <div>
-                  <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Tasks</span>
-                    <span>{taskDone}/{taskTotal}</span>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div className="h-1.5 rounded-full bg-green-500" style={{ width: `${taskPct}%` }} />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-[10px] text-gray-500 mb-1">
-                    <span>Milestones</span>
-                    <span>{milestoneDone}/{milestoneTotal}</span>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div className="h-1.5 rounded-full bg-purple-500" style={{ width: `${pct(milestoneDone, milestoneTotal)}%` }} />
-                  </div>
-                </div>
-              </div>
 
-              {/* Bottom stats */}
-              <div className="flex gap-6 text-xs text-gray-500">
-                <span>{proj.billable_hours}h billable</span>
-                <span>Revenue: {fmt(proj.revenue)}</span>
-                <span className={proj.revenue - proj.spent >= 0 ? 'text-green-600' : 'text-red-600'}>
-                  Profit: {fmt(proj.revenue - proj.spent)}
-                </span>
-                <span>Margin: {proj.revenue ? pct(proj.revenue - proj.spent, proj.revenue) + '%' : '—'}</span>
-              </div>
-            </div>
+                {/* Bottom stats */}
+                <div className="flex gap-6 text-xs text-gray-500">
+                  <span>{proj.billable_hours}h billable</span>
+                  <span>Revenue: {fmt(proj.revenue)}</span>
+                  <span className={proj.revenue - proj.spent >= 0 ? 'text-green-600' : 'text-red-600'}>
+                    Profit: {fmt(proj.revenue - proj.spent)}
+                  </span>
+                  <span>Margin: {proj.revenue ? pct(proj.revenue - proj.spent, proj.revenue) + '%' : '—'}</span>
+                </div>
+              </Card>
+            </motion.div>
           );
         })}
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-16 bg-white border rounded-xl">
-          <p className="text-gray-400 text-lg mb-2">No projects match this filter</p>
-          <button onClick={() => setFilterStatus('')} className="text-blue-600 text-sm hover:underline">Show all projects</button>
-        </div>
+        <motion.div variants={fadeUp}>
+          <Card className="text-center py-16">
+            <p className="text-gray-400 text-lg mb-2">No projects match this filter</p>
+            <Button variant="link" onClick={() => setFilterStatus('')}>Show all projects</Button>
+          </Card>
+        </motion.div>
       )}
 
       {/* Create modal */}
-      {showCreate && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setShowCreate(false)}>
-          <div className="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-bold mb-4">New Project</h2>
-            <div className="space-y-3">
+      <Dialog open={showCreate} onOpenChange={setShowCreate}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New Project</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Project name</label>
+              <Input value={createForm.name} onChange={e => setCreateForm(f => ({ ...f, name: e.target.value }))}
+                placeholder="e.g. Annual Audit — Acme Corp" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Project name</label>
-                <input value={createForm.name} onChange={e => setCreateForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="e.g. Annual Audit — Acme Corp" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
-                  <input value={createForm.client} onChange={e => setCreateForm(f => ({ ...f, client: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="Client name" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Budget</label>
-                  <input type="number" value={createForm.budget} onChange={e => setCreateForm(f => ({ ...f, budget: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="45000" />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Start date</label>
-                  <input type="date" value={createForm.start_date} onChange={e => setCreateForm(f => ({ ...f, start_date: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Due date</label>
-                  <input type="date" value={createForm.due_date} onChange={e => setCreateForm(f => ({ ...f, due_date: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm" />
-                </div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Client</label>
+                <Input value={createForm.client} onChange={e => setCreateForm(f => ({ ...f, client: e.target.value }))}
+                  placeholder="Client name" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hourly rate</label>
-                <input type="number" value={createForm.hourly_rate} onChange={e => setCreateForm(f => ({ ...f, hourly_rate: e.target.value }))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm" placeholder="200" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                <textarea value={createForm.description} onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))}
-                  className="w-full border rounded-lg px-3 py-2 text-sm" rows={2} placeholder="Brief project description" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Budget</label>
+                <Input type="number" value={createForm.budget} onChange={e => setCreateForm(f => ({ ...f, budget: e.target.value }))}
+                  placeholder="45000" />
               </div>
             </div>
-            <div className="flex justify-end gap-2 mt-5">
-              <button onClick={() => setShowCreate(false)} className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
-              <button onClick={handleCreate} className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Create Project</button>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Start date</label>
+                <Input type="date" value={createForm.start_date} onChange={e => setCreateForm(f => ({ ...f, start_date: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Due date</label>
+                <Input type="date" value={createForm.due_date} onChange={e => setCreateForm(f => ({ ...f, due_date: e.target.value }))} />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Hourly rate</label>
+              <Input type="number" value={createForm.hourly_rate} onChange={e => setCreateForm(f => ({ ...f, hourly_rate: e.target.value }))}
+                placeholder="200" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea value={createForm.description} onChange={e => setCreateForm(f => ({ ...f, description: e.target.value }))}
+                className={cn(
+                  'flex w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors',
+                  'placeholder:text-gray-400 focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20'
+                )}
+                rows={2} placeholder="Brief project description" />
             </div>
           </div>
-        </div>
-      )}
-    </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowCreate(false)}>Cancel</Button>
+            <Button onClick={handleCreate}>Create Project</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </motion.div>
   );
 }

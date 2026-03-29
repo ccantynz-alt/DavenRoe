@@ -1,14 +1,28 @@
 import { useState, useEffect } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { cn } from '@/lib/utils';
 
-const STATUS_COLORS = {
-  active: 'bg-green-100 text-green-700',
-  disposed: 'bg-gray-100 text-gray-400',
-  fully_depreciated: 'bg-amber-100 text-amber-700',
+const STATUS_BADGE = {
+  active: { variant: 'success', label: 'Active' },
+  disposed: { variant: 'secondary', label: 'Disposed' },
+  fully_depreciated: { variant: 'warning', label: 'Fully Depreciated' },
 };
 
 const CATEGORIES = ['All', 'Furniture', 'Equipment', 'Vehicles', 'Software', 'Leasehold'];
+
+const STAT_COLORS = {
+  indigo: 'bg-indigo-50 text-indigo-700',
+  green: 'bg-green-50 text-green-700',
+  amber: 'bg-amber-50 text-amber-700',
+  blue: 'bg-blue-50 text-blue-700',
+};
 
 function calcDepreciation(cost, method, useful_life, purchase_date) {
   const startYear = new Date(purchase_date).getFullYear();
@@ -19,13 +33,12 @@ function calcDepreciation(cost, method, useful_life, purchase_date) {
   for (let y = 0; y < useful_life; y++) {
     let dep;
     if (method === 'diminishing_value') {
-      const rate = 1 - Math.pow(0.1 / 1, 1 / useful_life); // ~DV rate so residual ~10%
       dep = Math.round(nbv * (2 / useful_life) * 100) / 100;
       if (dep > nbv) dep = nbv;
     } else {
       dep = Math.round((cost / useful_life) * 100) / 100;
     }
-    if (y === useful_life - 1) dep = nbv; // last year clears remaining
+    if (y === useful_life - 1) dep = nbv;
     accumulated += dep;
     nbv = Math.max(0, cost - accumulated);
     schedule.push({ year: startYear + y, depreciation: dep, accumulated: Math.round(accumulated * 100) / 100, nbv: Math.round(nbv * 100) / 100 });
@@ -96,7 +109,7 @@ export default function FixedAssets() {
   if (loading) return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" /></div>;
 
   return (
-    <div>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">Fixed Assets</h2>
@@ -106,18 +119,34 @@ export default function FixedAssets() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <Card label="Total Assets" value={summary.total} />
-        <Card label="Total Value (Cost)" value={`$${summary.totalValue.toLocaleString()}`} color="blue" />
-        <Card label="Accumulated Depreciation" value={`$${Math.round(summary.accDep).toLocaleString()}`} color="amber" />
-        <Card label="Net Book Value" value={`$${Math.round(summary.nbv).toLocaleString()}`} color="green" />
+        {[
+          { label: 'Total Assets', value: summary.total, color: 'indigo' },
+          { label: 'Total Value (Cost)', value: `$${summary.totalValue.toLocaleString()}`, color: 'blue' },
+          { label: 'Accumulated Depreciation', value: `$${Math.round(summary.accDep).toLocaleString()}`, color: 'amber' },
+          { label: 'Net Book Value', value: `$${Math.round(summary.nbv).toLocaleString()}`, color: 'green' },
+        ].map((stat, i) => (
+          <motion.div key={stat.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+            <Card className={cn('border-0 shadow-none', STAT_COLORS[stat.color])}>
+              <CardContent className="p-4">
+                <p className="text-xs font-medium opacity-70">{stat.label}</p>
+                <p className="text-xl font-bold mt-1">{stat.value}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
       {/* Category Filter */}
       <div className="flex gap-2 mb-6 flex-wrap">
         {CATEGORIES.map(c => (
-          <button key={c} onClick={() => setFilterCategory(c)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filterCategory === c ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+          <Button
+            key={c}
+            onClick={() => setFilterCategory(c)}
+            variant={filterCategory === c ? 'default' : 'secondary'}
+            size="sm"
+          >
             {c}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -128,44 +157,44 @@ export default function FixedAssets() {
       {showDispose && <DisposeModal asset={showDispose} onClose={() => setShowDispose(null)} onConfirm={handleDispose} />}
 
       {/* Table */}
-      <div className="bg-white rounded-xl border overflow-hidden">
-        <table className="w-full text-sm">
-          <thead><tr className="bg-gray-50 border-b">
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Asset #</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700">Name</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Category</th>
-            <th className="text-left px-4 py-3 font-semibold text-gray-700 hidden md:table-cell">Purchase Date</th>
-            <th className="text-right px-4 py-3 font-semibold text-gray-700">Cost</th>
-            <th className="text-right px-4 py-3 font-semibold text-gray-700">NBV</th>
-            <th className="text-center px-4 py-3 font-semibold text-gray-700">Status</th>
-          </tr></thead>
-          <tbody>
+      <Card>
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-gray-50">
+              <TableHead>Asset #</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead className="hidden md:table-cell">Category</TableHead>
+              <TableHead className="hidden md:table-cell">Purchase Date</TableHead>
+              <TableHead className="text-right">Cost</TableHead>
+              <TableHead className="text-right">NBV</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filtered.map(a => {
               const nbv = a.status === 'disposed' ? 0 : getCurrentNBV(a.cost, a.method, a.useful_life, a.purchase_date);
               const isFullyDep = nbv === 0 && a.status !== 'disposed';
               const displayStatus = isFullyDep ? 'fully_depreciated' : a.status;
+              const badge = STATUS_BADGE[displayStatus] || { variant: 'secondary', label: displayStatus };
               return (
-                <tr key={a.id} onClick={() => setSelected(a)} className="border-b hover:bg-gray-50 cursor-pointer transition-colors">
-                  <td className="px-4 py-3 font-medium text-indigo-600">{a.asset_number}</td>
-                  <td className="px-4 py-3 text-gray-900">{a.name}</td>
-                  <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{a.category}</td>
-                  <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{a.purchase_date}</td>
-                  <td className="px-4 py-3 text-right font-medium text-gray-900">${Number(a.cost).toLocaleString()}</td>
-                  <td className="px-4 py-3 text-right font-medium text-gray-900">${Math.round(nbv).toLocaleString()}</td>
-                  <td className="px-4 py-3 text-center"><span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[displayStatus]}`}>{displayStatus.replace(/_/g, ' ')}</span></td>
-                </tr>
+                <TableRow key={a.id} onClick={() => setSelected(a)} className="cursor-pointer">
+                  <TableCell className="font-medium text-indigo-600">{a.asset_number}</TableCell>
+                  <TableCell className="text-gray-900">{a.name}</TableCell>
+                  <TableCell className="text-gray-500 hidden md:table-cell">{a.category}</TableCell>
+                  <TableCell className="text-gray-500 hidden md:table-cell">{a.purchase_date}</TableCell>
+                  <TableCell className="text-right font-medium text-gray-900">${Number(a.cost).toLocaleString()}</TableCell>
+                  <TableCell className="text-right font-medium text-gray-900">${Math.round(nbv).toLocaleString()}</TableCell>
+                  <TableCell className="text-center">
+                    <Badge variant={badge.variant}>{badge.label}</Badge>
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </Card>
+    </motion.div>
   );
-}
-
-function Card({ label, value, color = 'indigo' }) {
-  const c = { indigo: 'bg-indigo-50 text-indigo-700', green: 'bg-green-50 text-green-700', amber: 'bg-amber-50 text-amber-700', red: 'bg-red-50 text-red-700', blue: 'bg-blue-50 text-blue-700' };
-  return <div className={`rounded-xl p-4 ${c[color]}`}><p className="text-xs font-medium opacity-70">{label}</p><p className="text-xl font-bold mt-1">{value}</p></div>;
 }
 
 function AssetDetail({ asset: a, onClose, onDispose }) {
@@ -174,13 +203,21 @@ function AssetDetail({ asset: a, onClose, onDispose }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto"
+        onClick={e => e.stopPropagation()}
+      >
         <div className="flex justify-between items-start mb-6">
           <div>
             <h3 className="text-xl font-bold">{a.asset_number} — {a.name}</h3>
             <p className="text-gray-500">{a.category}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">x</button>
+          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8 text-gray-400 hover:text-gray-600">
+            <span className="text-xl leading-none">&times;</span>
+          </Button>
         </div>
 
         {/* Purchase Info */}
@@ -193,31 +230,33 @@ function AssetDetail({ asset: a, onClose, onDispose }) {
 
         {/* Depreciation Schedule */}
         <h4 className="font-semibold text-sm text-gray-700 mb-3">Depreciation Schedule</h4>
-        <table className="w-full text-sm mb-6">
-          <thead><tr className="border-b">
-            <th className="text-left py-2 text-gray-600">Year</th>
-            <th className="text-right py-2 text-gray-600">Depreciation</th>
-            <th className="text-right py-2 text-gray-600">Accumulated</th>
-            <th className="text-right py-2 text-gray-600">NBV</th>
-          </tr></thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left">Year</TableHead>
+              <TableHead className="text-right">Depreciation</TableHead>
+              <TableHead className="text-right">Accumulated</TableHead>
+              <TableHead className="text-right">NBV</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {schedule.map((s, i) => (
-              <tr key={i} className={`border-b border-gray-100 ${s.year === 2026 ? 'bg-indigo-50' : ''}`}>
-                <td className="py-2">{s.year}{s.year === 2026 ? <span className="text-xs text-indigo-600 ml-1">(current)</span> : ''}</td>
-                <td className="py-2 text-right">${Number(s.depreciation).toLocaleString()}</td>
-                <td className="py-2 text-right">${Number(s.accumulated).toLocaleString()}</td>
-                <td className="py-2 text-right font-medium">${Number(s.nbv).toLocaleString()}</td>
-              </tr>
+              <TableRow key={i} className={cn(s.year === 2026 && 'bg-indigo-50')}>
+                <TableCell>{s.year}{s.year === 2026 ? <span className="text-xs text-indigo-600 ml-1">(current)</span> : ''}</TableCell>
+                <TableCell className="text-right">${Number(s.depreciation).toLocaleString()}</TableCell>
+                <TableCell className="text-right">${Number(s.accumulated).toLocaleString()}</TableCell>
+                <TableCell className="text-right font-medium">${Number(s.nbv).toLocaleString()}</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
 
         {a.status === 'active' && (
-          <div className="flex justify-end pt-4 border-t">
-            <button onClick={onDispose} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700">Dispose Asset</button>
+          <div className="flex justify-end pt-4 border-t mt-4">
+            <Button variant="destructive" onClick={onDispose}>Dispose Asset</Button>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
@@ -230,23 +269,29 @@ function DisposeModal({ asset, onClose, onConfirm }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl max-w-md w-full p-6"
+        onClick={e => e.stopPropagation()}
+      >
         <h3 className="text-lg font-bold mb-4">Dispose {asset.asset_number}</h3>
         <p className="text-sm text-gray-600 mb-4">Current NBV: <span className="font-medium">${Math.round(nbv).toLocaleString()}</span></p>
         <div className="mb-4">
           <label className="text-xs font-medium text-gray-600 block mb-1">Disposal Price *</label>
-          <input type="number" value={price} onChange={e => setPrice(e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="0.00" />
+          <Input type="number" value={price} onChange={e => setPrice(e.target.value)} placeholder="0.00" />
         </div>
         {price && (
-          <div className={`text-sm font-medium mb-4 p-3 rounded-lg ${gainLoss >= 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+          <div className={cn('text-sm font-medium mb-4 p-3 rounded-lg', gainLoss >= 0 ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700')}>
             {gainLoss >= 0 ? 'Gain' : 'Loss'} on disposal: ${Math.abs(Math.round(gainLoss)).toLocaleString()}
           </div>
         )}
         <div className="flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 border rounded-lg text-sm">Cancel</button>
-          <button onClick={() => price && onConfirm(asset, disposalPrice)} disabled={!price} className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-40">Confirm Disposal</button>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
+          <Button variant="destructive" onClick={() => price && onConfirm(asset, disposalPrice)} disabled={!price}>Confirm Disposal</Button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

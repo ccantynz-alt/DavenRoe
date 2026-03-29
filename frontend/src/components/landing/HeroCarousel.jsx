@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 /**
  * Premium hero section with animated gradient mesh background,
@@ -50,13 +51,21 @@ export default function HeroCarousel({ children }) {
             transition: 'right 3s ease-out, bottom 3s ease-out',
           }}
         />
-        <div
+        <motion.div
           className="absolute w-[400px] h-[400px] rounded-full opacity-15 blur-[80px]"
           style={{
             background: 'radial-gradient(circle, #06b6d4 0%, #0891b2 40%, transparent 70%)',
             left: '60%',
             top: '20%',
-            animation: 'float-slow 20s ease-in-out infinite',
+          }}
+          animate={{
+            x: [0, 30, -20, 0],
+            y: [0, -40, 30, 0],
+          }}
+          transition={{
+            duration: 20,
+            ease: 'easeInOut',
+            repeat: Infinity,
           }}
         />
       </div>
@@ -86,21 +95,22 @@ export default function HeroCarousel({ children }) {
 
         {/* Scroll indicator */}
         <div className="pb-8 flex justify-center">
-          <div className="flex flex-col items-center gap-2">
+          <motion.div
+            className="flex flex-col items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1 }}
+          >
             <div className="w-5 h-8 rounded-full border border-white/20 flex justify-center pt-1.5">
-              <div className="w-1 h-2 bg-white/40 rounded-full animate-bounce" />
+              <motion.div
+                className="w-1 h-2 bg-white/40 rounded-full"
+                animate={{ y: [0, 6, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              />
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes float-slow {
-          0%, 100% { transform: translate(0, 0); }
-          33% { transform: translate(30px, -40px); }
-          66% { transform: translate(-20px, 30px); }
-        }
-      `}</style>
     </div>
   );
 }

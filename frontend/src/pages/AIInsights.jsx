@@ -1,42 +1,67 @@
 import { useState } from 'react';
-import api from '../services/api';
-import { useToast } from '../components/Toast';
+import { motion } from 'framer-motion';
+import api from '@/services/api';
+import { useToast } from '@/components/Toast';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Progress } from '@/components/ui/Progress';
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from '@/components/ui/Table';
+import { cn } from '@/lib/utils';
+
+const fadeIn = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.3 },
+};
+
+const stagger = {
+  animate: { transition: { staggerChildren: 0.06 } },
+};
 
 export default function AIInsights() {
-  const [tab, setTab] = useState('forecast');
-
   return (
-    <div>
-      <div className="flex items-center justify-between mb-8">
+    <motion.div initial="initial" animate="animate" variants={stagger}>
+      <motion.div variants={fadeIn} className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold">AI Command Center</h2>
           <p className="text-gray-500 mt-1">AI-powered insights, forecasts, and automation</p>
         </div>
-        <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-medium">Powered by Claude</span>
-      </div>
+        <Badge variant="secondary" className="bg-indigo-100 text-indigo-700">
+          Powered by Claude
+        </Badge>
+      </motion.div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-        {[
-          { id: 'forecast', label: 'Cash Flow Forecast' },
-          { id: 'anomalies', label: 'Anomaly Alerts' },
-          { id: 'receipt', label: 'Receipt Scanner' },
-          { id: 'reports', label: 'Natural Language Reports' },
-          { id: 'insights', label: 'Weekly Digest' },
-        ].map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${tab === t.id ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
-            {t.label}
-          </button>
-        ))}
-      </div>
+      <motion.div variants={fadeIn}>
+        <Tabs defaultValue="forecast">
+          <TabsList className="mb-6 overflow-x-auto h-auto flex-wrap gap-1">
+            <TabsTrigger value="forecast">Cash Flow Forecast</TabsTrigger>
+            <TabsTrigger value="anomalies">Anomaly Alerts</TabsTrigger>
+            <TabsTrigger value="receipt">Receipt Scanner</TabsTrigger>
+            <TabsTrigger value="reports">Natural Language Reports</TabsTrigger>
+            <TabsTrigger value="insights">Weekly Digest</TabsTrigger>
+          </TabsList>
 
-      {tab === 'forecast' && <CashFlowForecast />}
-      {tab === 'anomalies' && <AnomalyAlerts />}
-      {tab === 'receipt' && <ReceiptScanner />}
-      {tab === 'reports' && <NaturalLanguageReports />}
-      {tab === 'insights' && <WeeklyDigest />}
-    </div>
+          <TabsContent value="forecast">
+            <CashFlowForecast />
+          </TabsContent>
+          <TabsContent value="anomalies">
+            <AnomalyAlerts />
+          </TabsContent>
+          <TabsContent value="receipt">
+            <ReceiptScanner />
+          </TabsContent>
+          <TabsContent value="reports">
+            <NaturalLanguageReports />
+          </TabsContent>
+          <TabsContent value="insights">
+            <WeeklyDigest />
+          </TabsContent>
+        </Tabs>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -56,84 +81,113 @@ function CashFlowForecast() {
   const maxAmount = Math.max(...forecast.weeks.map(w => Math.abs(w.projected_balance)));
 
   return (
-    <div className="space-y-6">
+    <motion.div initial="initial" animate="animate" variants={stagger} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white border rounded-xl p-4 border-l-4 border-l-green-500">
-          <p className="text-xs text-gray-500">30-Day Forecast</p>
-          <p className="text-2xl font-bold text-green-600">${forecast.day_30?.toLocaleString() || '0'}</p>
-        </div>
-        <div className="bg-white border rounded-xl p-4 border-l-4 border-l-blue-500">
-          <p className="text-xs text-gray-500">60-Day Forecast</p>
-          <p className="text-2xl font-bold text-blue-600">${forecast.day_60?.toLocaleString() || '0'}</p>
-        </div>
-        <div className="bg-white border rounded-xl p-4 border-l-4 border-l-purple-500">
-          <p className="text-xs text-gray-500">90-Day Forecast</p>
-          <p className="text-2xl font-bold text-purple-600">${forecast.day_90?.toLocaleString() || '0'}</p>
-        </div>
+        {[
+          { label: '30-Day Forecast', value: forecast.day_30, color: 'green', border: 'border-l-green-500' },
+          { label: '60-Day Forecast', value: forecast.day_60, color: 'blue', border: 'border-l-blue-500' },
+          { label: '90-Day Forecast', value: forecast.day_90, color: 'purple', border: 'border-l-purple-500' },
+        ].map((item, i) => (
+          <motion.div key={i} variants={fadeIn}>
+            <Card className={cn('border-l-4', item.border)}>
+              <CardContent className="p-4">
+                <p className="text-xs text-gray-500">{item.label}</p>
+                <p className={cn('text-2xl font-bold', `text-${item.color}-600`)}>
+                  ${item.value?.toLocaleString() || '0'}
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
 
-      <div className="bg-white border rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">13-Week Rolling Forecast</h3>
-          <button onClick={refresh} disabled={loading}
-            className="text-sm text-indigo-600 hover:text-indigo-800 disabled:opacity-50">
-            {loading ? 'Refreshing...' : 'Refresh'}
-          </button>
-        </div>
-        <div className="space-y-2">
-          {forecast.weeks.map((week, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <span className="text-xs text-gray-400 w-20 shrink-0">{week.label}</span>
-              <div className="flex-1 h-6 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all ${week.projected_balance >= 0 ? 'bg-green-500' : 'bg-red-500'}`}
-                  style={{ width: `${Math.min(Math.abs(week.projected_balance) / maxAmount * 100, 100)}%` }}
-                />
+      <motion.div variants={fadeIn}>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle>13-Week Rolling Forecast</CardTitle>
+            <Button variant="ghost" size="sm" onClick={refresh} disabled={loading}>
+              {loading ? 'Refreshing...' : 'Refresh'}
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {forecast.weeks.map((week, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <span className="text-xs text-gray-400 w-20 shrink-0">{week.label}</span>
+                <div className="flex-1">
+                  <Progress
+                    value={Math.min(Math.abs(week.projected_balance) / maxAmount * 100, 100)}
+                    className={cn(
+                      'h-6',
+                      week.projected_balance < 0 && '[&>div]:bg-red-500'
+                    )}
+                  />
+                </div>
+                <span className={cn(
+                  'text-sm font-medium w-24 text-right',
+                  week.projected_balance >= 0 ? 'text-green-600' : 'text-red-600'
+                )}>
+                  ${week.projected_balance.toLocaleString()}
+                </span>
               </div>
-              <span className={`text-sm font-medium w-24 text-right ${week.projected_balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                ${week.projected_balance.toLocaleString()}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+            ))}
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
 
 function AnomalyAlerts() {
+  const severityBadgeVariant = (severity) => {
+    switch (severity) {
+      case 'critical': return 'destructive';
+      case 'high': return 'warning';
+      case 'medium': return 'warning';
+      default: return 'secondary';
+    }
+  };
+
+  const severityBorder = (severity) => {
+    switch (severity) {
+      case 'critical': return 'border-l-red-500';
+      case 'high': return 'border-l-orange-500';
+      case 'medium': return 'border-l-yellow-500';
+      default: return 'border-l-blue-500';
+    }
+  };
+
   return (
-    <div className="space-y-4">
+    <motion.div initial="initial" animate="animate" variants={stagger} className="space-y-4">
       {DEMO_ANOMALIES.map((alert, i) => (
-        <div key={i} className={`bg-white border rounded-xl p-5 border-l-4 ${
-          alert.severity === 'critical' ? 'border-l-red-500' :
-          alert.severity === 'high' ? 'border-l-orange-500' :
-          alert.severity === 'medium' ? 'border-l-yellow-500' :
-          'border-l-blue-500'
-        }`}>
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className={`text-xs px-2 py-0.5 rounded-full ${
-                  alert.severity === 'critical' ? 'bg-red-100 text-red-700' :
-                  alert.severity === 'high' ? 'bg-orange-100 text-orange-700' :
-                  alert.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-blue-100 text-blue-700'
-                }`}>{alert.severity}</span>
-                <span className="text-xs text-gray-400">{alert.type}</span>
+        <motion.div key={i} variants={fadeIn}>
+          <Card className={cn('border-l-4', severityBorder(alert.severity))}>
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge variant={severityBadgeVariant(alert.severity)}>
+                      {alert.severity}
+                    </Badge>
+                    <span className="text-xs text-gray-400">{alert.type}</span>
+                  </div>
+                  <h4 className="font-semibold">{alert.title}</h4>
+                  <p className="text-sm text-gray-500 mt-1">{alert.description}</p>
+                </div>
+                <span className="text-xs text-gray-400 shrink-0">{alert.timestamp}</span>
               </div>
-              <h4 className="font-semibold">{alert.title}</h4>
-              <p className="text-sm text-gray-500 mt-1">{alert.description}</p>
-            </div>
-            <span className="text-xs text-gray-400 shrink-0">{alert.timestamp}</span>
-          </div>
-          <div className="flex gap-2 mt-3">
-            <button className="text-xs px-3 py-1 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200">Investigate</button>
-            <button className="text-xs px-3 py-1 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200">Dismiss</button>
-          </div>
-        </div>
+              <div className="flex gap-2 mt-3">
+                <Button variant="secondary" size="sm" className="bg-indigo-100 text-indigo-700 hover:bg-indigo-200">
+                  Investigate
+                </Button>
+                <Button variant="secondary" size="sm">
+                  Dismiss
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 
@@ -165,41 +219,54 @@ function ReceiptScanner() {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="bg-white border rounded-xl p-6">
-        <h3 className="font-semibold mb-4">Scan Receipt</h3>
-        <textarea
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          rows={6}
-          className="w-full border rounded-lg px-4 py-3 text-sm mb-4"
-          placeholder="Paste receipt text or details here..."
-        />
-        <button onClick={scan} disabled={scanning}
-          className="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50">
-          {scanning ? 'Scanning...' : 'Scan & Categorize'}
-        </button>
-      </div>
+    <motion.div initial="initial" animate="animate" variants={stagger} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <motion.div variants={fadeIn}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Scan Receipt</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <textarea
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              rows={6}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm mb-4 focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20"
+              placeholder="Paste receipt text or details here..."
+            />
+            <Button onClick={scan} disabled={scanning} className="w-full">
+              {scanning ? 'Scanning...' : 'Scan & Categorize'}
+            </Button>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {result && (
-        <div className="bg-white border rounded-xl p-6">
-          <h3 className="font-semibold mb-4">AI Result</h3>
-          <div className="space-y-3">
-            <Row label="Merchant" value={result.merchant} />
-            <Row label="Amount" value={`$${result.amount?.toFixed(2)}`} />
-            <Row label="Date" value={result.date} />
-            <Row label="Category" value={result.category} />
-            <Row label="Account Code" value={result.account_code} />
-            <Row label="GST Amount" value={result.gst_amount ? `$${result.gst_amount.toFixed(2)}` : 'N/A'} />
-            <Row label="Tax Deductible" value={result.tax_deductible ? 'Yes' : 'No'} />
-            <Row label="AI Confidence" value={`${(result.confidence * 100).toFixed(0)}%`} />
-          </div>
-          <button className="w-full mt-4 py-2.5 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">
-            Create Transaction
-          </button>
-        </div>
+        <motion.div variants={fadeIn}>
+          <Card>
+            <CardHeader>
+              <CardTitle>AI Result</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableBody>
+                  <ResultRow label="Merchant" value={result.merchant} />
+                  <ResultRow label="Amount" value={`$${result.amount?.toFixed(2)}`} />
+                  <ResultRow label="Date" value={result.date} />
+                  <ResultRow label="Category" value={result.category} />
+                  <ResultRow label="Account Code" value={result.account_code} />
+                  <ResultRow label="GST Amount" value={result.gst_amount ? `$${result.gst_amount.toFixed(2)}` : 'N/A'} />
+                  <ResultRow label="Tax Deductible" value={result.tax_deductible ? 'Yes' : 'No'} />
+                  <ResultRow label="AI Confidence" value={`${(result.confidence * 100).toFixed(0)}%`} />
+                </TableBody>
+              </Table>
+              <Button variant="success" className="w-full mt-4">
+                Create Transaction
+              </Button>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -238,89 +305,110 @@ function NaturalLanguageReports() {
   };
 
   return (
-    <div>
-      <div className="bg-white border rounded-xl p-6 mb-6">
-        <h3 className="font-semibold mb-4">Ask Astra About Your Finances</h3>
-        <div className="flex gap-3 mb-4">
-          <input type="text" value={query} onChange={e => setQuery(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && run()}
-            placeholder="Type a question about your financial data..."
-            className="flex-1 px-4 py-2.5 border rounded-lg" />
-          <button onClick={() => run()} disabled={loading}
-            className="px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50">
-            {loading ? 'Thinking...' : 'Ask'}
-          </button>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {suggested.map((s, i) => (
-            <button key={i} onClick={() => run(s)}
-              className="text-xs px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-full hover:bg-indigo-100">
-              {s}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {result && (
-        <div className="bg-white border rounded-xl p-6">
-          <p className="text-gray-700 mb-4">{result.answer}</p>
-          {result.data_points && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {result.data_points.map((dp, i) => (
-                <div key={i} className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-xs text-gray-500">{dp.label}</p>
-                  <p className="text-xl font-bold">{dp.value}</p>
-                </div>
+    <motion.div initial="initial" animate="animate" variants={stagger}>
+      <motion.div variants={fadeIn}>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Ask Astra About Your Finances</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3 mb-4">
+              <Input
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && run()}
+                placeholder="Type a question about your financial data..."
+                className="flex-1"
+              />
+              <Button onClick={() => run()} disabled={loading}>
+                {loading ? 'Thinking...' : 'Ask'}
+              </Button>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              {suggested.map((s, i) => (
+                <Button key={i} variant="ghost" size="sm" onClick={() => run(s)}
+                  className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-full text-xs">
+                  {s}
+                </Button>
               ))}
             </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {result && (
+        <motion.div variants={fadeIn}>
+          <Card>
+            <CardContent className="p-6">
+              <p className="text-gray-700 mb-4">{result.answer}</p>
+              {result.data_points && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {result.data_points.map((dp, i) => (
+                    <Card key={i} className="bg-gray-50 border-0 shadow-none">
+                      <CardContent className="p-4">
+                        <p className="text-xs text-gray-500">{dp.label}</p>
+                        <p className="text-xl font-bold">{dp.value}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
 function WeeklyDigest() {
   return (
-    <div className="space-y-4">
-      <div className="bg-white border rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-lg">Weekly Financial Digest</h3>
-          <span className="text-xs text-gray-400">Week of March 18, 2024</span>
-        </div>
-        <div className="space-y-4">
-          <InsightCard emoji="↑" title="Revenue up 8%" body="Total revenue this week was $42,300, compared to $39,100 last week. Primary growth came from Harbour Bridge Holdings ($12,500 invoice paid)." type="positive" />
-          <InsightCard emoji="!" title="3 invoices now overdue" body="Pacific Ventures ($8,200), Southern Cross ($3,400), and Kiwi Imports ($1,800) have passed their due dates. Consider sending automated reminders." type="warning" />
-          <InsightCard emoji="$" title="Cash position strong" body="Current bank balance of $186,400 covers 4.2 months of operating expenses at current burn rate of $44,200/month." type="positive" />
-          <InsightCard emoji="%" title="BAS deadline in 21 days" body="Q3 BAS is due April 28. Estimated GST payable is $12,450. All source transactions have been categorized and reconciled." type="info" />
-          <InsightCard emoji="~" title="Anomaly detected" body="Unusual payment of $15,000 to 'Consulting Services Pty Ltd' — no prior transactions with this vendor. Flagged for review." type="alert" />
-        </div>
-      </div>
-    </div>
+    <motion.div initial="initial" animate="animate" variants={stagger} className="space-y-4">
+      <motion.div variants={fadeIn}>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="text-lg">Weekly Financial Digest</CardTitle>
+            <Badge variant="outline">Week of March 18, 2024</Badge>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <InsightCard emoji="↑" title="Revenue up 8%" body="Total revenue this week was $42,300, compared to $39,100 last week. Primary growth came from Harbour Bridge Holdings ($12,500 invoice paid)." type="positive" />
+            <InsightCard emoji="!" title="3 invoices now overdue" body="Pacific Ventures ($8,200), Southern Cross ($3,400), and Kiwi Imports ($1,800) have passed their due dates. Consider sending automated reminders." type="warning" />
+            <InsightCard emoji="$" title="Cash position strong" body="Current bank balance of $186,400 covers 4.2 months of operating expenses at current burn rate of $44,200/month." type="positive" />
+            <InsightCard emoji="%" title="BAS deadline in 21 days" body="Q3 BAS is due April 28. Estimated GST payable is $12,450. All source transactions have been categorized and reconciled." type="info" />
+            <InsightCard emoji="~" title="Anomaly detected" body="Unusual payment of $15,000 to 'Consulting Services Pty Ltd' — no prior transactions with this vendor. Flagged for review." type="alert" />
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   );
 }
 
 function InsightCard({ emoji, title, body, type }) {
-  const bg = type === 'positive' ? 'bg-green-50 border-green-200' : type === 'warning' ? 'bg-yellow-50 border-yellow-200' : type === 'alert' ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200';
+  const variant = type === 'positive' ? 'success' : type === 'warning' ? 'warning' : type === 'alert' ? 'destructive' : 'default';
+  const bgClass = type === 'positive' ? 'bg-green-50 border-green-200' : type === 'warning' ? 'bg-yellow-50 border-yellow-200' : type === 'alert' ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200';
+
   return (
-    <div className={`border rounded-lg p-4 ${bg}`}>
-      <div className="flex items-start gap-3">
-        <span className="text-lg">{emoji}</span>
-        <div>
-          <h4 className="font-medium text-sm">{title}</h4>
-          <p className="text-sm text-gray-600 mt-1">{body}</p>
+    <Card className={cn('shadow-none', bgClass)}>
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <Badge variant={variant} className="mt-0.5 shrink-0">{emoji}</Badge>
+          <div>
+            <h4 className="font-medium text-sm">{title}</h4>
+            <p className="text-sm text-gray-600 mt-1">{body}</p>
+          </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
-function Row({ label, value }) {
+function ResultRow({ label, value }) {
   return (
-    <div className="flex justify-between py-2 border-b border-gray-100">
-      <span className="text-sm text-gray-500">{label}</span>
-      <span className="text-sm font-medium">{value}</span>
-    </div>
+    <TableRow>
+      <TableCell className="text-sm text-gray-500 py-2 pl-0">{label}</TableCell>
+      <TableCell className="text-sm font-medium text-right py-2 pr-0">{value}</TableCell>
+    </TableRow>
   );
 }
 

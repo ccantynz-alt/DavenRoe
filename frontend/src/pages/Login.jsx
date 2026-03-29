@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { cn } from '@/lib/utils';
 
 export default function Login() {
   const { login, register } = useAuth();
@@ -48,104 +54,116 @@ export default function Login() {
           <p className="text-gray-500 mt-2">Autonomous Global Accounting</p>
         </div>
 
-        <div className="bg-white rounded-xl border shadow-sm p-8">
-          <h2 className="text-xl font-semibold mb-6">
-            {showReset ? 'Reset Password' : isRegister ? 'Create Account' : 'Sign In'}
-          </h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-xl">
+                {showReset ? 'Reset Password' : isRegister ? 'Create Account' : 'Sign In'}
+              </CardTitle>
+            </CardHeader>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-              {error}
-            </div>
-          )}
-          {success && (
-            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
-              {success}
-            </div>
-          )}
+            <CardContent>
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+                  {success}
+                </div>
+              )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isRegister && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  required
-                />
-              </div>
-            )}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {isRegister && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <Input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required
+                    />
+                  </div>
+                )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                required
-              />
-            </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
 
-            {!showReset && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  minLength={8}
-                  required={!showReset}
-                />
-              </div>
-            )}
+                {!showReset && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      minLength={8}
+                      required={!showReset}
+                    />
+                  </div>
+                )}
 
-            {isRegister && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                {isRegister && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                    <Select value={role} onValueChange={setRole}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="partner">Partner</SelectItem>
+                        <SelectItem value="manager">Manager</SelectItem>
+                        <SelectItem value="senior">Senior Accountant</SelectItem>
+                        <SelectItem value="bookkeeper">Bookkeeper</SelectItem>
+                        <SelectItem value="client">Client</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full"
+                  size="lg"
                 >
-                  <option value="partner">Partner</option>
-                  <option value="manager">Manager</option>
-                  <option value="senior">Senior Accountant</option>
-                  <option value="bookkeeper">Bookkeeper</option>
-                  <option value="client">Client</option>
-                </select>
+                  {loading ? 'Please wait...' : showReset ? 'Send Reset Link' : isRegister ? 'Create Account' : 'Sign In'}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center space-y-2">
+                {!isRegister && !showReset && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => { setShowReset(true); setError(''); setSuccess(''); }}
+                    className="text-sm text-gray-500 hover:text-gray-700 block mx-auto"
+                  >
+                    Forgot your password?
+                  </Button>
+                )}
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => { setIsRegister(!isRegister); setShowReset(false); setError(''); setSuccess(''); }}
+                >
+                  {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Register"}
+                </Button>
               </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2.5 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Please wait...' : showReset ? 'Send Reset Link' : isRegister ? 'Create Account' : 'Sign In'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center space-y-2">
-            {!isRegister && !showReset && (
-              <button
-                onClick={() => { setShowReset(true); setError(''); setSuccess(''); }}
-                className="text-sm text-gray-500 hover:text-gray-700 block mx-auto"
-              >
-                Forgot your password?
-              </button>
-            )}
-            <button
-              onClick={() => { setIsRegister(!isRegister); setShowReset(false); setError(''); setSuccess(''); }}
-              className="text-sm text-indigo-600 hover:text-indigo-800"
-            >
-              {isRegister ? 'Already have an account? Sign in' : "Don't have an account? Register"}
-            </button>
-          </div>
-        </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
           Protected by 256-bit encryption. Your data never leaves our secure infrastructure.
