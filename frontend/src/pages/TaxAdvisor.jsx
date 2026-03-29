@@ -1,6 +1,16 @@
 import { useState } from 'react';
-import { useToast } from '../components/Toast';
-import ProprietaryNotice from '../components/ProprietaryNotice';
+import { useToast } from '@/components/Toast';
+import ProprietaryNotice from '@/components/ProprietaryNotice';
+import { Button } from '@/components/ui/Button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Badge } from '@/components/ui/Badge';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
+import { Switch } from '@/components/ui/Switch';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 const TREATIES = {
   'AU-NZ': { dividends: 15, interest: 10, royalties: 5, services: 0, source: 'AU-NZ DTA 2009' },
@@ -95,36 +105,24 @@ const COMPLIANCE_CHECKLISTS = {
   ],
 };
 
-const TABS = ['DTA Calculator', 'WHT Optimizer', 'Compliance Checklists', 'Entity Structure Advisor', 'Tax Rate Reference'];
 const fmt = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(n);
 
 export default function TaxAdvisorToolkit() {
-  const [tab, setTab] = useState(0);
   const toast = useToast();
-
-  // DTA state
   const [dtaSource, setDtaSource] = useState('AU');
   const [dtaDest, setDtaDest] = useState('UK');
   const [dtaType, setDtaType] = useState('dividends');
   const [dtaAmount, setDtaAmount] = useState(100000);
-
-  // WHT state
   const [whtPayer, setWhtPayer] = useState('AU');
   const [whtRecipient, setWhtRecipient] = useState('US');
   const [whtType, setWhtType] = useState('dividends');
   const [whtAmount, setWhtAmount] = useState(50000);
   const [whtPE, setWhtPE] = useState(false);
-
-  // Compliance state
   const [compJurisdiction, setCompJurisdiction] = useState('AU');
   const [checkedItems, setCheckedItems] = useState({});
-
-  // Entity structure state
   const [structJurisdiction, setStructJurisdiction] = useState('AU');
   const [structRevenue, setStructRevenue] = useState(250000);
   const [structOwners, setStructOwners] = useState(1);
-
-  // Tax rates state
   const [rateJurisdiction, setRateJurisdiction] = useState('AU');
 
   const getTreetyKey = (a, b) => {
@@ -140,335 +138,320 @@ export default function TaxAdvisorToolkit() {
   const saving = withTreaty !== null ? withoutTreaty - withTreaty : 0;
 
   return (
-    <div className="space-y-6">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Tax Advisory Toolkit</h1>
         <p className="text-sm text-gray-500 mt-0.5">DTA calculations, compliance checklists, and entity structure advice</p>
       </div>
 
-      <div className="flex gap-2 flex-wrap">
-        {TABS.map((t, i) => (
-          <button key={t} onClick={() => setTab(i)}
-            className={`px-3 py-1.5 text-xs rounded-lg font-medium transition ${tab === i ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-            {t}
-          </button>
-        ))}
-      </div>
+      <Tabs defaultValue="dta">
+        <TabsList>
+          <TabsTrigger value="dta">DTA Calculator</TabsTrigger>
+          <TabsTrigger value="wht">WHT Optimizer</TabsTrigger>
+          <TabsTrigger value="compliance">Compliance Checklists</TabsTrigger>
+          <TabsTrigger value="entity">Entity Structure Advisor</TabsTrigger>
+          <TabsTrigger value="rates">Tax Rate Reference</TabsTrigger>
+        </TabsList>
 
-      {/* DTA Calculator */}
-      {tab === 0 && (
-        <div className="bg-white border rounded-xl p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Double Taxation Agreement Calculator</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Source Country</label>
-              <select value={dtaSource} onChange={e => setDtaSource(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Destination Country</label>
-              <select value={dtaDest} onChange={e => setDtaDest(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                {COUNTRIES.filter(c => c.code !== dtaSource).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Income Type</label>
-              <select value={dtaType} onChange={e => setDtaType(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                {INCOME_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Gross Amount</label>
-              <input type="number" value={dtaAmount} onChange={e => setDtaAmount(parseFloat(e.target.value) || 0)}
-                className="w-full border rounded-lg px-3 py-2 text-sm" />
-            </div>
-          </div>
-
-          {dtaSource === dtaDest ? (
-            <p className="text-sm text-gray-500">Source and destination must be different countries.</p>
-          ) : treaty ? (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <p className="text-xs text-red-600 font-medium mb-1">Without Treaty</p>
-                <p className="text-2xl font-bold text-red-700">{fmt(withoutTreaty)}</p>
-                <p className="text-xs text-red-500 mt-1">Domestic WHT rate: {domesticRate}%</p>
-                <p className="text-xs text-red-500">Net to recipient: {fmt(dtaAmount - withoutTreaty)}</p>
-              </div>
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                <p className="text-xs text-green-600 font-medium mb-1">With Treaty</p>
-                <p className="text-2xl font-bold text-green-700">{fmt(withTreaty)}</p>
-                <p className="text-xs text-green-500 mt-1">Treaty rate: {treatyRate}% ({treaty.source})</p>
-                <p className="text-xs text-green-500">Net to recipient: {fmt(dtaAmount - withTreaty)}</p>
-              </div>
-              <div className="col-span-2 bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-                <p className="text-xs text-blue-600 font-medium">Treaty Saving</p>
-                <p className="text-3xl font-bold text-blue-700">{fmt(saving)}</p>
-                <p className="text-xs text-blue-500">({((saving / dtaAmount) * 100).toFixed(1)}% of gross amount)</p>
-              </div>
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500">No treaty found between {dtaSource} and {dtaDest}.</p>
-          )}
-        </div>
-      )}
-
-      {/* WHT Optimizer */}
-      {tab === 1 && (
-        <div className="bg-white border rounded-xl p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Withholding Tax Optimizer</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Payer Jurisdiction</label>
-              <select value={whtPayer} onChange={e => setWhtPayer(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Recipient Jurisdiction</label>
-              <select value={whtRecipient} onChange={e => setWhtRecipient(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                {COUNTRIES.filter(c => c.code !== whtPayer).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Payment Type</label>
-              <select value={whtType} onChange={e => setWhtType(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                {INCOME_TYPES.map(t => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Amount</label>
-              <input type="number" value={whtAmount} onChange={e => setWhtAmount(parseFloat(e.target.value) || 0)}
-                className="w-full border rounded-lg px-3 py-2 text-sm" />
-            </div>
-          </div>
-          <label className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-            <input type="checkbox" checked={whtPE} onChange={e => setWhtPE(e.target.checked)} className="rounded" />
-            Recipient has a permanent establishment (PE) in source country
-          </label>
-
-          {(() => {
-            const key = getTreetyKey(whtPayer, whtRecipient);
-            const t = TREATIES[key];
-            const standard = DOMESTIC_WHT[whtPayer];
-            const treatyR = t ? t[whtType] : standard;
-            const peRate = whtPE ? Math.min(standard, treatyR) : treatyR;
-            const taxStd = whtAmount * standard / 100;
-            const taxTreaty = whtAmount * peRate / 100;
-
-            return (
-              <div className="space-y-4">
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-white border rounded-xl p-4">
-                    <p className="text-xs text-gray-500">Standard WHT</p>
-                    <p className="text-xl font-bold text-red-600">{standard}%</p>
-                    <p className="text-xs text-gray-400">{fmt(taxStd)} withheld</p>
-                  </div>
-                  <div className="bg-white border rounded-xl p-4">
-                    <p className="text-xs text-gray-500">Treaty Rate</p>
-                    <p className="text-xl font-bold text-green-600">{peRate}%</p>
-                    <p className="text-xs text-gray-400">{fmt(taxTreaty)} withheld</p>
-                  </div>
-                  <div className="bg-white border rounded-xl p-4">
-                    <p className="text-xs text-gray-500">Saving</p>
-                    <p className="text-xl font-bold text-blue-600">{fmt(taxStd - taxTreaty)}</p>
-                    <p className="text-xs text-gray-400">{((1 - peRate / standard) * 100).toFixed(0)}% reduction</p>
-                  </div>
+        <TabsContent value="dta">
+          <Card>
+            <CardHeader><CardTitle>Double Taxation Agreement Calculator</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Source Country</label>
+                  <Select value={dtaSource} onValueChange={setDtaSource}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{COUNTRIES.map(c => <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>)}</SelectContent>
+                  </Select>
                 </div>
-                {whtPE && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                    <p className="text-sm text-amber-700">
-                      PE in source country: The recipient may be subject to full domestic tax rates on income attributable to the PE, rather than the reduced treaty WHT rate. Consult a cross-border specialist.
-                    </p>
-                  </div>
-                )}
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                  <p className="text-sm text-blue-800 font-medium">Recommendation</p>
-                  <p className="text-sm text-blue-700 mt-1">
-                    {treatyR < standard
-                      ? `Apply for treaty relief using ${t?.source}. The recipient should provide a Certificate of Residence from their home jurisdiction to claim the reduced ${treatyR}% rate.`
-                      : 'No treaty benefit available for this payment type. Consider restructuring the payment as a different income category if commercially appropriate.'}
-                  </p>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Destination Country</label>
+                  <Select value={dtaDest} onValueChange={setDtaDest}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{COUNTRIES.filter(c => c.code !== dtaSource).map(c => <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Income Type</label>
+                  <Select value={dtaType} onValueChange={setDtaType}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{INCOME_TYPES.map(t => <SelectItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Gross Amount</label>
+                  <Input type="number" value={dtaAmount} onChange={e => setDtaAmount(parseFloat(e.target.value) || 0)} />
                 </div>
               </div>
-            );
-          })()}
-        </div>
-      )}
+              {dtaSource === dtaDest ? (
+                <p className="text-sm text-gray-500">Source and destination must be different countries.</p>
+              ) : treaty ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <Card className="border-red-200 bg-red-50">
+                    <CardContent className="pt-4">
+                      <p className="text-xs text-red-600 font-medium mb-1">Without Treaty</p>
+                      <p className="text-2xl font-bold text-red-700">{fmt(withoutTreaty)}</p>
+                      <p className="text-xs text-red-500 mt-1">Domestic WHT rate: {domesticRate}%</p>
+                      <p className="text-xs text-red-500">Net to recipient: {fmt(dtaAmount - withoutTreaty)}</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-green-200 bg-green-50">
+                    <CardContent className="pt-4">
+                      <p className="text-xs text-green-600 font-medium mb-1">With Treaty</p>
+                      <p className="text-2xl font-bold text-green-700">{fmt(withTreaty)}</p>
+                      <p className="text-xs text-green-500 mt-1">Treaty rate: {treatyRate}% ({treaty.source})</p>
+                      <p className="text-xs text-green-500">Net to recipient: {fmt(dtaAmount - withTreaty)}</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="col-span-2 border-blue-200 bg-blue-50">
+                    <CardContent className="pt-4 text-center">
+                      <p className="text-xs text-blue-600 font-medium">Treaty Saving</p>
+                      <p className="text-3xl font-bold text-blue-700">{fmt(saving)}</p>
+                      <p className="text-xs text-blue-500">({((saving / dtaAmount) * 100).toFixed(1)}% of gross amount)</p>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">No treaty found between {dtaSource} and {dtaDest}.</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      {/* Compliance Checklists */}
-      {tab === 2 && (
-        <div className="bg-white border rounded-xl p-5">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-gray-900">Compliance Checklist</h3>
-            <div className="flex gap-2">
-              {COUNTRIES.map(c => (
-                <button key={c.code} onClick={() => { setCompJurisdiction(c.code); setCheckedItems({}); }}
-                  className={`px-3 py-1 text-xs rounded-lg font-medium ${compJurisdiction === c.code ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {c.code}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-3">
-            {COMPLIANCE_CHECKLISTS[compJurisdiction].map((item, i) => {
-              const key = `${compJurisdiction}-${i}`;
-              return (
-                <div key={i} className={`border rounded-lg p-4 ${checkedItems[key] ? 'bg-green-50 border-green-200' : ''}`}>
-                  <div className="flex items-start gap-3">
-                    <button onClick={() => setCheckedItems(prev => ({ ...prev, [key]: !prev[key] }))}
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 mt-0.5 ${checkedItems[key] ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300'}`}>
-                      {checkedItems[key] && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
-                    </button>
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <h4 className={`text-sm font-medium ${checkedItems[key] ? 'text-green-700 line-through' : 'text-gray-900'}`}>{item.filing}</h4>
-                        <span className="text-xs text-blue-600 font-medium shrink-0 ml-2">Due: {item.due}</span>
-                      </div>
-                      <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
-                      <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
-                        <div><span className="text-gray-400">Required:</span> <span className="text-gray-600">{item.docs}</span></div>
-                        <div><span className="text-gray-400">Late penalty:</span> <span className="text-red-500">{item.penalty}</span></div>
-                      </div>
+        <TabsContent value="wht">
+          <Card>
+            <CardHeader><CardTitle>Withholding Tax Optimizer</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Payer Jurisdiction</label>
+                  <Select value={whtPayer} onValueChange={setWhtPayer}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{COUNTRIES.map(c => <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Recipient Jurisdiction</label>
+                  <Select value={whtRecipient} onValueChange={setWhtRecipient}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{COUNTRIES.filter(c => c.code !== whtPayer).map(c => <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Payment Type</label>
+                  <Select value={whtType} onValueChange={setWhtType}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{INCOME_TYPES.map(t => <SelectItem key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Amount</label>
+                  <Input type="number" value={whtAmount} onChange={e => setWhtAmount(parseFloat(e.target.value) || 0)} />
+                </div>
+              </div>
+              <label className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+                <Switch checked={whtPE} onCheckedChange={setWhtPE} />
+                Recipient has a permanent establishment (PE) in source country
+              </label>
+              {(() => {
+                const key = getTreetyKey(whtPayer, whtRecipient);
+                const t = TREATIES[key];
+                const standard = DOMESTIC_WHT[whtPayer];
+                const treatyR = t ? t[whtType] : standard;
+                const peRate = whtPE ? Math.min(standard, treatyR) : treatyR;
+                const taxStd = whtAmount * standard / 100;
+                const taxTreaty = whtAmount * peRate / 100;
+                return (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      <Card><CardContent className="pt-4"><p className="text-xs text-gray-500">Standard WHT</p><p className="text-xl font-bold text-red-600">{standard}%</p><p className="text-xs text-gray-400">{fmt(taxStd)} withheld</p></CardContent></Card>
+                      <Card><CardContent className="pt-4"><p className="text-xs text-gray-500">Treaty Rate</p><p className="text-xl font-bold text-green-600">{peRate}%</p><p className="text-xs text-gray-400">{fmt(taxTreaty)} withheld</p></CardContent></Card>
+                      <Card><CardContent className="pt-4"><p className="text-xs text-gray-500">Saving</p><p className="text-xl font-bold text-blue-600">{fmt(taxStd - taxTreaty)}</p><p className="text-xs text-gray-400">{((1 - peRate / standard) * 100).toFixed(0)}% reduction</p></CardContent></Card>
                     </div>
+                    {whtPE && <Card className="border-amber-200 bg-amber-50"><CardContent className="pt-4"><p className="text-sm text-amber-700">PE in source country: The recipient may be subject to full domestic tax rates on income attributable to the PE, rather than the reduced treaty WHT rate. Consult a cross-border specialist.</p></CardContent></Card>}
+                    <Card className="border-blue-200 bg-blue-50">
+                      <CardContent className="pt-4">
+                        <p className="text-sm font-medium text-blue-800">Recommendation</p>
+                        <p className="text-sm text-blue-700 mt-1">
+                          {treatyR < standard
+                            ? `Apply for treaty relief using ${t?.source}. The recipient should provide a Certificate of Residence from their home jurisdiction to claim the reduced ${treatyR}% rate.`
+                            : 'No treaty benefit available for this payment type. Consider restructuring the payment as a different income category if commercially appropriate.'}
+                        </p>
+                      </CardContent>
+                    </Card>
                   </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="compliance">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Compliance Checklist</CardTitle>
+                <div className="flex gap-2">
+                  {COUNTRIES.map(c => (
+                    <Button key={c.code} variant={compJurisdiction === c.code ? 'default' : 'secondary'} size="sm"
+                      onClick={() => { setCompJurisdiction(c.code); setCheckedItems({}); }}>
+                      {c.code}
+                    </Button>
+                  ))}
                 </div>
-              );
-            })}
-          </div>
-          <div className="mt-4 flex justify-end">
-            <button onClick={() => toast.success('Compliance checklist exported to PDF')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">
-              Export as PDF
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Entity Structure Advisor */}
-      {tab === 3 && (
-        <div className="bg-white border rounded-xl p-5">
-          <h3 className="font-semibold text-gray-900 mb-4">Entity Structure Advisor</h3>
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Jurisdiction</label>
-              <select value={structJurisdiction} onChange={e => setStructJurisdiction(e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
-                {COUNTRIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Expected Annual Revenue</label>
-              <input type="number" value={structRevenue} onChange={e => setStructRevenue(parseFloat(e.target.value) || 0)}
-                className="w-full border rounded-lg px-3 py-2 text-sm" />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">Number of Owners</label>
-              <input type="number" value={structOwners} onChange={e => setStructOwners(parseInt(e.target.value) || 1)}
-                className="w-full border rounded-lg px-3 py-2 text-sm" min="1" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {Object.entries(STRUCTURES).map(([key, s]) => {
-              const rates = TAX_RATES[structJurisdiction];
-              const taxRate = key === 'sole_trader' ? rates.brackets[rates.brackets.length - 1].rate : rates.company;
-              const recommended = (structRevenue > 100000 && structOwners === 1 && key === 'company') ||
-                (structOwners > 1 && key === 'partnership') ||
-                (structRevenue <= 100000 && structOwners === 1 && key === 'sole_trader');
-
-              return (
-                <div key={key} className={`border-2 rounded-xl p-4 ${recommended ? 'border-blue-400 bg-blue-50' : 'border-gray-200'}`}>
-                  {recommended && <span className="text-[10px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-medium">Recommended</span>}
-                  <h4 className="text-sm font-semibold text-gray-900 mt-2">{s.label}</h4>
-                  <div className="mt-3 space-y-1.5 text-xs">
-                    <div className="flex justify-between"><span className="text-gray-500">Tax Rate</span><span className="font-medium">{key === 'sole_trader' ? 'Marginal' : `${taxRate}%`}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-500">Setup Cost</span><span>{s.setup_cost}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-500">Compliance</span><span>{s.compliance_cost}</span></div>
-                    <div className="flex justify-between"><span className="text-gray-500">Asset Protection</span><span>{s.asset_protection}</span></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-blue-800">AI Recommendation</p>
-            <p className="text-sm text-blue-700 mt-1">
-              {structRevenue > 100000 && structOwners === 1
-                ? `At ${fmt(structRevenue)} annual revenue with a single owner, a Company structure is recommended. The flat ${TAX_RATES[structJurisdiction].company}% company tax rate is lower than the top marginal rate of ${TAX_RATES[structJurisdiction].brackets[TAX_RATES[structJurisdiction].brackets.length - 1].rate}%, and provides liability protection for personal assets.`
-                : structOwners > 1
-                ? `With ${structOwners} owners, a Partnership or Company structure provides clearer profit sharing and liability separation. At ${fmt(structRevenue)} revenue, consider the compliance costs of each.`
-                : `At ${fmt(structRevenue)} annual revenue as a sole owner, a Sole Trader structure keeps things simple with minimal compliance costs. Consider incorporating when revenue exceeds $100,000 for tax optimisation.`
-              }
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* Tax Rate Reference */}
-      {tab === 4 && (
-        <div className="bg-white border rounded-xl p-5">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-gray-900">Tax Rate Quick Reference</h3>
-            <div className="flex gap-2">
-              {COUNTRIES.map(c => (
-                <button key={c.code} onClick={() => setRateJurisdiction(c.code)}
-                  className={`px-3 py-1 text-xs rounded-lg font-medium ${rateJurisdiction === c.code ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
-                  {c.code}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {(() => {
-            const r = TAX_RATES[rateJurisdiction];
-            return (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500">GST/VAT Rate</p>
-                    <p className="text-2xl font-bold text-gray-900">{r.gst}%</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500">Company Tax</p>
-                    <p className="text-2xl font-bold text-gray-900">{r.company}%</p>
-                    {r.small_company !== r.company && <p className="text-xs text-gray-400">Small: {r.small_company}%</p>}
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500">CGT</p>
-                    <p className="text-sm font-bold text-gray-900 mt-1">{r.cgt}</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <p className="text-xs text-gray-500">Super/Pension</p>
-                    <p className="text-sm font-bold text-gray-900 mt-1">{r.super}</p>
-                  </div>
-                </div>
-
-                <h4 className="font-medium text-gray-800 mt-4">Individual Income Tax Brackets — {r.label}</h4>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-left text-xs text-gray-500 border-b">
-                      <th className="pb-2 font-medium">From</th>
-                      <th className="pb-2 font-medium">To</th>
-                      <th className="pb-2 font-medium">Rate</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {r.brackets.map((b, i) => (
-                      <tr key={i} className="border-b last:border-0">
-                        <td className="py-2">{fmt(b.from)}</td>
-                        <td className="py-2">{b.to === Infinity ? 'and above' : fmt(b.to)}</td>
-                        <td className="py-2 font-medium">{b.rate}%</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
-            );
-          })()}
-        </div>
-      )}
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {COMPLIANCE_CHECKLISTS[compJurisdiction].map((item, i) => {
+                  const key = `${compJurisdiction}-${i}`;
+                  return (
+                    <Card key={i} className={cn(checkedItems[key] && 'bg-green-50 border-green-200')}>
+                      <CardContent className="pt-4">
+                        <div className="flex items-start gap-3">
+                          <Button variant={checkedItems[key] ? 'success' : 'outline'} size="icon"
+                            className="w-5 h-5 shrink-0 mt-0.5 rounded"
+                            onClick={() => setCheckedItems(prev => ({ ...prev, [key]: !prev[key] }))}>
+                            {checkedItems[key] && <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                          </Button>
+                          <div className="flex-1">
+                            <div className="flex justify-between items-start">
+                              <h4 className={cn('text-sm font-medium', checkedItems[key] ? 'text-green-700 line-through' : 'text-gray-900')}>{item.filing}</h4>
+                              <Badge variant="default" className="shrink-0 ml-2">Due: {item.due}</Badge>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
+                            <div className="mt-2 grid grid-cols-2 gap-2 text-[10px]">
+                              <div><span className="text-gray-400">Required:</span> <span className="text-gray-600">{item.docs}</span></div>
+                              <div><span className="text-gray-400">Late penalty:</span> <span className="text-red-500">{item.penalty}</span></div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+              <div className="mt-4 flex justify-end">
+                <Button onClick={() => toast.success('Compliance checklist exported to PDF')}>Export as PDF</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="entity">
+          <Card>
+            <CardHeader><CardTitle>Entity Structure Advisor</CardTitle></CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Jurisdiction</label>
+                  <Select value={structJurisdiction} onValueChange={setStructJurisdiction}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>{COUNTRIES.map(c => <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Expected Annual Revenue</label>
+                  <Input type="number" value={structRevenue} onChange={e => setStructRevenue(parseFloat(e.target.value) || 0)} />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 mb-1">Number of Owners</label>
+                  <Input type="number" value={structOwners} onChange={e => setStructOwners(parseInt(e.target.value) || 1)} min="1" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {Object.entries(STRUCTURES).map(([key, s]) => {
+                  const rates = TAX_RATES[structJurisdiction];
+                  const taxRate = key === 'sole_trader' ? rates.brackets[rates.brackets.length - 1].rate : rates.company;
+                  const recommended = (structRevenue > 100000 && structOwners === 1 && key === 'company') ||
+                    (structOwners > 1 && key === 'partnership') ||
+                    (structRevenue <= 100000 && structOwners === 1 && key === 'sole_trader');
+                  return (
+                    <Card key={key} className={cn(recommended && 'border-2 border-blue-400 bg-blue-50')}>
+                      <CardContent className="pt-4">
+                        {recommended && <Badge>Recommended</Badge>}
+                        <h4 className="text-sm font-semibold text-gray-900 mt-2">{s.label}</h4>
+                        <div className="mt-3 space-y-1.5 text-xs">
+                          <div className="flex justify-between"><span className="text-gray-500">Tax Rate</span><span className="font-medium">{key === 'sole_trader' ? 'Marginal' : `${taxRate}%`}</span></div>
+                          <div className="flex justify-between"><span className="text-gray-500">Setup Cost</span><span>{s.setup_cost}</span></div>
+                          <div className="flex justify-between"><span className="text-gray-500">Compliance</span><span>{s.compliance_cost}</span></div>
+                          <div className="flex justify-between"><span className="text-gray-500">Asset Protection</span><span>{s.asset_protection}</span></div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+              <Card className="border-blue-200 bg-blue-50">
+                <CardContent className="pt-4">
+                  <p className="text-sm font-medium text-blue-800">AI Recommendation</p>
+                  <p className="text-sm text-blue-700 mt-1">
+                    {structRevenue > 100000 && structOwners === 1
+                      ? `At ${fmt(structRevenue)} annual revenue with a single owner, a Company structure is recommended. The flat ${TAX_RATES[structJurisdiction].company}% company tax rate is lower than the top marginal rate of ${TAX_RATES[structJurisdiction].brackets[TAX_RATES[structJurisdiction].brackets.length - 1].rate}%, and provides liability protection for personal assets.`
+                      : structOwners > 1
+                      ? `With ${structOwners} owners, a Partnership or Company structure provides clearer profit sharing and liability separation. At ${fmt(structRevenue)} revenue, consider the compliance costs of each.`
+                      : `At ${fmt(structRevenue)} annual revenue as a sole owner, a Sole Trader structure keeps things simple with minimal compliance costs. Consider incorporating when revenue exceeds $100,000 for tax optimisation.`}
+                  </p>
+                </CardContent>
+              </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="rates">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <CardTitle>Tax Rate Quick Reference</CardTitle>
+                <div className="flex gap-2">
+                  {COUNTRIES.map(c => (
+                    <Button key={c.code} variant={rateJurisdiction === c.code ? 'default' : 'secondary'} size="sm"
+                      onClick={() => setRateJurisdiction(c.code)}>
+                      {c.code}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                const r = TAX_RATES[rateJurisdiction];
+                return (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <Card className="bg-gray-50"><CardContent className="pt-4"><p className="text-xs text-gray-500">GST/VAT Rate</p><p className="text-2xl font-bold text-gray-900">{r.gst}%</p></CardContent></Card>
+                      <Card className="bg-gray-50"><CardContent className="pt-4"><p className="text-xs text-gray-500">Company Tax</p><p className="text-2xl font-bold text-gray-900">{r.company}%</p>{r.small_company !== r.company && <p className="text-xs text-gray-400">Small: {r.small_company}%</p>}</CardContent></Card>
+                      <Card className="bg-gray-50"><CardContent className="pt-4"><p className="text-xs text-gray-500">CGT</p><p className="text-sm font-bold text-gray-900 mt-1">{r.cgt}</p></CardContent></Card>
+                      <Card className="bg-gray-50"><CardContent className="pt-4"><p className="text-xs text-gray-500">Super/Pension</p><p className="text-sm font-bold text-gray-900 mt-1">{r.super}</p></CardContent></Card>
+                    </div>
+                    <h4 className="font-medium text-gray-800 mt-4">Individual Income Tax Brackets — {r.label}</h4>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>From</TableHead>
+                          <TableHead>To</TableHead>
+                          <TableHead>Rate</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {r.brackets.map((b, i) => (
+                          <TableRow key={i}>
+                            <TableCell>{fmt(b.from)}</TableCell>
+                            <TableCell>{b.to === Infinity ? 'and above' : fmt(b.to)}</TableCell>
+                            <TableCell className="font-medium">{b.rate}%</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                );
+              })()}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
       <ProprietaryNotice />
-    </div>
+    </motion.div>
   );
 }
