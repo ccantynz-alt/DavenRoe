@@ -70,7 +70,7 @@ export default function Settings() {
 
   const handleSetActive = (id) => {
     setActiveEntity(id);
-    localStorage.setItem('astra_active_entity', id);
+    localStorage.setItem('alecrae_active_entity', id);
     const entity = entities.find(e => e.id === id);
     toast.success(`Switched to ${entity?.name}`);
   };

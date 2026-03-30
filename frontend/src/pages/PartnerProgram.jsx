@@ -92,7 +92,7 @@ const RESOURCES = [
   { title: 'Partner Training', desc: 'Complete the certification curriculum at your own pace', icon: '▶' },
   { title: 'Marketing Kit', desc: 'Downloadable logos, banners, email templates, and social assets', icon: '▼' },
   { title: 'Client Migration Guide', desc: 'Step-by-step playbook for moving clients from Xero, QBO, or MYOB', icon: '◈' },
-  { title: 'Co-Branded Proposal Template', desc: 'Professional proposal template with your branding and Astra features', icon: '◧' },
+  { title: 'Co-Branded Proposal Template', desc: 'Professional proposal template with your branding and AlecRae features', icon: '◧' },
 ];
 
 const INITIAL_FORM = {
@@ -117,7 +117,7 @@ function RevenueCalculator() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-8">
       <h3 className="text-2xl font-bold mb-2">Revenue Calculator</h3>
-      <p className="text-gray-500 mb-6">See how much you could earn as an Astra partner.</p>
+      <p className="text-gray-500 mb-6">See how much you could earn as an AlecRae partner.</p>
 
       <label className="block text-sm font-medium text-gray-700 mb-2">
         How many clients do you manage?
@@ -259,7 +259,7 @@ function ApplicationModal({ open, onClose, onSubmit }) {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">How did you hear about Astra?</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">How did you hear about AlecRae?</label>
               <select value={form.hearAbout} onChange={(e) => set('hearAbout', e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 outline-none bg-white">
                 <option value="">Select...</option>
                 {HEAR_ABOUT.map((h) => <option key={h} value={h}>{h}</option>)}
@@ -287,9 +287,9 @@ function PublicView({ onOpenApply }) {
     <div className="space-y-12">
       {/* Hero */}
       <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-2xl p-10 md:p-14 text-white text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Grow Your Practice with Astra</h1>
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Grow Your Practice with AlecRae</h1>
         <p className="text-lg md:text-xl text-indigo-100 max-w-2xl mx-auto mb-8">
-          Join the Astra Certified Partner Program. Free practice management tools, revenue share on referrals, and priority support.
+          Join the AlecRae Certified Partner Program. Free practice management tools, revenue share on referrals, and priority support.
         </p>
         <button
           onClick={onOpenApply}
@@ -301,7 +301,7 @@ function PublicView({ onOpenApply }) {
 
       {/* Why Partner */}
       <div>
-        <h2 className="text-2xl font-bold mb-6">Why Partner with Astra</h2>
+        <h2 className="text-2xl font-bold mb-6">Why Partner with AlecRae</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {WHY_PARTNER.map((item) => (
             <div key={item.title} className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-md transition-shadow">
@@ -379,7 +379,7 @@ function PublicView({ onOpenApply }) {
       <div className="bg-gray-50 rounded-2xl border border-gray-200 p-10 text-center">
         <h2 className="text-2xl font-bold mb-3">Ready to grow your practice?</h2>
         <p className="text-gray-500 mb-6 max-w-xl mx-auto">
-          Join hundreds of forward-thinking accountants who are building recurring revenue and delivering better client outcomes with Astra.
+          Join hundreds of forward-thinking accountants who are building recurring revenue and delivering better client outcomes with AlecRae.
         </p>
         <button
           onClick={onOpenApply}
@@ -396,7 +396,7 @@ function PublicView({ onOpenApply }) {
 
 function PartnerDashboard() {
   const [copied, setCopied] = useState(false);
-  const referralUrl = 'https://astra.ai/ref/PTR-SM-2847';
+  const referralUrl = 'https://alecrae.com/ref/PTR-SM-2847';
 
   const copy = () => {
     navigator.clipboard.writeText(referralUrl).catch(() => {});
@@ -518,7 +518,7 @@ export default function PartnerProgram() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="text-3xl font-bold">{isPartner ? 'Partner Dashboard' : 'Astra Certified Partner Program'}</h2>
+        <h2 className="text-3xl font-bold">{isPartner ? 'Partner Dashboard' : 'AlecRae Certified Partner Program'}</h2>
         <p className="text-gray-500 mt-1">
           {isPartner
             ? 'Manage your referrals, track commissions, and access partner resources.'

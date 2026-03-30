@@ -44,7 +44,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Astra</h1>
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">AlecRae</h1>
           <p className="text-gray-500 mt-2">Autonomous Global Accounting</p>
         </div>
 

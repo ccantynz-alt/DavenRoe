@@ -14,7 +14,7 @@ const PLANS = [
       'Bank feed integration',
       'Invoicing & payments',
       'Reports (P&L, Balance Sheet)',
-      'Ask Astra (AI queries)',
+      'Ask AlecRae (AI queries)',
       'Document OCR',
     ],
     cta: 'Start Free Trial',
@@ -201,7 +201,7 @@ export default function Pricing() {
             = <span className="text-red-500 line-through">$384/month</span> across 6 vendors
           </p>
           <p className="text-2xl font-bold text-indigo-600 mt-2">
-            Astra Practice: $149/month. One platform. One login. Everything.
+            AlecRae Practice: $149/month. One platform. One login. Everything.
           </p>
         </div>
       </div>

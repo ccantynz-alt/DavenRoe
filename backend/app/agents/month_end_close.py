@@ -31,7 +31,7 @@ class CloseStepStatus(str, Enum):
     SKIPPED = "skipped"
 
 
-CLOSE_NARRATIVE_PROMPT = """You are the Month-End Close AI for Astra, an autonomous accounting platform.
+CLOSE_NARRATIVE_PROMPT = """You are the Month-End Close AI for AlecRae, an autonomous accounting platform.
 
 You are generating a close narrative for a completed month-end close process.
 Summarize the results in clear, professional language suitable for a partner review.

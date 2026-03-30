@@ -6,7 +6,7 @@ export default function AIDisclosure({ onBack }) {
           <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-semibold tracking-tight">Astra</span>
+          <span className="text-xl font-semibold tracking-tight">AlecRae</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage
@@ -18,13 +18,13 @@ export default function AIDisclosure({ onBack }) {
         <p className="text-sm text-gray-400 mb-12">Last Updated: March 2026</p>
 
         <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-12 text-sm text-indigo-800">
-          <strong>Our Commitment:</strong> Astra uses artificial intelligence in specific, clearly defined areas. This document explains exactly what the AI does and does not do, how your data is handled, and how you maintain full control over every AI-generated output.
+          <strong>Our Commitment:</strong> AlecRae uses artificial intelligence in specific, clearly defined areas. This document explains exactly what the AI does and does not do, how your data is handled, and how you maintain full control over every AI-generated output.
         </div>
 
         <div className="space-y-10">
           <Section title="1. AI Model Information">
             <p className="mb-3">
-              Astra integrates with <strong>Anthropic&apos;s Claude</strong> large language model for its AI-powered features. Claude is used exclusively through Anthropic&apos;s commercial API under enterprise terms.
+              AlecRae integrates with <strong>Anthropic&apos;s Claude</strong> large language model for its AI-powered features. Claude is used exclusively through Anthropic&apos;s commercial API under enterprise terms.
             </p>
             <ul className="space-y-2 text-sm">
               {[
@@ -32,7 +32,7 @@ export default function AIDisclosure({ onBack }) {
                 'Your data is sent to Anthropic\'s API for processing of AI features only',
                 'Per Anthropic\'s commercial terms, your data is NOT used to train AI models',
                 'API inputs and outputs are retained by Anthropic for up to 30 days for trust and safety purposes, then deleted',
-                'No other third-party AI models are used in any Astra feature',
+                'No other third-party AI models are used in any AlecRae feature',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-gray-600">
                   <span className="text-indigo-500 mt-0.5">&#8226;</span> {item}
@@ -98,7 +98,7 @@ export default function AIDisclosure({ onBack }) {
                 review="Required before any action"
               />
               <AIItem
-                title="Natural Language Queries (Ask Astra)"
+                title="Natural Language Queries (Ask AlecRae)"
                 description="Answers questions about your financial data in conversational language"
                 confidence="N/A (conversational)"
                 review="Recommended"
@@ -120,11 +120,11 @@ export default function AIDisclosure({ onBack }) {
               {[
                 {
                   principle: 'AI never files anything.',
-                  detail: 'Tax returns, BAS, GST returns, VAT returns, and 1099s are drafted by the system but require explicit human review and submission. Astra does not transmit any filing to any tax authority without your express action.',
+                  detail: 'Tax returns, BAS, GST returns, VAT returns, and 1099s are drafted by the system but require explicit human review and submission. AlecRae does not transmit any filing to any tax authority without your express action.',
                 },
                 {
                   principle: 'AI never moves money.',
-                  detail: 'Astra reads bank feeds through Plaid, Basiq, and TrueLayer but cannot initiate transactions, transfers, payments, or any financial movement.',
+                  detail: 'AlecRae reads bank feeds through Plaid, Basiq, and TrueLayer but cannot initiate transactions, transfers, payments, or any financial movement.',
                 },
                 {
                   principle: 'AI always shows its work.',
@@ -152,7 +152,7 @@ export default function AIDisclosure({ onBack }) {
 
           <Section title="5. How to Override AI Decisions">
             <p className="mb-4">
-              Every AI suggestion in Astra can be handled in one of four ways. You are always in control:
+              Every AI suggestion in AlecRae can be handled in one of four ways. You are always in control:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
@@ -175,7 +175,7 @@ export default function AIDisclosure({ onBack }) {
           <Section title="6. Data Usage &amp; Privacy">
             <h3 className="font-semibold text-gray-900 mt-4 mb-2">6.1 What Data Is Sent to the AI</h3>
             <p className="mb-3">
-              Only the minimum data necessary for each AI feature is sent to the Anthropic API. This includes transaction descriptions, amounts, and categories for the categoriser; financial summaries for the narrator; and your natural language queries for Ask Astra.
+              Only the minimum data necessary for each AI feature is sent to the Anthropic API. This includes transaction descriptions, amounts, and categories for the categoriser; financial summaries for the narrator; and your natural language queries for Ask AlecRae.
             </p>
             <h3 className="font-semibold text-gray-900 mt-4 mb-2">6.2 What Data Is Never Sent to the AI</h3>
             <ul className="space-y-2 text-sm mb-4">
@@ -199,15 +199,15 @@ export default function AIDisclosure({ onBack }) {
 
           <Section title="7. Transparency Reporting">
             <p>
-              Astra is committed to ongoing transparency about its AI usage. If Astra adds new AI-powered features, changes AI providers, or materially alters how AI is used in the platform, this disclosure will be updated and users will be notified via email and in-app notification at least 14 days before any change takes effect.
+              AlecRae is committed to ongoing transparency about its AI usage. If AlecRae adds new AI-powered features, changes AI providers, or materially alters how AI is used in the platform, this disclosure will be updated and users will be notified via email and in-app notification at least 14 days before any change takes effect.
             </p>
           </Section>
 
           <Section title="8. Contact">
             <p>
-              AI-related enquiries: <span className="text-indigo-600 font-medium">ai@astra.ai</span> &middot;
-              Privacy: <span className="text-indigo-600 font-medium">privacy@astra.ai</span> &middot;
-              Legal: <span className="text-indigo-600 font-medium">legal@astra.ai</span>
+              AI-related enquiries: <span className="text-indigo-600 font-medium">ai@alecrae.com</span> &middot;
+              Privacy: <span className="text-indigo-600 font-medium">privacy@alecrae.com</span> &middot;
+              Legal: <span className="text-indigo-600 font-medium">legal@alecrae.com</span>
             </p>
           </Section>
         </div>

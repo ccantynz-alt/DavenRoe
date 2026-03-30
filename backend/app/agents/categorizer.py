@@ -10,7 +10,7 @@ import anthropic
 
 from app.core.config import get_settings
 
-SYSTEM_PROMPT = """You are a senior bookkeeper AI for Astra, an autonomous accounting platform.
+SYSTEM_PROMPT = """You are a senior bookkeeper AI for AlecRae, an autonomous accounting platform.
 
 Your job is to categorize bank feed transactions into the correct Chart of Accounts category.
 

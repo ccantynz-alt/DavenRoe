@@ -19,7 +19,7 @@ import anthropic
 from app.core.config import get_settings
 
 
-FORECAST_PROMPT = """You are the Cash Flow Forecasting AI for Astra, an autonomous accounting platform.
+FORECAST_PROMPT = """You are the Cash Flow Forecasting AI for AlecRae, an autonomous accounting platform.
 
 Analyze the provided financial data and generate a forward-looking cash flow forecast.
 

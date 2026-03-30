@@ -1,4 +1,4 @@
-"""Tax Jurisdiction Registry — the deterministic heart of Astra.
+"""Tax Jurisdiction Registry — the deterministic heart of AlecRae.
 
 This is NOT AI-driven. Tax law is hard-coded and versioned.
 Every rate has an effective date range and legislation reference.

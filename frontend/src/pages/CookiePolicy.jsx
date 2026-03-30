@@ -6,7 +6,7 @@ export default function CookiePolicy({ onBack }) {
           <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-semibold tracking-tight">Astra</span>
+          <span className="text-xl font-semibold tracking-tight">AlecRae</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage
@@ -18,42 +18,42 @@ export default function CookiePolicy({ onBack }) {
         <p className="text-sm text-gray-400 mb-12">Last Updated: March 2026 &middot; Version 2026.03.1</p>
 
         <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-12 text-sm text-indigo-800">
-          <strong>Summary:</strong> Astra uses only essential and functional cookies to operate the platform. We do <strong>not</strong> use advertising cookies, cross-site tracking, or sell your data to third parties. You can manage optional cookies at any time through your browser settings.
+          <strong>Summary:</strong> AlecRae uses only essential and functional cookies to operate the platform. We do <strong>not</strong> use advertising cookies, cross-site tracking, or sell your data to third parties. You can manage optional cookies at any time through your browser settings.
         </div>
 
         <div className="space-y-10">
           <Section title="1. What Are Cookies">
             <p>
-              Cookies are small text files stored on your device when you visit a website. They help the site remember your preferences, keep you logged in, and understand how you use the service. Some cookies are essential for the platform to function; others help us improve the experience. This policy explains which cookies Astra uses, why we use them, and how you can control them.
+              Cookies are small text files stored on your device when you visit a website. They help the site remember your preferences, keep you logged in, and understand how you use the service. Some cookies are essential for the platform to function; others help us improve the experience. This policy explains which cookies AlecRae uses, why we use them, and how you can control them.
             </p>
           </Section>
 
           <Section title="2. Cookies We Use">
             <h3 className="font-semibold text-gray-900 mt-4 mb-3">2.1 Essential Cookies (Strictly Necessary)</h3>
             <p className="mb-3 text-sm">
-              These cookies are required for Astra to function. They cannot be disabled without breaking core platform functionality.
+              These cookies are required for AlecRae to function. They cannot be disabled without breaking core platform functionality.
             </p>
             <div className="space-y-2 mb-6">
               <CookieRow
-                name="astra_token"
+                name="alecrae_token"
                 purpose="Authentication session token. Keeps you logged in securely."
                 duration="60 minutes (refreshed on activity)"
                 type="Essential"
               />
               <CookieRow
-                name="astra_onboarded"
+                name="alecrae_onboarded"
                 purpose="Tracks whether you have completed the onboarding flow."
                 duration="Persistent"
                 type="Essential"
               />
               <CookieRow
-                name="astra_csrf"
+                name="alecrae_csrf"
                 purpose="Cross-site request forgery protection token."
                 duration="Session"
                 type="Essential"
               />
               <CookieRow
-                name="astra_consent_*"
+                name="alecrae_consent_*"
                 purpose="Records your acceptance of disclaimers and consent gates (e.g., forensic module, AI features)."
                 duration="Persistent"
                 type="Essential"
@@ -66,25 +66,25 @@ export default function CookiePolicy({ onBack }) {
             </p>
             <div className="space-y-2 mb-6">
               <CookieRow
-                name="astra_active_entity"
+                name="alecrae_active_entity"
                 purpose="Remembers your currently selected client entity for multi-entity users."
                 duration="Persistent"
                 type="Functional"
               />
               <CookieRow
-                name="astra_theme"
+                name="alecrae_theme"
                 purpose="Stores your display preference (light/dark mode)."
                 duration="1 year"
                 type="Functional"
               />
               <CookieRow
-                name="astra_locale"
+                name="alecrae_locale"
                 purpose="Stores your preferred language and date/number format."
                 duration="1 year"
                 type="Functional"
               />
               <CookieRow
-                name="astra_sidebar"
+                name="alecrae_sidebar"
                 purpose="Remembers sidebar collapse/expand state."
                 duration="1 year"
                 type="Functional"
@@ -93,11 +93,11 @@ export default function CookiePolicy({ onBack }) {
 
             <h3 className="font-semibold text-gray-900 mt-6 mb-3">2.3 Analytics Cookies (Optional)</h3>
             <p className="mb-3 text-sm">
-              These cookies help us understand how users interact with Astra so we can improve the platform. They are <strong>optional</strong> and can be disabled.
+              These cookies help us understand how users interact with AlecRae so we can improve the platform. They are <strong>optional</strong> and can be disabled.
             </p>
             <div className="space-y-2">
               <CookieRow
-                name="astra_analytics"
+                name="alecrae_analytics"
                 purpose="Anonymous usage analytics (page views, feature usage, performance metrics). No personal data is collected."
                 duration="30 days"
                 type="Optional"
@@ -107,7 +107,7 @@ export default function CookiePolicy({ onBack }) {
 
           <Section title="3. Third-Party Cookies">
             <p className="mb-4">
-              The following third-party services may set their own cookies when you use specific features of Astra. These cookies are governed by the respective third party&apos;s privacy and cookie policies.
+              The following third-party services may set their own cookies when you use specific features of AlecRae. These cookies are governed by the respective third party&apos;s privacy and cookie policies.
             </p>
             <div className="space-y-3">
               <ThirdPartyCookie
@@ -169,7 +169,7 @@ export default function CookiePolicy({ onBack }) {
               ))}
             </ul>
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4 text-sm text-amber-800">
-              <strong>Note:</strong> Disabling essential cookies (such as the authentication token) will prevent you from logging in to Astra. Disabling functional cookies may result in a degraded experience (e.g., preferences not being remembered between sessions).
+              <strong>Note:</strong> Disabling essential cookies (such as the authentication token) will prevent you from logging in to AlecRae. Disabling functional cookies may result in a degraded experience (e.g., preferences not being remembered between sessions).
             </div>
           </Section>
 
@@ -191,7 +191,7 @@ export default function CookiePolicy({ onBack }) {
               ))}
             </ul>
             <p className="mt-3 text-sm">
-              Astra&apos;s legal basis for essential cookies is <strong>legitimate interest</strong> (platform operation). Since Astra uses only essential and functional cookies with no advertising or analytics tracking by default, explicit cookie consent is not required under GDPR&apos;s &ldquo;strictly necessary&rdquo; exemption. We provide full transparency through this policy.
+              AlecRae&apos;s legal basis for essential cookies is <strong>legitimate interest</strong> (platform operation). Since AlecRae uses only essential and functional cookies with no advertising or analytics tracking by default, explicit cookie consent is not required under GDPR&apos;s &ldquo;strictly necessary&rdquo; exemption. We provide full transparency through this policy.
             </p>
           </Section>
 
@@ -201,8 +201,8 @@ export default function CookiePolicy({ onBack }) {
             </p>
             <ul className="space-y-2 text-sm">
               {[
-                'Astra does not sell your personal information, including cookie data',
-                'Astra does not share your personal information for cross-context behavioural advertising',
+                'AlecRae does not sell your personal information, including cookie data',
+                'AlecRae does not share your personal information for cross-context behavioural advertising',
                 'You have the right to know what personal information is collected via cookies',
                 'You have the right to delete personal information collected via cookies',
                 'You have the right to opt out of the sale or sharing of personal information (not applicable — we do not sell or share)',
@@ -217,7 +217,7 @@ export default function CookiePolicy({ onBack }) {
 
           <Section title="8. Do Not Track">
             <p>
-              Astra respects the &ldquo;Do Not Track&rdquo; (DNT) browser signal. When DNT is enabled, optional analytics cookies will not be set. Essential and functional cookies will continue to operate as they are required for platform functionality.
+              AlecRae respects the &ldquo;Do Not Track&rdquo; (DNT) browser signal. When DNT is enabled, optional analytics cookies will not be set. Essential and functional cookies will continue to operate as they are required for platform functionality.
             </p>
           </Section>
 
@@ -229,9 +229,9 @@ export default function CookiePolicy({ onBack }) {
 
           <Section title="10. Contact">
             <p>
-              Cookie enquiries: <span className="text-indigo-600 font-medium">privacy@astra.ai</span> &middot;
-              GDPR/DPO requests: <span className="text-indigo-600 font-medium">dpo@astra.ai</span> &middot;
-              General legal: <span className="text-indigo-600 font-medium">legal@astra.ai</span>
+              Cookie enquiries: <span className="text-indigo-600 font-medium">privacy@alecrae.com</span> &middot;
+              GDPR/DPO requests: <span className="text-indigo-600 font-medium">dpo@alecrae.com</span> &middot;
+              General legal: <span className="text-indigo-600 font-medium">legal@alecrae.com</span>
             </p>
           </Section>
         </div>

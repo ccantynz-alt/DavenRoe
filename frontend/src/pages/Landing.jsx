@@ -10,11 +10,11 @@ import Pricing from '../components/landing/Pricing';
 import FAQ from '../components/landing/FAQ';
 
 /**
- * Premium landing page for Astra — dark hero with gradient mesh,
+ * Premium landing page for AlecRae — dark hero with gradient mesh,
  * live AI demo, bento grid features, competitor comparison.
  *
  * Section flow:
- *  1. Hero (dark, animated gradient mesh + live Ask Astra demo)
+ *  1. Hero (dark, animated gradient mesh + live Ask AlecRae demo)
  *  2. Logo marquee (animated infinite scroll)
  *  3. Stats (glass morphism, dark section)
  *  4. Dashboard preview (floating mockup with notification cards)
@@ -60,7 +60,7 @@ export default function Landing({ onLogin, onNavigate }) {
       <div className="bg-indigo-600 text-white text-center py-2.5 px-4 text-sm">
         <span className="font-medium">Coming Q2 2026</span>
         <span className="mx-2 text-indigo-300">|</span>
-        <span className="text-indigo-100">Astra is currently in private beta. Register your interest below to get early access.</span>
+        <span className="text-indigo-100">AlecRae is currently in private beta. Register your interest below to get early access.</span>
       </div>
 
       {/* ============================================================
@@ -73,7 +73,7 @@ export default function Landing({ onLogin, onNavigate }) {
             <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
               <span className="text-white font-bold text-lg">A</span>
             </div>
-            <span className="text-xl font-semibold text-white tracking-tight">Astra</span>
+            <span className="text-xl font-semibold text-white tracking-tight">AlecRae</span>
           </div>
           <div className="flex items-center gap-8">
             <a href="#features" className="hidden md:inline text-sm text-white/50 hover:text-white transition-colors">Features</a>
@@ -212,7 +212,7 @@ export default function Landing({ onLogin, onNavigate }) {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">Be First in Line</h2>
           <p className="text-lg text-indigo-200 mb-8">
-            Astra launches Q2 2026. Register your interest for early access, founding member pricing, and a free data migration from your current platform.
+            AlecRae launches Q2 2026. Register your interest for early access, founding member pricing, and a free data migration from your current platform.
           </p>
           {registered ? (
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
@@ -263,7 +263,7 @@ export default function Landing({ onLogin, onNavigate }) {
           ============================================================ */}
       <div className="bg-gray-100 border-t border-b py-4 px-6 lg:px-16">
         <p className="text-[11px] text-gray-500 text-center max-w-4xl mx-auto leading-relaxed">
-          Astra is an AI-assisted accounting software tool currently in development. It is not a registered accounting firm, tax agent, licensed financial advisor, or legal practice. All features shown on this page represent planned functionality and may change before launch. No output from Astra constitutes professional advice. By registering your interest, you agree to receive product updates via email. You can unsubscribe at any time. See our <button onClick={() => onNavigate('terms')} className="underline hover:text-gray-700">Terms of Service</button>, <button onClick={() => onNavigate('privacy')} className="underline hover:text-gray-700">Privacy Policy</button>, and <a href="/ai-disclosure" className="underline hover:text-gray-700">AI Disclosure</a> for full details. Contact: <span className="font-medium">hello@astra.ai</span>
+          AlecRae is an AI-assisted accounting software tool currently in development. It is not a registered accounting firm, tax agent, licensed financial advisor, or legal practice. All features shown on this page represent planned functionality and may change before launch. No output from AlecRae constitutes professional advice. By registering your interest, you agree to receive product updates via email. You can unsubscribe at any time. See our <button onClick={() => onNavigate('terms')} className="underline hover:text-gray-700">Terms of Service</button>, <button onClick={() => onNavigate('privacy')} className="underline hover:text-gray-700">Privacy Policy</button>, and <a href="/ai-disclosure" className="underline hover:text-gray-700">AI Disclosure</a> for full details. Contact: <span className="font-medium">hello@alecrae.com</span>
         </p>
       </div>
 
@@ -278,7 +278,7 @@ export default function Landing({ onLogin, onNavigate }) {
                 <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center">
                   <span className="text-white font-bold">A</span>
                 </div>
-                <span className="text-lg font-semibold">Astra</span>
+                <span className="text-lg font-semibold">AlecRae</span>
               </div>
               <p className="text-gray-500 text-sm leading-relaxed mb-6">
                 Autonomous accounting intelligence for the modern practice. AI-powered bookkeeping, multi-jurisdiction tax compliance, and forensic anomaly detection.
@@ -290,7 +290,7 @@ export default function Landing({ onLogin, onNavigate }) {
                 <li><button onClick={() => onNavigate('invoicing')} className="hover:text-white transition-colors">Bookkeeping</button></li>
                 <li><button onClick={() => onNavigate('tax')} className="hover:text-white transition-colors">Tax Engine</button></li>
                 <li><button onClick={() => onNavigate('agentic')} className="hover:text-white transition-colors">Forensics</button></li>
-                <li><button onClick={() => onNavigate('ask')} className="hover:text-white transition-colors">Ask Astra</button></li>
+                <li><button onClick={() => onNavigate('ask')} className="hover:text-white transition-colors">Ask AlecRae</button></li>
                 <li><button onClick={() => onNavigate('banking')} className="hover:text-white transition-colors">Bank Feeds</button></li>
                 <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
               </ul>
@@ -314,7 +314,7 @@ export default function Landing({ onLogin, onNavigate }) {
             </div>
           </div>
           <div className="border-t border-white/[0.06] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-600">&copy; 2026 Astra. All rights reserved.</p>
+            <p className="text-sm text-gray-600">&copy; 2026 AlecRae. All rights reserved.</p>
             <div className="flex items-center gap-6 text-xs text-gray-600">
               <span className="flex items-center gap-1.5">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>

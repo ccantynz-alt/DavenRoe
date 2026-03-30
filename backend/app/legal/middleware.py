@@ -23,30 +23,30 @@ class LegalHeadersMiddleware(BaseHTTPMiddleware):
 
         # Legal headers on all API responses
         if request.url.path.startswith("/api/"):
-            response.headers["X-Astra-Disclaimer"] = (
+            response.headers["X-AlecRae-Disclaimer"] = (
                 "Outputs are for informational purposes only. "
                 "Not professional advice. Human review required."
             )
-            response.headers["X-Astra-AI-Disclosure"] = (
+            response.headers["X-AlecRae-AI-Disclosure"] = (
                 "This service uses AI. See /legal/ai-disclosure for details."
             )
-            response.headers["X-Astra-Liability"] = "See Terms of Service"
+            response.headers["X-AlecRae-Liability"] = "See Terms of Service"
 
             # Specific headers for AI endpoints
             if "/ai/" in request.url.path:
-                response.headers["X-Astra-AI-Generated"] = "true"
-                response.headers["X-Astra-Requires-Review"] = "true"
+                response.headers["X-AlecRae-AI-Generated"] = "true"
+                response.headers["X-AlecRae-Requires-Review"] = "true"
 
             # Specific headers for forensic endpoints
             if "/forensic/" in request.url.path:
-                response.headers["X-Astra-Forensic-Disclaimer"] = (
+                response.headers["X-AlecRae-Forensic-Disclaimer"] = (
                     "Investigative aid only. Not legal evidence. "
                     "Verify with qualified forensic accountants."
                 )
 
             # Specific headers for tax endpoints
             if "/tax/" in request.url.path:
-                response.headers["X-Astra-Tax-Disclaimer"] = (
+                response.headers["X-AlecRae-Tax-Disclaimer"] = (
                     "Not tax advice. Based on published legislation. "
                     "Consult qualified tax professional."
                 )

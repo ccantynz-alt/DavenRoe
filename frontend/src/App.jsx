@@ -10,7 +10,7 @@ import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import ReviewQueue from './pages/ReviewQueue';
 import TaxEngine from './pages/TaxEngine';
-import AskAstra from './pages/AskAstra';
+import AskAlecRae from './pages/AskAlecRae';
 import AgenticDashboard from './pages/AgenticDashboard';
 import Specialists from './pages/Specialists';
 import Toolkit from './pages/Toolkit';
@@ -75,7 +75,7 @@ import PartnerProgram from './pages/PartnerProgram';
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('astra_onboarded') === 'true');
+  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('alecrae_onboarded') === 'true');
   const [showLogin, setShowLogin] = useState(false);
   const [publicPage, setPublicPage] = useState(null);
 
@@ -86,7 +86,7 @@ function AppRoutes() {
           <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
             A
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Astra</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">AlecRae</h1>
           <p className="text-gray-500">Initializing...</p>
         </div>
       </div>
@@ -124,7 +124,7 @@ function AppRoutes() {
   if (!onboarded) {
     return (
       <Onboarding onComplete={() => {
-        localStorage.setItem('astra_onboarded', 'true');
+        localStorage.setItem('alecrae_onboarded', 'true');
         setOnboarded(true);
       }} />
     );
@@ -145,7 +145,7 @@ function AppRoutes() {
         <Route path="/portal" element={<ClientPortal />} />
         <Route path="/specialists" element={<Specialists />} />
         <Route path="/toolkit" element={<Toolkit />} />
-        <Route path="/ask" element={<AskAstra />} />
+        <Route path="/ask" element={<AskAlecRae />} />
         <Route path="/agentic" element={<AgenticDashboard />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/integrations" element={<Integrations />} />

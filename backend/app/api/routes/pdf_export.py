@@ -39,12 +39,12 @@ body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
 </style></head><body>
 <div style="border-bottom:3px solid #4c6ef5;padding-bottom:20px;margin-bottom:30px;">
   <h1 style="margin:0;font-size:24px;color:#111827;">{title}</h1>
-  <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')} | Astra Autonomous Accounting</p>
+  <p style="margin:4px 0 0;color:#6b7280;font-size:13px;">Generated: {datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')} | AlecRae Autonomous Accounting</p>
 </div>
 {rows_html}
 {footer_html}
 <div style="margin-top:40px;padding-top:16px;border-top:1px solid #e5e7eb;">
-  <p style="color:#9ca3af;font-size:10px;">Astra — Autonomous Global Accounting. This document is system-generated. Verify against source records.</p>
+  <p style="color:#9ca3af;font-size:10px;">AlecRae — Autonomous Global Accounting. This document is system-generated. Verify against source records.</p>
 </div>
 </body></html>"""
 
@@ -72,7 +72,7 @@ def _build_text_report(title: str, sections: list[tuple[str, list[tuple[str, str
         lines.append("")
 
     lines.append("=" * 60)
-    lines.append("  Astra — Autonomous Global Accounting")
+    lines.append("  AlecRae — Autonomous Global Accounting")
     lines.append("  This document is system-generated. Verify against source records.")
     lines.append("=" * 60)
     return "\n".join(lines)

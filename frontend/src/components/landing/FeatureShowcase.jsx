@@ -134,7 +134,7 @@ export default function FeatureShowcase() {
               <BentoCard accent="rose">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 mb-4">
                   <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-                  <span className="text-[11px] font-medium text-rose-300">Unique to Astra</span>
+                  <span className="text-[11px] font-medium text-rose-300">Unique to AlecRae</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Forensic Intelligence</h3>
                 <p className="text-white/50 text-sm leading-relaxed mb-4">Benford's Law analysis, ghost vendor detection, payment splitting alerts. Runs continuously.</p>
@@ -153,14 +153,14 @@ export default function FeatureShowcase() {
               </BentoCard>
             </FadeIn>
 
-            {/* Ask Astra */}
+            {/* Ask AlecRae */}
             <FadeIn delay={300}>
               <BentoCard accent="violet">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 mb-4">
                   <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
                   <span className="text-[11px] font-medium text-violet-300">AI Assistant</span>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Ask Astra</h3>
+                <h3 className="text-xl font-bold text-white mb-2">Ask AlecRae</h3>
                 <p className="text-white/50 text-sm leading-relaxed mb-4">Natural language queries over your entire financial dataset. Answers in under 2 seconds.</p>
                 <div className="bg-white/[0.04] rounded-lg px-3 py-2 border border-white/[0.06]">
                   <p className="text-xs text-violet-300 font-mono">"What were my top 5 expenses last quarter?"</p>
