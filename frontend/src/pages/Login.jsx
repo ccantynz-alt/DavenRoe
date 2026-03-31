@@ -44,8 +44,8 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">AlecRae</h1>
-          <p className="text-gray-500 mt-2">Autonomous Global Accounting</p>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-5xl font-light italic text-gray-900">AlecRae</h1>
+          <p className="text-gray-400 mt-1 text-sm tracking-widest uppercase">Accounting</p>
         </div>
 
         <div className="bg-white rounded-xl border shadow-sm p-8">

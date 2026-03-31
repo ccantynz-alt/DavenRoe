@@ -70,10 +70,7 @@ export default function Landing({ onLogin, onNavigate }) {
         {/* Navigation */}
         <nav className="flex items-center justify-between px-6 lg:px-16 py-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
-              <span className="text-white font-bold text-lg">A</span>
-            </div>
-            <span className="text-xl font-semibold text-white tracking-tight">AlecRae</span>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic tracking-wide bg-gradient-to-r from-gray-200 via-white to-gray-300 bg-clip-text text-transparent">AlecRae</span>
           </div>
           <div className="flex items-center gap-8">
             <a href="#features" className="hidden md:inline text-sm text-white/50 hover:text-white transition-colors">Features</a>
@@ -103,16 +100,33 @@ export default function Landing({ onLogin, onNavigate }) {
               </span>
             </div>
 
-            <h1
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.1] mb-6 tracking-tight"
+            {/* AlecRae name — elegant handwriting style */}
+            <div
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(30px)',
-                transition: 'all 1s ease-out 0.4s',
+                transition: 'all 1s ease-out 0.3s',
+              }}
+              className="mb-4"
+            >
+              <span
+                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-light italic bg-gradient-to-r from-gray-300 via-white via-50% to-gray-400 bg-clip-text text-transparent"
+              >
+                AlecRae
+              </span>
+            </div>
+
+            <h1
+              className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white/90 leading-[1.2] mb-6 tracking-tight"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(20px)',
+                transition: 'all 0.8s ease-out 0.5s',
               }}
             >
-              Your entire practice.<br />
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">One AI platform.</span><br />
+              Your entire practice.{' '}
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">One AI platform.</span>{' '}
               Zero add-ons.
             </h1>
 
@@ -274,11 +288,8 @@ export default function Landing({ onLogin, onNavigate }) {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
             <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center">
-                  <span className="text-white font-bold">A</span>
-                </div>
-                <span className="text-lg font-semibold">AlecRae</span>
+              <div className="mb-4">
+                <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic bg-gradient-to-r from-gray-400 via-white to-gray-500 bg-clip-text text-transparent">AlecRae</span>
               </div>
               <p className="text-gray-500 text-sm leading-relaxed mb-6">
                 Autonomous accounting intelligence for the modern practice. AI-powered bookkeeping, multi-jurisdiction tax compliance, and forensic anomaly detection.
