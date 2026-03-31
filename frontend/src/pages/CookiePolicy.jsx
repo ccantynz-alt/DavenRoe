@@ -3,7 +3,7 @@ export default function CookiePolicy({ onBack }) {
     <div className="bg-white text-gray-900 min-h-screen">
       <nav className="flex items-center justify-between px-6 lg:px-16 py-6 border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic text-gray-900">AlecRae</span>
+          <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-3xl font-light italic text-gray-900">AlecRae</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage
