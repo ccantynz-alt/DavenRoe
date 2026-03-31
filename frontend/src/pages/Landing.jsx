@@ -70,7 +70,7 @@ export default function Landing({ onLogin, onNavigate }) {
         {/* Navigation */}
         <nav className="flex items-center justify-between px-6 lg:px-16 py-6">
           <div className="flex items-center gap-3">
-            <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-3xl font-light italic tracking-wide bg-gradient-to-r from-gray-200 via-white to-gray-300 bg-clip-text text-transparent">AlecRae</span>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-4xl font-light italic tracking-wide text-white drop-shadow-lg">AlecRae</span>
           </div>
           <div className="flex items-center gap-8">
             <a href="#features" className="hidden md:inline text-sm text-white/50 hover:text-white transition-colors">Features</a>
@@ -108,8 +108,9 @@ export default function Landing({ onLogin, onNavigate }) {
                 transition: 'all 1s ease-out 0.4s',
               }}
             >
-              Stop paying for<br />
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">six separate tools.</span>
+              Everything your<br />
+              practice needs.{' '}
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">Nothing it doesn't.</span>
             </h1>
 
             <p
@@ -120,9 +121,9 @@ export default function Landing({ onLogin, onNavigate }) {
                 transition: 'all 0.8s ease-out 0.7s',
               }}
             >
-              Your clients are paying $384/month across Xero, Gusto, Dext, Fathom, Chaser, and Float.
-              AlecRae replaces all of them — bookkeeping, tax, payroll, invoicing, and forensic fraud
-              detection across AU, NZ, UK &amp; US. From $49/month.
+              Bookkeeping, tax filing, payroll, invoicing, and forensic fraud detection — all in one
+              platform, across AU, NZ, UK &amp; US. 25 AI agents handle the work. You review and approve.
+              From $49/month.
             </p>
 
             <div
@@ -271,7 +272,7 @@ export default function Landing({ onLogin, onNavigate }) {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
             <div className="md:col-span-2">
               <div className="mb-4">
-                <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic bg-gradient-to-r from-gray-400 via-white to-gray-500 bg-clip-text text-transparent">AlecRae</span>
+                <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-3xl font-light italic text-white drop-shadow-lg">AlecRae</span>
               </div>
               <p className="text-gray-500 text-sm leading-relaxed mb-6">
                 Autonomous accounting intelligence for the modern practice. AI-powered bookkeeping, multi-jurisdiction tax compliance, and forensic anomaly detection.
