@@ -25,7 +25,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "Connecting your bank account",
         "keywords": ["bank", "connect", "feed", "plaid", "basiq", "truelayer", "link", "account"],
         "content": (
-            "Astra supports automatic bank feeds through Plaid (US/CA), Basiq (AU/NZ), "
+            "AlecRae supports automatic bank feeds through Plaid (US/CA), Basiq (AU/NZ), "
             "and TrueLayer (UK/EU). Navigate to Banking > Connect Account, select your "
             "country, and follow the secure authentication flow. Transactions are imported "
             "automatically every 4 hours and can be manually refreshed at any time."
@@ -51,7 +51,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "content": (
             "Go to Invoicing > New Invoice. Select a client, add line items with descriptions "
             "and amounts, set payment terms, and click Send. Invoices are delivered via email "
-            "with a secure payment link. Astra supports credit notes, recurring invoices, and "
+            "with a secure payment link. AlecRae supports credit notes, recurring invoices, and "
             "automatic payment reminders."
         ),
     },
@@ -75,7 +75,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "content": (
             "Navigate to Payroll > New Pay Run. Select the pay period, review employee hours "
             "and earnings, verify tax withholdings (PAYG for AU, PAYE for NZ/UK, Federal for US), "
-            "and approve the run. Astra calculates superannuation (AU 11.5%), KiwiSaver (NZ 3-8%), "
+            "and approve the run. AlecRae calculates superannuation (AU 11.5%), KiwiSaver (NZ 3-8%), "
             "and pension contributions (UK) automatically."
         ),
     },
@@ -87,7 +87,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "content": (
             "Go to Payroll > Employees > Add Employee. Enter their personal details, tax file "
             "number or equivalent, employment type (full-time, part-time, contractor), pay rate, "
-            "and superannuation/pension fund details. Astra supports employees across AU, NZ, UK, "
+            "and superannuation/pension fund details. AlecRae supports employees across AU, NZ, UK, "
             "and US jurisdictions in a single platform."
         ),
     },
@@ -97,7 +97,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "Filing BAS, GST, VAT, or Sales Tax returns",
         "keywords": ["tax", "bas", "gst", "vat", "sales tax", "filing", "lodge", "return", "ato"],
         "content": (
-            "Go to Tax Filing, select your jurisdiction and period, and Astra will auto-generate "
+            "Go to Tax Filing, select your jurisdiction and period, and AlecRae will auto-generate "
             "your return. Review the calculated figures, validate with the built-in checker, and "
             "submit directly to the tax authority. Supported: BAS (AU), GST (NZ), VAT (UK), "
             "Sales Tax (US). The compliance calendar tracks all 40+ deadlines."
@@ -109,7 +109,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "Cross-border tax treaties and withholding tax",
         "keywords": ["tax", "treaty", "cross-border", "withholding", "dta", "international", "double tax"],
         "content": (
-            "Astra includes a cross-border tax treaty engine covering 6 bilateral Double Tax "
+            "AlecRae includes a cross-border tax treaty engine covering 6 bilateral Double Tax "
             "Agreements (AU-NZ, AU-UK, AU-US, NZ-UK, NZ-US, UK-US). Withholding tax rates are "
             "automatically applied based on the treaty. Navigate to Tax > Treaty Engine to review "
             "applicable rates and optimize your international payments."
@@ -118,13 +118,13 @@ KNOWLEDGE_BASE: list[dict] = [
     {
         "id": "kb-ai-001",
         "category": "ai features",
-        "title": "Using Ask Astra (AI assistant)",
+        "title": "Using Ask AlecRae (AI assistant)",
         "keywords": ["ai", "astra", "ask", "question", "assistant", "natural language", "nlp"],
         "content": (
-            "Ask Astra is your AI financial assistant. Type any question in natural language "
-            "such as 'What was my revenue last quarter?' or 'Show me overdue invoices'. Astra "
+            "Ask AlecRae is your AI financial assistant. Type any question in natural language "
+            "such as 'What was my revenue last quarter?' or 'Show me overdue invoices'. AlecRae "
             "queries your financial data in real time and returns answers with supporting details. "
-            "Access it from the Ask Astra page or the command bar (Ctrl+K)."
+            "Access it from the Ask AlecRae page or the command bar (Ctrl+K)."
         ),
     },
     {
@@ -133,7 +133,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "AI-powered transaction categorization",
         "keywords": ["ai", "categorize", "category", "transaction", "auto", "review queue", "confidence"],
         "content": (
-            "Astra's AI automatically categorizes bank feed transactions with a confidence score. "
+            "AlecRae's AI automatically categorizes bank feed transactions with a confidence score. "
             "High-confidence items (90%+) are auto-approved. Lower-confidence items appear in the "
             "Review Queue for human approval. Over time, the AI learns from your corrections and "
             "improves accuracy. Target accuracy is 95%+."
@@ -157,7 +157,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "Subscription plans and pricing",
         "keywords": ["billing", "plan", "pricing", "subscription", "cost", "upgrade", "downgrade", "tier"],
         "content": (
-            "Astra offers three tiers: Practice ($149/mo) includes all core features and payroll "
+            "AlecRae offers three tiers: Practice ($149/mo) includes all core features and payroll "
             "for a single jurisdiction. Firm ($499/mo) adds multi-jurisdiction support, forensic "
             "intelligence, and priority support. Enterprise (custom pricing) includes unlimited "
             "entities, white-label branding, and dedicated account management. All plans include "
@@ -182,7 +182,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "Data security and encryption",
         "keywords": ["security", "encryption", "data", "safe", "protect", "privacy", "gdpr", "compliance"],
         "content": (
-            "Astra uses AES-256 encryption at rest and TLS 1.3 in transit. All data is stored "
+            "AlecRae uses AES-256 encryption at rest and TLS 1.3 in transit. All data is stored "
             "in SOC 2 Type II certified data centers. We maintain an immutable hash-chain audit "
             "trail for every data change. Role-based access control with 5 permission levels "
             "ensures users only see data they are authorized to access."
@@ -194,7 +194,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "Two-factor authentication and password security",
         "keywords": ["security", "2fa", "two-factor", "password", "login", "authentication", "mfa"],
         "content": (
-            "Astra supports two-factor authentication (2FA) via authenticator apps. Enable it "
+            "AlecRae supports two-factor authentication (2FA) via authenticator apps. Enable it "
             "under Settings > Security. Passwords are hashed with bcrypt and never stored in "
             "plain text. Password reset is available via email-based secure token flow. We "
             "recommend using a unique, strong password of at least 12 characters."
@@ -206,7 +206,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "title": "Importing data from Xero, QuickBooks, or MYOB",
         "keywords": ["import", "migrate", "xero", "quickbooks", "myob", "data", "switch", "transfer", "csv"],
         "content": (
-            "Go to Settings > Data Import to migrate from another platform. Astra supports "
+            "Go to Settings > Data Import to migrate from another platform. AlecRae supports "
             "direct imports from Xero, QuickBooks, and MYOB via API, as well as CSV/Excel "
             "uploads for chart of accounts, contacts, invoices, and transactions. The import "
             "wizard maps fields automatically and flags any conflicts for review."
@@ -220,7 +220,7 @@ KNOWLEDGE_BASE: list[dict] = [
         "content": (
             "Navigate to Settings > Data Import > CSV Upload. Download the template for the "
             "data type you want to import (contacts, transactions, invoices, chart of accounts), "
-            "fill in your data, and upload. Astra validates the file, shows a preview of the "
+            "fill in your data, and upload. AlecRae validates the file, shows a preview of the "
             "import, and lets you confirm before committing changes."
         ),
     },
@@ -340,7 +340,7 @@ def _generate_auto_response(question: str) -> dict:
             "response": (
                 "I wasn't able to find a specific answer to your question in our knowledge base. "
                 "A support agent will follow up with you shortly. In the meantime, you can browse "
-                "our help articles or ask Astra directly using the Ask Astra feature."
+                "our help articles or ask AlecRae directly using the Ask AlecRae feature."
             ),
             "sources": [],
             "confidence": 0.0,

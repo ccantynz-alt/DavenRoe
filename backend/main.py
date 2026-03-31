@@ -1,4 +1,4 @@
-"""Astra — The World's First Autonomous Global Accounting Agent.
+"""AlecRae — The World's First Autonomous Global Accounting Agent.
 
 Main FastAPI application entry point.
 """

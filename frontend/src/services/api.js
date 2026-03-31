@@ -7,7 +7,7 @@ const api = axios.create({
 
 // Attach token from localStorage on every request
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('astra_token');
+  const token = localStorage.getItem('alecrae_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -19,7 +19,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401 && window.location.pathname !== '/') {
-      localStorage.removeItem('astra_token');
+      localStorage.removeItem('alecrae_token');
       window.location.reload();
     }
     return Promise.reject(error);
@@ -55,7 +55,7 @@ export const getReviewQueue = (params) => api.get('/transactions/review', { para
 export const reviewTransaction = (id, data) => api.post(`/transactions/${id}/review`, data);
 
 // AI
-export const askAstra = (query) => api.post('/ai/query', { query });
+export const askAlecRae = (query) => api.post('/ai/query', { query });
 export const categorizeTransaction = (data) => api.post('/ai/categorize', data);
 export const generateNarrative = (data) => api.post('/ai/narrative', data);
 

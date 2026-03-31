@@ -64,7 +64,7 @@ export default function DashboardPreview() {
               <div className="flex-1 flex justify-center">
                 <div className="bg-white rounded-lg px-6 py-1.5 text-xs text-gray-400 border border-gray-100 min-w-[300px] text-center flex items-center justify-center gap-2">
                   <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4"/></svg>
-                  app.astra.ai/dashboard
+                  app.alecrae.com/dashboard
                 </div>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function DashboardPreview() {
               <div className="w-52 bg-[#0f1117] text-white p-4 hidden md:block" style={{ minHeight: 440 }}>
                 <div className="flex items-center gap-2 mb-8">
                   <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-sm font-bold">A</div>
-                  <span className="font-semibold text-sm">Astra</span>
+                  <span className="font-semibold text-sm">AlecRae</span>
                 </div>
                 <nav className="space-y-0.5 text-[13px]">
                   {[
@@ -88,7 +88,7 @@ export default function DashboardPreview() {
                     { name: 'Invoicing' },
                     { name: 'Forensics' },
                     { name: 'Compliance' },
-                    { name: 'Ask Astra' },
+                    { name: 'Ask AlecRae' },
                   ].map((item, i) => (
                     <div
                       key={i}

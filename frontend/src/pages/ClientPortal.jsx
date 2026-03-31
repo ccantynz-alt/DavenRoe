@@ -150,7 +150,7 @@ function ClientView() {
       <div className="bg-white border rounded-xl p-6">
         <h3 className="font-semibold text-lg mb-2">Need Help?</h3>
         <p className="text-gray-500 text-sm">
-          Contact your accountant or use Ask Astra to get answers about your financial data in plain English.
+          Contact your accountant or use Ask AlecRae to get answers about your financial data in plain English.
         </p>
       </div>
     </div>

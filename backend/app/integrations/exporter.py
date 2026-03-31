@@ -1,6 +1,6 @@
 """Data Export Engine.
 
-Export from Astra to Xero, QuickBooks, MYOB, CSV, and PDF.
+Export from AlecRae to Xero, QuickBooks, MYOB, CSV, and PDF.
 If data can't get out, the platform becomes a prison.
 """
 

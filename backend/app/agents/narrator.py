@@ -10,7 +10,7 @@ import anthropic
 
 from app.core.config import get_settings
 
-SYSTEM_PROMPT = """You are a financial analyst AI for Astra, an autonomous accounting platform.
+SYSTEM_PROMPT = """You are a financial analyst AI for AlecRae, an autonomous accounting platform.
 
 Your job is to translate financial data into clear, plain-English narratives
 that any business owner can understand — no accounting jargon.

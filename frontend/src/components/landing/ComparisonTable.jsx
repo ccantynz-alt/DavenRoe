@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 
 /**
- * Competitive comparison table — shows why Astra beats the competition.
+ * Competitive comparison table — shows why AlecRae beats the competition.
  * Clean, factual, no trash-talking. Just checkmarks and Xs.
  */
 
@@ -24,7 +24,7 @@ const FEATURES = [
 ];
 
 const COMPETITORS = [
-  { key: 'astra', name: 'Astra', highlight: true },
+  { key: 'astra', name: 'AlecRae', highlight: true },
   { key: 'xero', name: 'Xero' },
   { key: 'qbo', name: 'QuickBooks' },
   { key: 'myob', name: 'MYOB' },

@@ -94,7 +94,7 @@ class IntegrationsHub:
             Integration(
                 id="zoom", name="Zoom", provider="Zoom Video Communications",
                 category=IntegrationCategory.VIDEO,
-                description="Schedule and join Zoom meetings directly from Astra",
+                description="Schedule and join Zoom meetings directly from AlecRae",
                 auth_type="oauth2",
                 scopes=["meeting:write", "meeting:read", "user:read"],
                 supported_jurisdictions=["US", "AU", "NZ", "GB"],

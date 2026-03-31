@@ -2,7 +2,7 @@
 
 This is the abstraction layer that makes global bank feeds "easy."
 Every provider (Plaid, Basiq, TrueLayer, etc.) implements the same
-interface. The rest of Astra never knows which provider is being used.
+interface. The rest of AlecRae never knows which provider is being used.
 
 One interface, every bank in the world.
 """

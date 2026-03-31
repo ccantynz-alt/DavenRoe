@@ -15,7 +15,7 @@ const plans = [
       'Bank feeds & reconciliation',
       'Invoicing & payments',
       'AI categorisation',
-      'Ask Astra (natural language queries)',
+      'Ask AlecRae (natural language queries)',
       'Financial reports (P&L, Balance Sheet)',
       'Document OCR & storage',
       'Email support (48hr response)',
@@ -110,7 +110,7 @@ const comparisonFeatures = [
   { name: 'Tax filing', practice: true, firm: true, enterprise: true },
   { name: 'Financial reports', practice: true, firm: true, enterprise: true },
   { name: 'AI categorisation', practice: true, firm: true, enterprise: true },
-  { name: 'Ask Astra', practice: true, firm: true, enterprise: true },
+  { name: 'Ask AlecRae', practice: true, firm: true, enterprise: true },
   { name: 'Document OCR', practice: true, firm: true, enterprise: true },
   { name: 'Forensic Intelligence', practice: false, firm: true, enterprise: true },
   { name: 'Client Portal', practice: false, firm: true, enterprise: true },
@@ -506,11 +506,11 @@ export default function Billing() {
         <div>
           <h3 className="text-sm font-semibold text-gray-900">Need help with billing?</h3>
           <p className="text-sm text-gray-500 mt-1">
-            Contact our support team at billing@astra.ai or reach out via the in-app chat.
+            Contact our support team at billing@alecrae.com or reach out via the in-app chat.
           </p>
         </div>
         <button
-          onClick={() => toast.warning('To cancel your subscription, please contact support at billing@astra.ai')}
+          onClick={() => toast.warning('To cancel your subscription, please contact support at billing@alecrae.com')}
           className="text-sm text-red-500 hover:text-red-600 font-medium whitespace-nowrap"
         >
           Cancel Subscription
