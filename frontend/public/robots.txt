@@ -1,5 +1,7 @@
 # Astra AI Accounting Platform
 # Public pages — allow search engines to index
+
+# Google (primary target)
 User-agent: Googlebot
 Allow: /
 Allow: /about
@@ -8,6 +10,12 @@ Allow: /privacy
 Allow: /terms
 Allow: /contact
 Allow: /help
+Allow: /partners
+Allow: /case-studies
+Allow: /marketplace
+Allow: /ai-disclosure
+Allow: /acceptable-use
+Allow: /cookies
 Disallow: /api/
 Disallow: /admin
 Disallow: /clients
@@ -21,6 +29,12 @@ Disallow: /tax
 Disallow: /tax-filing
 Disallow: /settings
 Disallow: /billing
+Disallow: /practice
+Disallow: /forensic-tools
+Disallow: /tax-advisor
+Disallow: /agentic
+Disallow: /projects
+Disallow: /scenarios
 
 User-agent: Bingbot
 Allow: /
@@ -30,34 +44,39 @@ Allow: /privacy
 Allow: /terms
 Allow: /contact
 Allow: /help
+Allow: /partners
+Allow: /case-studies
+Allow: /marketplace
 Disallow: /api/
 Disallow: /admin
 
-# Block known competitor and scraping bots
+# Allow SEO analysis tools — we WANT them to index us for competitive visibility
 User-agent: SemrushBot
-Disallow: /
+Allow: /
+Allow: /about
+Allow: /security
+Allow: /contact
+Allow: /help
+Allow: /partners
+Allow: /case-studies
+Disallow: /api/
+Disallow: /admin
+Disallow: /clients
+Crawl-delay: 5
 
 User-agent: AhrefsBot
-Disallow: /
+Allow: /
+Allow: /about
+Allow: /security
+Allow: /contact
+Allow: /help
+Allow: /partners
+Disallow: /api/
+Disallow: /admin
+Disallow: /clients
+Crawl-delay: 5
 
-User-agent: MJ12bot
-Disallow: /
-
-User-agent: DotBot
-Disallow: /
-
-User-agent: BLEXBot
-Disallow: /
-
-User-agent: DataForSeoBot
-Disallow: /
-
-User-agent: PetalBot
-Disallow: /
-
-User-agent: Bytespider
-Disallow: /
-
+# Block AI training bots (protect our content)
 User-agent: GPTBot
 Disallow: /
 
@@ -73,6 +92,9 @@ Disallow: /
 User-agent: PerplexityBot
 Disallow: /
 
+User-agent: Bytespider
+Disallow: /
+
 # Block generic scrapers
 User-agent: Scrapy
 Disallow: /
@@ -80,10 +102,19 @@ Disallow: /
 User-agent: HTTrack
 Disallow: /
 
-User-agent: wget
+User-agent: MJ12bot
 Disallow: /
 
-User-agent: curl
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: PetalBot
 Disallow: /
 
 # Default: allow legitimate search engines only on public pages

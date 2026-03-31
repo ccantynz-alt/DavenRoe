@@ -159,11 +159,61 @@
     <meta name="apple-mobile-web-app-title" content="AlecRae" />
     <link rel="apple-touch-icon" href="/icon.svg" />
 
+    <!-- Structured Data — Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Astra",
+      "url": "https://astra.ai",
+      "logo": "https://astra.ai/icon-512.png",
+      "description": "AI-powered autonomous accounting platform for accountants, bookkeepers, and businesses across Australia, New Zealand, United Kingdom, and United States.",
+      "foundingDate": "2025",
+      "areaServed": ["AU", "NZ", "GB", "US"],
+      "knowsAbout": ["Accounting", "Tax Compliance", "Payroll", "Forensic Accounting", "AI Bookkeeping"],
+      "sameAs": [
+        "https://twitter.com/aaborai",
+        "https://linkedin.com/company/astra-accounting"
+      ]
+    }
+    </script>
+
+    <!-- Structured Data — BreadcrumbList (helps Google understand site structure) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://astra.ai/" },
+        { "@type": "ListItem", "position": 2, "name": "Features", "item": "https://astra.ai/about" },
+        { "@type": "ListItem", "position": 3, "name": "Pricing", "item": "https://astra.ai/billing" },
+        { "@type": "ListItem", "position": 4, "name": "Security", "item": "https://astra.ai/security" },
+        { "@type": "ListItem", "position": 5, "name": "Contact", "item": "https://astra.ai/contact" }
+      ]
+    }
+    </script>
+
     <!-- Preconnect to critical origins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
     <link rel="dns-prefetch" href="https://cdn.plaid.com" />
+    <link rel="dns-prefetch" href="https://api.basiq.io" />
+    <link rel="dns-prefetch" href="https://api.truelayer.com" />
+
+    <!-- Preload critical assets -->
+    <link rel="modulepreload" href="/src/main.jsx" />
+
+    <!-- Geo targeting hints for multi-jurisdiction SEO -->
+    <meta name="geo.region" content="AU" />
+    <meta name="geo.region" content="NZ" />
+    <meta name="geo.region" content="GB" />
+    <meta name="geo.region" content="US" />
+    <link rel="alternate" hreflang="en-AU" href="https://astra.ai/?region=au" />
+    <link rel="alternate" hreflang="en-NZ" href="https://astra.ai/?region=nz" />
+    <link rel="alternate" hreflang="en-GB" href="https://astra.ai/?region=uk" />
+    <link rel="alternate" hreflang="en-US" href="https://astra.ai/?region=us" />
+    <link rel="alternate" hreflang="x-default" href="https://astra.ai/" />
   </head>
   <body class="bg-gray-50 text-gray-900 antialiased">
     <div id="root"></div>

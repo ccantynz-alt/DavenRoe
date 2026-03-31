@@ -549,3 +549,242 @@ This is a standing directive. Every development session must evaluate whether ne
 >
 > Every feature we DON'T have is a reason for a customer to keep a competing subscription.
 > Every gap in this scorecard is leaked revenue. Close the gaps. Capture the wallet.
+
+---
+
+## Technology Stack Mandate — Best-of-Breed Only (Non-Negotiable)
+
+### Zero Tolerance for Outdated Components
+
+> **If it's old, rip it out and replace it. No exceptions. No "it still works." No legacy debt.**
+> Every dependency, every component, every pattern MUST be the most advanced, fastest, most modern
+> option available. If a newer, better alternative exists — migrate immediately.
+
+### Current Approved Stack (Verified Cutting-Edge as of March 2026)
+
+| Layer | Technology | Version | Status | Notes |
+|-------|-----------|---------|--------|-------|
+| **Runtime** | React | 19.x | APPROVED | Latest with RSC-ready architecture |
+| **Build** | Vite | 6.x | APPROVED | ESM-native, sub-second HMR, esbuild minification |
+| **CSS** | Tailwind CSS | 4.x | APPROVED | JIT-only, zero-runtime, CSS-first config |
+| **Router** | React Router | 7.x | APPROVED | Latest with Suspense boundary support |
+| **State (server)** | TanStack Query | 5.x | APPROVED | Deduplication, background refetch, optimistic updates |
+| **State (client)** | Zustand | 5.x | APPROVED | Minimal, no boilerplate, middleware support |
+| **Forms** | React Hook Form + Zod | 7.x + 3.x | APPROVED | Uncontrolled by default (fastest), schema validation |
+| **Components** | Radix UI Primitives | Latest | APPROVED | Headless, accessible, composable — zero HTML overhead |
+| **Animation** | Framer Motion | 11.x | APPROVED | Hardware-accelerated, layout animations |
+| **Charts** | Recharts | 2.x | APPROVED | React-native SVG charts, tree-shakeable |
+| **Tables** | TanStack Table | 8.x | APPROVED | Headless, virtual scrolling capable |
+| **Icons** | Lucide React | Latest | APPROVED | Tree-shakeable, 468+ icons |
+| **HTTP** | Axios | Latest | APPROVED | Interceptors, retry, cancel tokens |
+| **Dates** | date-fns | 4.x | APPROVED | Tree-shakeable, immutable, ESM-native |
+| **Toasts** | Sonner | Latest | APPROVED | Minimal, stackable, accessible |
+| **Command** | cmdk | 1.x | APPROVED | ⌘K interface, accessible |
+
+### Mandatory Performance Patterns
+
+1. **Route-based code splitting** — Every page MUST use `React.lazy()` + `<Suspense>`. Zero eagerly-loaded pages except the shell.
+2. **Manual chunk splitting** — Vendor libraries MUST be separated into cacheable chunks (vendor-react, vendor-radix, vendor-charts, etc.).
+3. **Build target: `esnext`** — No transpilation for legacy browsers. We target modern evergreen browsers only.
+4. **CSS code splitting** — Enabled by default in Vite 6. Each route only loads its own CSS.
+5. **esbuild minification** — For both JS and CSS. Faster than Terser, smaller output.
+6. **No source maps in production** — Zero exposure of source code.
+7. **Service Worker caching** — Cache-first for static assets, network-first for API calls.
+8. **React Query stale/gc times** — 2min stale, 10min garbage collection. Aggressive background refetch.
+9. **Preconnect/DNS-prefetch** — All external origins (fonts, Plaid, Basiq, TrueLayer) must be preconnected.
+10. **Image lazy loading** — All images MUST use `loading="lazy"`. No eager image loads below the fold.
+
+### Zero-HTML Component Philosophy
+
+> **We use ZERO raw HTML where a component library exists.**
+> - No `<select>` — use Radix Select
+> - No `<dialog>` — use Radix Dialog
+> - No `<details>` — use Radix Accordion
+> - No `<input type="checkbox">` — use Radix Checkbox/Switch
+> - No `<ul><li>` dropdowns — use Radix DropdownMenu
+> - No `<div>` tooltips — use Radix Tooltip
+> - No `<progress>` — use Radix Progress
+> - No `<table>` without TanStack Table
+> - No manual modals, drawers, popovers — use Radix/Vaul
+>
+> Every interactive element must be an accessible, headless primitive with proper ARIA, keyboard navigation, and focus management. Raw HTML is banned for interactive UI.
+
+### Upgrade Protocol
+
+When evaluating whether to upgrade a dependency:
+1. **Check npm/GitHub weekly** for major version releases of our stack
+2. **If a new major version ships** (e.g., React 20, Vite 7, Tailwind 5) — evaluate within 48 hours, migrate within 2 weeks
+3. **If a faster alternative emerges** (e.g., a build tool faster than Vite) — evaluate immediately, prototype within 1 week
+4. **Never pin to old versions** "because it works" — that's how tech debt accumulates
+5. **Run `npm outdated` monthly** — anything >1 major version behind gets upgraded immediately
+
+### Banned Technologies
+
+| Technology | Why Banned | Replacement |
+|-----------|-----------|-------------|
+| Create React App | Dead project, slow builds | Vite |
+| Webpack | Slower than Vite by 10-100x | Vite |
+| Styled Components / CSS-in-JS runtime | Runtime overhead, bundle bloat | Tailwind CSS |
+| Material UI / Ant Design | Heavy, opinionated, slow | Radix UI + Tailwind |
+| Redux / Redux Toolkit | Boilerplate, unnecessary complexity | Zustand + React Query |
+| Moment.js | Deprecated, 300KB+ | date-fns |
+| jQuery | Legacy, unnecessary with React | Native React |
+| Bootstrap | Utility-class conflict, heavy | Tailwind CSS |
+| Lodash (full) | Tree-shaking issues, ES native alternatives exist | Native JS / date-fns |
+| TypeORM (if ever backend) | Query builder overhead | Drizzle ORM / raw SQL |
+
+---
+
+## Nuclear SEO Campaign — Global Domination Strategy (Non-Negotiable)
+
+### Mission: Rank #1 for Every Accounting Software Query in AU/NZ/UK/US
+
+> **We don't just want visibility. We want to OWN the search results.**
+> Every potential customer searching for accounting software must see Astra
+> before they see Xero, QuickBooks, MYOB, Sage, or FreshBooks.
+
+### SEO Architecture (Already Implemented)
+
+- JSON-LD structured data: SoftwareApplication + FAQPage + Organization + BreadcrumbList
+- Open Graph + Twitter Card meta tags on every page
+- Canonical URLs with hreflang for AU/NZ/UK/US
+- Sitemap with hreflang alternate links
+- robots.txt allowing SEO tools (Semrush, Ahrefs) for competitive visibility
+- PWA manifest for app store indexing
+
+### Content SEO Strategy (Must Build)
+
+#### 1. Comparison Landing Pages (HIGH PRIORITY)
+Build dedicated public pages targeting "[competitor] alternative" keywords:
+- `/compare/xero` — "Astra vs Xero — Why Accountants Are Switching"
+- `/compare/quickbooks` — "Astra vs QuickBooks — Full Feature Comparison"
+- `/compare/myob` — "Astra vs MYOB — Modern AI vs Legacy Software"
+- `/compare/sage` — "Astra vs Sage — Enterprise Features at SMB Prices"
+- `/compare/freshbooks` — "Astra vs FreshBooks — Real Accounting vs Invoicing"
+Each page must: show feature-by-feature comparison table, include pricing comparison, have clear CTAs, use proper H1/H2/H3 hierarchy.
+
+#### 2. Use Case Landing Pages
+- `/for/accountants` — "Accounting Practice Management Software"
+- `/for/bookkeepers` — "AI Bookkeeping Software for Bookkeepers"
+- `/for/small-business` — "Small Business Accounting Software"
+- `/for/freelancers` — "Freelancer Invoicing & Tax Software"
+- `/for/construction` — "Construction Accounting Software"
+- `/for/ecommerce` — "E-Commerce Accounting & Inventory"
+- `/for/nonprofits` — "Nonprofit Fund Accounting Software"
+- `/for/healthcare` — "Healthcare Practice Accounting"
+
+#### 3. Feature Landing Pages
+- `/features/ai-bookkeeping` — Target "AI accounting software"
+- `/features/forensic-accounting` — Target "forensic accounting tools"
+- `/features/multi-jurisdiction-tax` — Target "multi-country tax compliance"
+- `/features/payroll` — Target "payroll software included"
+- `/features/bank-feeds` — Target "automatic bank reconciliation"
+- `/features/invoicing` — Target "invoice software free"
+- `/features/inventory` — Target "inventory management accounting"
+
+#### 4. Educational Content Hub (Blog/Resources)
+- `/resources/guides` — Long-form guides (2,000-5,000 words)
+  - "Complete Guide to BAS Lodgement in Australia"
+  - "GST Filing Guide for New Zealand Businesses"
+  - "UK VAT Return: Step-by-Step Guide"
+  - "US Sales Tax Compliance by State"
+  - "How to Detect Fraud in Your Books (Benford's Law Explained)"
+  - "Month-End Close Checklist for Accountants"
+- `/resources/templates` — Downloadable templates (lead magnets)
+  - Invoice templates, BAS worksheets, payroll checklists
+- `/resources/webinars` — Video content for authority building
+- `/resources/glossary` — SEO-rich accounting terminology (200+ terms)
+
+#### 5. Technical SEO Requirements
+- **Core Web Vitals**: LCP < 2.5s, FID < 100ms, CLS < 0.1 (enforce with Lighthouse CI)
+- **Page speed**: Mobile score > 90, Desktop score > 95
+- **Internal linking**: Every page must link to 3-5 related pages
+- **Schema markup on EVERY public page**: Article, HowTo, FAQ, Product, Review
+- **Meta descriptions**: Unique, 150-160 chars, include primary keyword + CTA
+- **H1 tags**: One per page, include primary target keyword
+- **Image alt text**: Descriptive, keyword-rich, on every image
+- **URL structure**: Clean, descriptive, keyword-containing slugs
+- **Canonical tags**: On every page to prevent duplicate content
+
+#### 6. Local SEO (Per-Country)
+- Google Business Profile for each target market
+- Country-specific content with local terminology (GST vs VAT vs Sales Tax)
+- Local currency pricing on region-specific pages
+- Testimonials/case studies from each target country
+
+#### 7. Link Building Strategy
+- Guest posts on accounting industry blogs
+- Partner program pages with backlinks from certified accountants
+- Integration partner pages with reciprocal links
+- Press releases for major feature launches
+- Industry award submissions (Fintech, SaaS, Accounting Tech)
+
+### SEO Enforcement Rules
+
+1. **Every new public page** must include: proper meta title/description, JSON-LD schema, OG tags, canonical URL, and be added to sitemap.xml
+2. **Every public page** must pass Lighthouse SEO audit at 100/100
+3. **No orphan pages** — every page reachable within 3 clicks from homepage
+4. **No duplicate content** — unique title/description/H1 on every page
+5. **Monitor weekly**: Google Search Console, Ahrefs/Semrush rankings, Core Web Vitals
+6. **Target keywords per page**: 1 primary, 2-3 secondary, mapped in a keyword spreadsheet
+
+---
+
+## Missing Features — Day-to-Day Pain Points to Solve (Non-Negotiable)
+
+### What Accountants/Bookkeepers Struggle With Daily
+
+These are the real-world daily pain points that NO competitor fully solves. Building these turns Astra from "another accounting app" into "the platform I can't live without."
+
+#### P1 — Must-Build (Immediate Competitive Impact)
+
+| # | Feature | Pain Point It Solves | Competitor Status |
+|---|---------|---------------------|-------------------|
+| 1 | **Auto Bank Rule Engine** | "I categorize the same transactions every month manually" — Smart rules that learn from approvals and auto-apply to future transactions. Confidence scoring + auto-approve above threshold. | Xero has basic rules. QBO has some. None have AI-learning rules. |
+| 2 | **Client Communication Log** | "I can't remember what I discussed with the client last week" — Unified log of emails, calls, notes, document requests per client. Linked to transactions and tax periods. | No competitor has this built-in. Everyone uses separate CRM. |
+| 3 | **Deadline Countdown Dashboard** | "I missed a filing deadline because I forgot" — Visual countdown timers for EVERY deadline per client per jurisdiction. SMS/email/push alerts at 30/14/7/3/1 days. | No competitor has real-time countdown. They just have calendar events. |
+| 4 | **Batch Operations Hub** | "I need to send 50 invoices / approve 100 transactions / file 20 BAS" — Bulk select + batch execute for every repetitive operation. Progress tracking with error recovery. | Xero has basic batch. QBO is limited. None have intelligent batching. |
+| 5 | **Smart Receipt Matching** | "I have 200 receipts and 200 transactions — matching them takes hours" — AI matches receipts to transactions by amount, date, vendor. Handles fuzzy matching for rounding, currency conversion. | Dext/Hubdoc do this as separate products ($30/mo). Not built into any accounting platform. |
+| 6 | **Expense Policy Enforcer** | "Employees submit expenses that violate our policy and I catch them too late" — Define rules (max meal $50, no alcohol, require receipt over $25). Auto-flag violations before approval. | SAP Concur has this ($8/user/mo). No SMB accounting platform does. |
+| 7 | **Multi-Currency Auto-Revaluation** | "I manually revalue foreign currency balances every month-end" — Automatic FX revaluation using daily rates. Unrealized gain/loss calculations. Multi-currency P&L. | Xero does basic FX. None do automatic revaluation with gain/loss. |
+| 8 | **Year-End Rollover Wizard** | "Year-end close is a nightmare — retained earnings, opening balances, tax provisions" — One-click year-end: auto-calculate retained earnings, create opening balances, carry forward provisions, generate year-end reports. | All competitors require manual year-end. Some have basic rollover. |
+| 9 | **Audit Preparation Pack** | "My client is being audited and I need to pull everything together fast" — One-click audit pack: trial balance, GL, bank statements, receipts, aged receivables/payables, tax returns, rolled into a single PDF/ZIP. | No competitor generates audit packs. Accountants assemble manually. |
+| 10 | **WIP (Work in Progress) Tracker** | "I don't know how much unbilled work each staff member has" — Real-time WIP by staff, by client, by engagement. Billable utilization %. WIP aging report. Auto-generate invoices from WIP. | Practice management tools have this (Karbon $59/mo, Ignition). Not in accounting platforms. |
+
+#### P2 — Should-Build (Moat Deepening)
+
+| # | Feature | Pain Point It Solves |
+|---|---------|---------------------|
+| 11 | **Loan & Liability Tracker** | Track loan balances, interest accruals, repayment schedules. Auto-create journal entries for interest. Amortization schedules. |
+| 12 | **Dividend Calculator & Distribution** | Calculate franking credits (AU), imputation (NZ), dividend tax (UK/US). Generate distribution statements. |
+| 13 | **Related Party Transaction Monitor** | Flag transactions between related entities. Ensure arm's-length pricing. Generate related party disclosure notes. |
+| 14 | **Practice Workflow Automator** | "New client onboarded" → auto-create entity, set up bank feeds, create compliance calendar, assign team member, send welcome email. Zero manual steps. |
+| 15 | **Client Health Dashboard** | At-a-glance view per client: overdue filings, missing documents, aging receivables, communication gaps. Red/amber/green status. |
+| 16 | **Trust Account Management** | For law firms, real estate: separate trust account ledgers, automatic trust reconciliation, trust audit reports. Required in AU/NZ. |
+| 17 | **Depreciation Schedule Engine** | Automatic asset depreciation: straight-line, diminishing value, units of production. Tax vs accounting depreciation. AU/NZ/UK/US rates built-in. |
+| 18 | **GST/VAT Partial Exemption Calculator** | For mixed-supply businesses: auto-calculate input tax credit apportionment. Partial exemption methods (AU, NZ, UK). |
+| 19 | **Inter-Entity Elimination Engine** | For group reporting: auto-eliminate inter-company transactions, generate consolidated P&L/BS. |
+| 20 | **Custom Report Builder** | Drag-and-drop report builder. Any data field, any filter, any grouping. Save templates. Schedule auto-generation. |
+
+#### P3 — Nice-to-Have (Future Differentiation)
+
+| # | Feature | Description |
+|---|---------|-------------|
+| 21 | **AI Meeting Notes Summarizer** | Record client meetings, AI summarizes action items, creates tasks, links to transactions |
+| 22 | **Regulatory Change Alerts** | AI monitors tax law changes (ATO, IRD, HMRC, IRS) and alerts when they affect clients |
+| 23 | **Benchmarking Reports** | Compare client metrics against industry averages (anonymized platform data) |
+| 24 | **White-Label Client App** | Accountants brand the client portal as their own app |
+| 25 | **AI Tax Return Reviewer** | Before filing: AI reviews return for common errors, missing deductions, audit triggers |
+| 26 | **Payment Gateway (Direct)** | Accept payments directly in Astra without Stripe — lower fees, faster settlement |
+| 27 | **Embedded Lending** | "Based on your financials, you qualify for a $50K line of credit" — in-platform |
+| 28 | **Carbon Accounting** | Track Scope 1/2/3 emissions from expense data. ESG reporting for compliance. |
+| 29 | **Crypto Asset Tracking** | Import wallet/exchange data, calculate capital gains, cost base tracking |
+| 30 | **Employee Self-Service Portal** | Employees view payslips, submit leave, update bank details, upload receipts |
+
+### Enforcement
+
+1. **Every sprint must ship at least 1 item from this list** in addition to the competitive scorecard work
+2. **Features must be production-quality** — no stubs, no "coming soon", no placeholder UI
+3. **Each feature ships with**: full UI, API endpoints, data persistence, error handling, loading states, empty states
+4. **Priority order**: P1 first, then P2, then P3. Skip ahead only if a P1 is blocked by external dependency
+5. **Update this list** when a feature is complete — move to "Implemented" section with date

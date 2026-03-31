@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './components/Toast';
@@ -45,33 +45,110 @@ import TimeTracker from './pages/TimeTracker';
 import LiveReceipt from './pages/LiveReceipt';
 import SpendMonitor from './pages/SpendMonitor';
 import ConsentGate from './components/ConsentGate';
-import NotFound from './pages/NotFound';
-import Suppliers from './pages/Suppliers';
-import Bills from './pages/Bills';
-import ChartOfAccounts from './pages/ChartOfAccounts';
-import JournalEntries from './pages/JournalEntries';
-import BankReconciliation from './pages/BankReconciliation';
-import Quotes from './pages/Quotes';
-import RecurringTransactions from './pages/RecurringTransactions';
-import PurchaseOrders from './pages/PurchaseOrders';
-import CreditNotes from './pages/CreditNotes';
-import FixedAssets from './pages/FixedAssets';
-import Budgets from './pages/Budgets';
-import ProjectManagement from './pages/ProjectManagement';
-import ScenarioPlanning from './pages/ScenarioPlanning';
-import HelpCenter from './pages/HelpCenter';
-import DataImport from './pages/DataImport';
-import Billing from './pages/Billing';
-import PracticeDashboard from './pages/PracticeDashboard';
-import ForensicTools from './pages/ForensicTools';
-import TaxAdvisorToolkit from './pages/TaxAdvisor';
-import AdminDashboard from './pages/AdminDashboard';
-import AIDisclosure from './pages/AIDisclosure';
-import AcceptableUse from './pages/AcceptableUse';
-import CookiePolicy from './pages/CookiePolicy';
-import TaxRulingsAgent from './pages/TaxRulingsAgent';
-import CaseStudies from './pages/CaseStudies';
-import PartnerProgram from './pages/PartnerProgram';
+
+// ─── Lazy-loaded pages (route-based code splitting) ──────────────────────────
+// Every page is dynamically imported so the initial bundle only contains
+// the shell + whichever page the user navigates to first. Vite automatically
+// creates separate chunks for each lazy() import.
+
+// Auth & onboarding (loaded early, small)
+const Landing = lazy(() => import('./pages/Landing'));
+const Login = lazy(() => import('./pages/Login'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
+
+// Core pages
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const ReviewQueue = lazy(() => import('./pages/ReviewQueue'));
+const Clients = lazy(() => import('./pages/Clients'));
+const Reports = lazy(() => import('./pages/Reports'));
+const BankFeeds = lazy(() => import('./pages/BankFeeds'));
+const Invoicing = lazy(() => import('./pages/Invoicing'));
+const Documents = lazy(() => import('./pages/Documents'));
+const Settings = lazy(() => import('./pages/Settings'));
+
+// Tax & compliance
+const TaxEngine = lazy(() => import('./pages/TaxEngine'));
+const TaxFiling = lazy(() => import('./pages/TaxFiling'));
+const ComplianceCalendar = lazy(() => import('./pages/ComplianceCalendar'));
+const TaxAgent = lazy(() => import('./pages/TaxAgent'));
+const TaxRulingsAgent = lazy(() => import('./pages/TaxRulingsAgent'));
+const TaxAdvisorToolkit = lazy(() => import('./pages/TaxAdvisor'));
+
+// AI & intelligence
+const AskAstra = lazy(() => import('./pages/AskAstra'));
+const AgenticDashboard = lazy(() => import('./pages/AgenticDashboard'));
+const AIInsights = lazy(() => import('./pages/AIInsights'));
+const FinancialHealthScore = lazy(() => import('./pages/FinancialHealthScore'));
+const ForensicTools = lazy(() => import('./pages/ForensicTools'));
+
+// Operations
+const Payroll = lazy(() => import('./pages/Payroll'));
+const Inventory = lazy(() => import('./pages/Inventory'));
+const Suppliers = lazy(() => import('./pages/Suppliers'));
+const Bills = lazy(() => import('./pages/Bills'));
+const ChartOfAccounts = lazy(() => import('./pages/ChartOfAccounts'));
+const JournalEntries = lazy(() => import('./pages/JournalEntries'));
+const BankReconciliation = lazy(() => import('./pages/BankReconciliation'));
+const Quotes = lazy(() => import('./pages/Quotes'));
+const RecurringTransactions = lazy(() => import('./pages/RecurringTransactions'));
+const PurchaseOrders = lazy(() => import('./pages/PurchaseOrders'));
+const CreditNotes = lazy(() => import('./pages/CreditNotes'));
+const FixedAssets = lazy(() => import('./pages/FixedAssets'));
+
+// Planning & projects
+const Budgets = lazy(() => import('./pages/Budgets'));
+const ProjectManagement = lazy(() => import('./pages/ProjectManagement'));
+const ScenarioPlanning = lazy(() => import('./pages/ScenarioPlanning'));
+
+// Tools & features
+const Specialists = lazy(() => import('./pages/Specialists'));
+const Toolkit = lazy(() => import('./pages/Toolkit'));
+const SmartTools = lazy(() => import('./pages/SmartTools'));
+const TimeTracker = lazy(() => import('./pages/TimeTracker'));
+const LiveReceipt = lazy(() => import('./pages/LiveReceipt'));
+const SpendMonitor = lazy(() => import('./pages/SpendMonitor'));
+const EmailScanner = lazy(() => import('./pages/EmailScanner'));
+const PeerReview = lazy(() => import('./pages/PeerReview'));
+
+// Platform
+const Enterprise = lazy(() => import('./pages/Enterprise'));
+const Integrations = lazy(() => import('./pages/Integrations'));
+const Marketplace = lazy(() => import('./pages/Marketplace'));
+const ClientPortal = lazy(() => import('./pages/ClientPortal'));
+const ActivityFeed = lazy(() => import('./pages/ActivityFeed'));
+const Incorporation = lazy(() => import('./pages/Incorporation'));
+const DataImport = lazy(() => import('./pages/DataImport'));
+const Billing = lazy(() => import('./pages/Billing'));
+const PracticeDashboard = lazy(() => import('./pages/PracticeDashboard'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const HelpCenter = lazy(() => import('./pages/HelpCenter'));
+const PartnerProgram = lazy(() => import('./pages/PartnerProgram'));
+const CaseStudies = lazy(() => import('./pages/CaseStudies'));
+
+// Public / legal pages
+const About = lazy(() => import('./pages/About'));
+const SecurityPage = lazy(() => import('./pages/Security'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
+const Contact = lazy(() => import('./pages/Contact'));
+const AIDisclosure = lazy(() => import('./pages/AIDisclosure'));
+const AcceptableUse = lazy(() => import('./pages/AcceptableUse'));
+const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
+// ─── Loading fallback ────────────────────────────────────────────────────────
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-950">
+      <div className="text-center">
+        <div className="w-12 h-12 rounded-xl bg-indigo-600/20 flex items-center justify-center mx-auto mb-3">
+          <div className="w-6 h-6 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+        <p className="text-sm text-gray-500">Loading...</p>
+      </div>
+    </div>
+  );
+}
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -97,28 +174,30 @@ function AppRoutes() {
 
   // Public pages (accessible without login)
   if (!user) {
-    if (publicPage === 'about') return <About onBack={goHome} />;
-    if (publicPage === 'security') return <SecurityPage onBack={goHome} />;
-    if (publicPage === 'privacy') return <Privacy onBack={goHome} />;
-    if (publicPage === 'terms') return <Terms onBack={goHome} />;
-    if (publicPage === 'contact') return <Contact onBack={goHome} />;
+    if (publicPage === 'about') return <Suspense fallback={<PageLoader />}><About onBack={goHome} /></Suspense>;
+    if (publicPage === 'security') return <Suspense fallback={<PageLoader />}><SecurityPage onBack={goHome} /></Suspense>;
+    if (publicPage === 'privacy') return <Suspense fallback={<PageLoader />}><Privacy onBack={goHome} /></Suspense>;
+    if (publicPage === 'terms') return <Suspense fallback={<PageLoader />}><Terms onBack={goHome} /></Suspense>;
+    if (publicPage === 'contact') return <Suspense fallback={<PageLoader />}><Contact onBack={goHome} /></Suspense>;
 
     if (showLogin) {
       return (
-        <div>
-          <Login />
-          <div className="fixed top-4 left-4 z-50">
-            <button
-              onClick={goHome}
-              className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
-            >
-              &larr; Back to homepage
-            </button>
+        <Suspense fallback={<PageLoader />}>
+          <div>
+            <Login />
+            <div className="fixed top-4 left-4 z-50">
+              <button
+                onClick={goHome}
+                className="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1"
+              >
+                &larr; Back to homepage
+              </button>
+            </div>
           </div>
-        </div>
+        </Suspense>
       );
     }
-    return <Landing onLogin={() => setShowLogin(true)} onNavigate={setPublicPage} />;
+    return <Suspense fallback={<PageLoader />}><Landing onLogin={() => setShowLogin(true)} onNavigate={setPublicPage} /></Suspense>;
   }
 
   if (!onboarded) {
