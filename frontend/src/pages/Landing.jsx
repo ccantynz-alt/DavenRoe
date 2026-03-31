@@ -70,7 +70,7 @@ export default function Landing({ onLogin, onNavigate }) {
         {/* Navigation */}
         <nav className="flex items-center justify-between px-6 lg:px-16 py-6">
           <div className="flex items-center gap-3">
-            <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic tracking-wide bg-gradient-to-r from-gray-200 via-white to-gray-300 bg-clip-text text-transparent">AlecRae</span>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-3xl font-light italic tracking-wide bg-gradient-to-r from-gray-200 via-white to-gray-300 bg-clip-text text-transparent">AlecRae</span>
           </div>
           <div className="flex items-center gap-8">
             <a href="#features" className="hidden md:inline text-sm text-white/50 hover:text-white transition-colors">Features</a>
@@ -100,34 +100,16 @@ export default function Landing({ onLogin, onNavigate }) {
               </span>
             </div>
 
-            {/* AlecRae name — elegant handwriting style */}
-            <div
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] mb-6 tracking-tight"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(30px)',
-                transition: 'all 1s ease-out 0.3s',
-              }}
-              className="mb-4"
-            >
-              <span
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                className="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-light italic bg-gradient-to-r from-gray-300 via-white via-50% to-gray-400 bg-clip-text text-transparent"
-              >
-                AlecRae
-              </span>
-            </div>
-
-            <h1
-              className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-white/90 leading-[1.2] mb-6 tracking-tight"
-              style={{
-                opacity: loaded ? 1 : 0,
-                transform: loaded ? 'translateY(0)' : 'translateY(20px)',
-                transition: 'all 0.8s ease-out 0.5s',
+                transition: 'all 1s ease-out 0.4s',
               }}
             >
-              Your entire practice.{' '}
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">One AI platform.</span>{' '}
-              Zero add-ons.
+              Stop paying for<br />
+              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">six separate tools.</span>
             </h1>
 
             <p
@@ -138,9 +120,9 @@ export default function Landing({ onLogin, onNavigate }) {
                 transition: 'all 0.8s ease-out 0.7s',
               }}
             >
-              Bookkeeping, tax filing, payroll, invoicing, and forensic fraud detection
-              across AU, NZ, UK &amp; US — with 24 AI agents that do the work while you
-              review and approve. Replaces 6 separate tools for $49/month.
+              Your clients are paying $384/month across Xero, Gusto, Dext, Fathom, Chaser, and Float.
+              AlecRae replaces all of them — bookkeeping, tax, payroll, invoicing, and forensic fraud
+              detection across AU, NZ, UK &amp; US. From $49/month.
             </p>
 
             <div
