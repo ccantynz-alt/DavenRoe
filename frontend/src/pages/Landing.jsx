@@ -101,8 +101,11 @@ export default function Landing({ onLogin, onNavigate }) {
             </div>
 
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] mb-6 tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-white leading-[1.1] mb-6"
               style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontWeight: 300,
+                fontStyle: 'italic',
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(30px)',
                 transition: 'all 1s ease-out 0.4s',
