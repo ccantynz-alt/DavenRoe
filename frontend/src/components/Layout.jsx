@@ -113,6 +113,7 @@ const navSections = [
       { path: '/portal', label: 'Client Portal' },
       { path: '/case-studies', label: 'Case Studies' },
       { path: '/incorporate', label: 'Incorporate' },
+      { path: '/oracle', label: 'Oracle Brain' },
       { path: '/enterprise', label: 'Enterprise' },
       { path: '/import', label: 'Data Import' },
     ],
