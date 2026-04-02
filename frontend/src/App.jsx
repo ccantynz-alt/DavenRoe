@@ -69,6 +69,7 @@ const LiveReceipt = lazy(() => import('./pages/LiveReceipt'));
 const SpendMonitor = lazy(() => import('./pages/SpendMonitor'));
 const EmailScanner = lazy(() => import('./pages/EmailScanner'));
 const PeerReview = lazy(() => import('./pages/PeerReview'));
+const VoiceCommand = lazy(() => import('./pages/VoiceCommand'));
 
 // Platform
 const Enterprise = lazy(() => import('./pages/Enterprise'));
@@ -94,6 +95,8 @@ const Contact = lazy(() => import('./pages/Contact'));
 const AIDisclosure = lazy(() => import('./pages/AIDisclosure'));
 const AcceptableUse = lazy(() => import('./pages/AcceptableUse'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
+const PredictiveInsights = lazy(() => import('./pages/PredictiveInsights'));
+const SmartInbox = lazy(() => import('./pages/SmartInbox'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // ─── Loading fallback ────────────────────────────────────────────────────────
@@ -199,6 +202,7 @@ function AppRoutes() {
         <Route path="/email-scanner" element={<EmailScanner />} />
         <Route path="/tax-agent" element={<TaxAgent />} />
         <Route path="/peer-review" element={<PeerReview />} />
+        <Route path="/voice" element={<VoiceCommand />} />
         <Route path="/smart-tools" element={<SmartTools />} />
         <Route path="/time-tracker" element={<TimeTracker />} />
         <Route path="/live-receipt" element={<LiveReceipt />} />
@@ -230,6 +234,8 @@ function AppRoutes() {
         <Route path="/ai-disclosure" element={<AIDisclosure />} />
         <Route path="/acceptable-use" element={<AcceptableUse />} />
         <Route path="/cookies" element={<CookiePolicy />} />
+        <Route path="/predictions" element={<PredictiveInsights />} />
+        <Route path="/smart-inbox" element={<SmartInbox />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

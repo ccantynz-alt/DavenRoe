@@ -83,6 +83,9 @@ const navSections = [
     label: 'AI & Intelligence',
     items: [
       { path: '/ask', label: 'Ask AlecRae' },
+      { path: '/voice', label: 'Voice Commands' },
+      { path: '/predictions', label: 'Predictive Insights' },
+      { path: '/smart-inbox', label: 'Smart Inbox' },
       { path: '/agentic', label: 'AI Agents' },
       { path: '/ai-insights', label: 'AI Insights' },
       { path: '/forensic-tools', label: 'Forensic Tools' },
