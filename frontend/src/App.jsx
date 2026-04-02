@@ -101,6 +101,7 @@ const RegulatoryTracker = lazy(() => import('./pages/RegulatoryTracker'));
 const SmartReconciliation = lazy(() => import('./pages/SmartReconciliation'));
 const DocumentChaser = lazy(() => import('./pages/DocumentChaser'));
 const OracleBrain = lazy(() => import('./pages/OracleBrain'));
+const LivePulse = lazy(() => import('./pages/LivePulse'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // ─── Loading fallback ────────────────────────────────────────────────────────
@@ -244,6 +245,7 @@ function AppRoutes() {
         <Route path="/smart-reconciliation" element={<SmartReconciliation />} />
         <Route path="/document-chaser" element={<DocumentChaser />} />
         <Route path="/oracle" element={<OracleBrain />} />
+        <Route path="/live-pulse" element={<LivePulse />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>

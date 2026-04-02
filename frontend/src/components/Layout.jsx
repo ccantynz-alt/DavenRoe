@@ -10,6 +10,7 @@ const navSections = [
     label: 'Overview',
     items: [
       { path: '/', label: 'Dashboard' },
+      { path: '/live-pulse', label: 'Live Pulse' },
       { path: '/practice', label: 'Practice Overview' },
       { path: '/financial-health', label: 'Health Score' },
     ],
