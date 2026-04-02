@@ -69,6 +69,7 @@ const navSections = [
       { path: '/tax-advisor', label: 'Tax Advisor Toolkit' },
       { path: '/tax-agent', label: 'Tax Agent' },
       { path: '/compliance', label: 'Compliance Calendar' },
+      { path: '/regulatory', label: 'Regulatory Tracker' },
     ],
   },
   {

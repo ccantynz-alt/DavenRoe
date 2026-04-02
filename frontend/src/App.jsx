@@ -97,6 +97,7 @@ const AcceptableUse = lazy(() => import('./pages/AcceptableUse'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
 const PredictiveInsights = lazy(() => import('./pages/PredictiveInsights'));
 const SmartInbox = lazy(() => import('./pages/SmartInbox'));
+const RegulatoryTracker = lazy(() => import('./pages/RegulatoryTracker'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 // ─── Loading fallback ────────────────────────────────────────────────────────
@@ -236,6 +237,7 @@ function AppRoutes() {
         <Route path="/cookies" element={<CookiePolicy />} />
         <Route path="/predictions" element={<PredictiveInsights />} />
         <Route path="/smart-inbox" element={<SmartInbox />} />
+        <Route path="/regulatory" element={<RegulatoryTracker />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
       </Routes>
