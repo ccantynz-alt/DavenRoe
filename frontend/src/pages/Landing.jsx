@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import HeroCarousel from '../components/landing/HeroCarousel';
 import LogoBar from '../components/landing/LogoBar';
 import AnimatedStats from '../components/landing/AnimatedStats';
@@ -8,6 +8,131 @@ import ComparisonTable from '../components/landing/ComparisonTable';
 import Testimonials from '../components/landing/Testimonials';
 import Pricing from '../components/landing/Pricing';
 import FAQ from '../components/landing/FAQ';
+
+/**
+ * Typewriter effect that cycles through phrases
+ */
+function TypewriterText({ phrases, className }) {
+  const [index, setIndex] = useState(0);
+  const [text, setText] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    const phrase = phrases[index];
+
+    if (!deleting) {
+      if (text.length < phrase.length) {
+        timeoutRef.current = setTimeout(() => setText(phrase.slice(0, text.length + 1)), 60);
+      } else {
+        timeoutRef.current = setTimeout(() => setDeleting(true), 2200);
+      }
+    } else {
+      if (text.length > 0) {
+        timeoutRef.current = setTimeout(() => setText(text.slice(0, -1)), 30);
+      } else {
+        setDeleting(false);
+        setIndex((index + 1) % phrases.length);
+      }
+    }
+
+    return () => clearTimeout(timeoutRef.current);
+  }, [text, deleting, index, phrases]);
+
+  return (
+    <span className={className}>
+      {text}
+      <span className="inline-block w-[3px] h-[1em] bg-indigo-400 ml-1 align-middle animate-pulse" />
+    </span>
+  );
+}
+
+/**
+ * Live AI demo — simulates Astra processing a query with streaming response
+ */
+function LiveAIDemo() {
+  const [stage, setStage] = useState(0);
+  const [response, setResponse] = useState('');
+  const fullResponse = 'Revenue is up 12.4% month-over-month at $245,100. Top contributors: Coastal Coffee ($89K), Wright Advisory ($67K), Pacific Ledger ($42K). Cash position healthy at $1.2M with 47 days runway. One anomaly flagged: duplicate vendor payment of $2,100 to REF #4821 — recommend review.';
+
+  useEffect(() => {
+    const timers = [];
+    timers.push(setTimeout(() => setStage(1), 800));  // Show query
+    timers.push(setTimeout(() => setStage(2), 2200)); // Show "thinking"
+    timers.push(setTimeout(() => setStage(3), 3200)); // Start streaming
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
+  useEffect(() => {
+    if (stage !== 3) return;
+    let i = 0;
+    const interval = setInterval(() => {
+      i += 2;
+      if (i >= fullResponse.length) {
+        setResponse(fullResponse);
+        clearInterval(interval);
+        return;
+      }
+      setResponse(fullResponse.slice(0, i));
+    }, 18);
+    return () => clearInterval(interval);
+  }, [stage]);
+
+  return (
+    <div className="bg-white/[0.04] backdrop-blur-md rounded-2xl border border-white/[0.08] p-5 max-w-lg mx-auto text-left shadow-2xl shadow-indigo-500/5">
+      {/* Terminal header */}
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-white/[0.06]">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/60" />
+          <div className="w-2.5 h-2.5 rounded-full bg-green-500/60" />
+        </div>
+        <span className="text-[10px] text-white/30 ml-2 font-mono">Ask AlecRae</span>
+        <div className="ml-auto flex items-center gap-1.5">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-[10px] text-emerald-400/70 font-mono">live</span>
+        </div>
+      </div>
+
+      {/* Query */}
+      <div className={`transition-all duration-500 ${stage >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+        <div className="flex items-start gap-2 mb-3">
+          <div className="w-6 h-6 rounded-lg bg-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-[10px] text-indigo-300">You</span>
+          </div>
+          <p className="text-sm text-white/80 font-mono">"How's the practice performing this month?"</p>
+        </div>
+      </div>
+
+      {/* Thinking indicator */}
+      {stage === 2 && (
+        <div className="flex items-center gap-2 mb-3 ml-8">
+          <div className="flex gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+          </div>
+          <span className="text-[10px] text-white/30 font-mono">Analysing 1,247 transactions across 3 entities...</span>
+        </div>
+      )}
+
+      {/* AI Response */}
+      {stage >= 3 && (
+        <div className="flex items-start gap-2">
+          <div className="w-6 h-6 rounded-lg bg-violet-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+            <span className="text-[10px] text-violet-300">AI</span>
+          </div>
+          <p className="text-xs text-white/60 leading-relaxed font-mono">
+            {response}
+            {response.length < fullResponse.length && (
+              <span className="inline-block w-1.5 h-3 bg-violet-400/60 ml-0.5 animate-pulse" />
+            )}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 /**
  * Premium landing page for AlecRae — dark hero with gradient mesh,
@@ -86,8 +211,8 @@ export default function Landing({ onLogin, onNavigate }) {
         </nav>
 
         {/* Hero content */}
-        <div className="flex-1 flex items-center justify-center px-6 lg:px-16">
-          <div className="text-center max-w-4xl">
+        <div className="flex-1 flex items-center justify-center px-6 lg:px-16 py-12">
+          <div className="text-center max-w-5xl w-full">
             <div
               style={{
                 opacity: loaded ? 1 : 0,
@@ -95,39 +220,60 @@ export default function Landing({ onLogin, onNavigate }) {
                 transition: 'all 0.8s ease-out 0.2s',
               }}
             >
-              <span className="inline-block px-4 py-1.5 rounded-full bg-white/[0.06] backdrop-blur-sm text-white/70 text-xs font-medium tracking-wide border border-white/[0.08] mb-8">
-                Launching Q2 2026 — Register for Early Access
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] backdrop-blur-sm text-white/70 text-xs font-medium tracking-wide border border-white/[0.08] mb-8">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                25 AI Agents Active — Launching Q2 2026
               </span>
             </div>
 
             <h1
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] mb-6 tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] mb-3 tracking-tight"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(30px)',
                 transition: 'all 1s ease-out 0.4s',
               }}
             >
-              Everything your<br />
-              practice needs.{' '}
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">Nothing it doesn't.</span>
+              AI that does your
             </h1>
+            <div
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.05] mb-8 tracking-tight h-[1.2em]"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(30px)',
+                transition: 'all 1s ease-out 0.5s',
+              }}
+            >
+              <TypewriterText
+                phrases={[
+                  'bookkeeping.',
+                  'tax compliance.',
+                  'payroll.',
+                  'fraud detection.',
+                  'month-end close.',
+                  'bank reconciliation.',
+                  'financial reporting.',
+                ]}
+                className="bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent"
+              />
+            </div>
 
             <p
-              className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-10"
+              className="text-lg sm:text-xl text-white/50 max-w-2xl mx-auto leading-relaxed mb-12"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(20px)',
                 transition: 'all 0.8s ease-out 0.7s',
               }}
             >
-              Bookkeeping, tax filing, payroll, invoicing, and forensic fraud detection — all in one
-              platform, across AU, NZ, UK &amp; US. 25 AI agents handle the work. You review and approve.
-              From $49/month.
+              Multi-agent AI architecture across AU, NZ, UK &amp; US.
+              Autonomous bookkeeping with forensic-grade intelligence.
+              Your team reviews. AI handles the rest.
             </p>
 
+            {/* CTA buttons */}
             <div
-              className="flex flex-col sm:flex-row justify-center gap-4"
+              className="flex flex-col sm:flex-row justify-center gap-4 mb-16"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded ? 'translateY(0)' : 'translateY(20px)',
@@ -136,24 +282,29 @@ export default function Landing({ onLogin, onNavigate }) {
             >
               <button
                 onClick={onLogin}
-                className="px-8 py-4 bg-indigo-600 text-white rounded-xl text-lg font-semibold hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-500/25 hover:shadow-xl hover:shadow-indigo-500/30"
+                className="group relative px-8 py-4 bg-indigo-600 text-white rounded-xl text-lg font-semibold transition-all shadow-lg shadow-indigo-500/25 hover:shadow-2xl hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98]"
               >
-                Register for Early Access
+                <span className="relative z-10">Register for Early Access</span>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
               </button>
               <a
-                href="#register"
-                className="px-8 py-4 bg-white/[0.06] backdrop-blur-sm text-white rounded-xl text-lg font-semibold hover:bg-white/[0.12] transition-all border border-white/[0.08]"
+                href="#features"
+                className="px-8 py-4 bg-white/[0.04] backdrop-blur-sm text-white rounded-xl text-lg font-semibold hover:bg-white/[0.08] transition-all border border-white/[0.08] hover:border-white/[0.15]"
               >
-                See How It Works
+                See the Platform
               </a>
             </div>
 
-            <p
-              className="text-sm text-white/30 mt-8"
-              style={{ opacity: loaded ? 1 : 0, transition: 'opacity 1s ease-out 1.2s' }}
+            {/* Live AI demo */}
+            <div
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(30px)',
+                transition: 'all 1s ease-out 1.2s',
+              }}
             >
-              Launching Q2 2026 — AI-powered accounting for firms across Australia, US, NZ &amp; UK
-            </p>
+              <LiveAIDemo />
+            </div>
           </div>
         </div>
       </HeroCarousel>
