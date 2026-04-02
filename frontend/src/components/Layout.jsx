@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { useAuth } from '../contexts/AuthContext';
 import { GlobalFooterDisclaimer } from './LegalDisclaimer';
 import HelpWidget from './HelpWidget';
+import CommandBar from './CommandBar';
 
 const navSections = [
   {
@@ -95,6 +96,8 @@ const navSections = [
       { path: '/smart-tools', label: 'Smart Tools' },
       { path: '/specialists', label: 'Specialist Tools' },
       { path: '/toolkit', label: 'Toolkit' },
+      { path: '/explanations', label: 'Explanation Engine' },
+      { path: '/agent-memory', label: 'Agent Memory' },
     ],
   },
   {
@@ -254,6 +257,7 @@ export default function Layout({ children }) {
           <GlobalFooterDisclaimer />
         </main>
         <HelpWidget />
+        <CommandBar />
       </div>
     </div>
   );
