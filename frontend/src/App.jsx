@@ -68,6 +68,7 @@ const TimeTracker = lazy(() => import('./pages/TimeTracker'));
 const LiveReceipt = lazy(() => import('./pages/LiveReceipt'));
 const SpendMonitor = lazy(() => import('./pages/SpendMonitor'));
 const EmailScanner = lazy(() => import('./pages/EmailScanner'));
+const EmailIntelligence = lazy(() => import('./pages/EmailIntelligence'));
 const PeerReview = lazy(() => import('./pages/PeerReview'));
 
 // Platform
@@ -197,6 +198,7 @@ function AppRoutes() {
         <Route path="/financial-health" element={<ConsentGate feature="financial_health"><FinancialHealthScore /></ConsentGate>} />
         <Route path="/incorporate" element={<ConsentGate feature="incorporation"><Incorporation /></ConsentGate>} />
         <Route path="/email-scanner" element={<EmailScanner />} />
+        <Route path="/email-intelligence" element={<EmailIntelligence />} />
         <Route path="/tax-agent" element={<TaxAgent />} />
         <Route path="/peer-review" element={<PeerReview />} />
         <Route path="/smart-tools" element={<SmartTools />} />

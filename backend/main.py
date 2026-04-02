@@ -23,6 +23,7 @@ from app.api.routes import (
     financial_health,
     incorporation,
     email_scanner,
+    email_intelligence,
     tax_agent,
     peer_review,
     smart_tools,
@@ -183,6 +184,7 @@ app.include_router(tax_filing.router, prefix="/api/v1")
 app.include_router(financial_health.router, prefix="/api/v1")
 app.include_router(incorporation.router, prefix="/api/v1")
 app.include_router(email_scanner.router, prefix="/api/v1")
+app.include_router(email_intelligence.router, prefix="/api/v1")
 app.include_router(tax_agent.router, prefix="/api/v1")
 app.include_router(peer_review.router, prefix="/api/v1")
 app.include_router(smart_tools.router, prefix="/api/v1")

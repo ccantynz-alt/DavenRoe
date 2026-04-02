@@ -92,8 +92,9 @@ const navSections = [
     ],
   },
   {
-    label: 'Documents',
+    label: 'Documents & Email',
     items: [
+      { path: '/email-intelligence', label: 'Email Intelligence' },
       { path: '/documents', label: 'Documents' },
       { path: '/email-scanner', label: 'Email Scanner' },
     ],
