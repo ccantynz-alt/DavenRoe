@@ -1,24 +1,18 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../services/api';
 
 const STEPS = [
-  { id: 'welcome', title: 'Welcome to AlecRae', subtitle: 'Let\'s set up your accounting in under 2 minutes' },
-  { id: 'entity', title: 'Create Your Business', subtitle: 'Tell us about your company' },
-  { id: 'bank', title: 'Connect Your Bank', subtitle: 'Automatic transaction import' },
-  { id: 'done', title: 'You\'re All Set', subtitle: 'Start working with AlecRae' },
-];
-
-const SAMPLE_ENTITIES = [
-  { name: 'Coastal Coffee Co', type: 'company', currency: 'AUD', jurisdiction: 'AU', tax_id_type: 'ABN', description: 'Cafe chain with 3 locations' },
-  { name: 'NorthStar Consulting LLC', type: 'company', currency: 'USD', jurisdiction: 'US', tax_id_type: 'EIN', description: 'Management consulting firm' },
-  { name: 'Kiwi Design Studio', type: 'sole_trader', currency: 'NZD', jurisdiction: 'NZ', tax_id_type: 'IRD', description: 'Freelance graphic designer' },
-  { name: 'Thames Legal Partners', type: 'partnership', currency: 'GBP', jurisdiction: 'GB', tax_id_type: 'UTR', description: 'UK law firm' },
+  { id: 'welcome', title: 'Welcome to AlecRae', subtitle: 'Set up your business in under 2 minutes' },
+  { id: 'entity', title: 'Your Business', subtitle: 'Tell us the basics' },
+  { id: 'connect', title: 'Connect Your Accounts', subtitle: 'Email, bank, or both' },
+  { id: 'done', title: 'You\'re Ready', subtitle: 'Start invoicing and getting paid' },
 ];
 
 export default function Onboarding({ onComplete }) {
   const [step, setStep] = useState(0);
   const [entityForm, setEntityForm] = useState({
-    name: '', legal_name: '', entity_type: 'company',
+    name: '', entity_type: 'sole_trader',
     primary_currency: 'AUD', tax_id: '', tax_id_type: 'ABN',
     jurisdiction: 'AU',
   });
@@ -29,12 +23,13 @@ export default function Onboarding({ onComplete }) {
   const currentStep = STEPS[step];
 
   const handleCreateEntity = async () => {
+    if (!entityForm.name.trim()) { setError('Enter your business name'); return; }
     setLoading(true);
     setError('');
     try {
       const res = await api.post('/entities/', {
         name: entityForm.name,
-        legal_name: entityForm.legal_name || entityForm.name,
+        legal_name: entityForm.name,
         entity_type: entityForm.entity_type,
         primary_currency: entityForm.primary_currency,
         tax_id: entityForm.tax_id || undefined,
@@ -49,26 +44,17 @@ export default function Onboarding({ onComplete }) {
       setCreatedEntity(res.data);
       setStep(2);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to create entity. Database may not be connected yet — you can skip this step.');
+      // If DB not connected, still let them proceed
+      setCreatedEntity({ name: entityForm.name });
+      setStep(2);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSampleData = async (sample) => {
-    setEntityForm({
-      name: sample.name,
-      legal_name: sample.name,
-      entity_type: sample.type,
-      primary_currency: sample.currency,
-      tax_id: '',
-      tax_id_type: sample.tax_id_type,
-      jurisdiction: sample.jurisdiction,
-    });
-  };
-
   const currencyByJurisdiction = { AU: 'AUD', US: 'USD', NZ: 'NZD', GB: 'GBP' };
   const taxIdByJurisdiction = { AU: 'ABN', US: 'EIN', NZ: 'IRD', GB: 'UTR' };
+  const taxIdLabel = { AU: 'ABN', US: 'EIN', NZ: 'IRD Number', GB: 'UTR' };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -77,188 +63,181 @@ export default function Onboarding({ onComplete }) {
         <div className="flex items-center justify-center gap-2 mb-8">
           {STEPS.map((s, i) => (
             <div key={s.id} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                i < step ? 'bg-green-500 text-white'
-                : i === step ? 'bg-indigo-600 text-white'
-                : 'bg-gray-200 text-gray-500'
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                i < step ? 'bg-emerald-500 text-white' : i === step ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-500'
               }`}>
-                {i < step ? '✓' : i + 1}
+                {i < step ? '\u2713' : i + 1}
               </div>
-              {i < STEPS.length - 1 && <div className={`w-12 h-0.5 ${i < step ? 'bg-green-500' : 'bg-gray-200'}`} />}
+              {i < STEPS.length - 1 && <div className={`w-12 h-0.5 ${i < step ? 'bg-emerald-500' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
 
         <div className="bg-white rounded-2xl border shadow-sm p-8">
-          <h2 className="text-2xl font-bold mb-1">{currentStep.title}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">{currentStep.title}</h2>
           <p className="text-gray-500 mb-8">{currentStep.subtitle}</p>
 
           {/* Step 0: Welcome */}
           {step === 0 && (
             <div>
+              <p className="text-gray-600 mb-6">
+                AlecRae handles your invoicing, expenses, tax, and bookkeeping — powered by AI.
+                Whether you're a one-person operation or running a team, everything's in one place.
+              </p>
+
               <div className="grid grid-cols-2 gap-4 mb-8">
-                <FeatureCard icon="$" title="Tax Engine" desc="US, AU, NZ, GB + 6 treaties" />
-                <FeatureCard icon=">" title="AI Ledger" desc="Auto-categorize & review" />
-                <FeatureCard icon="?" title="Ask AlecRae" desc="Natural language queries" />
-                <FeatureCard icon="!" title="Forensic Tools" desc="Anomaly detection & audit" />
+                <FeatureCard icon={<InvoiceIcon />} title="Invoice Customers" desc="Create and send invoices in seconds" />
+                <FeatureCard icon={<EmailIcon />} title="Email Intelligence" desc="AI finds invoices in your inbox" />
+                <FeatureCard icon={<BankIcon />} title="Bank Feeds" desc="Auto-import transactions" />
+                <FeatureCard icon={<BrainIcon />} title="Ask AlecRae" desc="Plain English financial answers" />
               </div>
 
               <div className="flex gap-3">
                 <button onClick={() => setStep(1)}
-                  className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-                  Set Up My Business
+                  className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
+                  Let's Go
                 </button>
                 <button onClick={() => onComplete()}
-                  className="px-6 py-3 bg-gray-100 text-gray-600 rounded-lg font-medium hover:bg-gray-200 transition-colors">
-                  Explore First
+                  className="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                  Skip Setup
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 1: Create Entity */}
+          {/* Step 1: Create Business */}
           {step === 1 && (
             <div>
-              {/* Sample data quick-start */}
-              <div className="mb-6">
-                <p className="text-sm font-medium text-gray-700 mb-2">Quick start with sample data:</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {SAMPLE_ENTITIES.map(s => (
-                    <button key={s.name} onClick={() => handleSampleData(s)}
-                      className={`text-left p-3 border rounded-lg text-sm hover:border-indigo-400 transition-colors ${
-                        entityForm.name === s.name ? 'border-indigo-500 bg-indigo-50' : ''
-                      }`}>
-                      <p className="font-medium">{s.name}</p>
-                      <p className="text-xs text-gray-400">{s.description}</p>
-                    </button>
-                  ))}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Business Name *</label>
+                  <input type="text" value={entityForm.name}
+                    onChange={e => setEntityForm(f => ({ ...f, name: e.target.value }))}
+                    className="w-full px-4 py-3 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="e.g. Dave's Transport, Smith Construction" autoFocus />
                 </div>
-              </div>
 
-              <div className="border-t pt-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
-                    <input type="text" value={entityForm.name}
-                      onChange={e => setEntityForm(f => ({ ...f, name: e.target.value }))}
-                      className="w-full px-3 py-2 border rounded-lg" placeholder="My Business Pty Ltd" required />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Entity Type</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Business Type</label>
                     <select value={entityForm.entity_type}
                       onChange={e => setEntityForm(f => ({ ...f, entity_type: e.target.value }))}
-                      className="w-full px-3 py-2 border rounded-lg">
-                      <option value="company">Company</option>
+                      className="w-full px-4 py-3 border rounded-xl text-sm bg-white">
                       <option value="sole_trader">Sole Trader</option>
+                      <option value="company">Company (Pty Ltd)</option>
                       <option value="partnership">Partnership</option>
                       <option value="trust">Trust</option>
                     </select>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Jurisdiction</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
                     <select value={entityForm.jurisdiction}
                       onChange={e => {
                         const j = e.target.value;
                         setEntityForm(f => ({
-                          ...f,
-                          jurisdiction: j,
+                          ...f, jurisdiction: j,
                           primary_currency: currencyByJurisdiction[j] || f.primary_currency,
                           tax_id_type: taxIdByJurisdiction[j] || f.tax_id_type,
                         }));
                       }}
-                      className="w-full px-3 py-2 border rounded-lg">
+                      className="w-full px-4 py-3 border rounded-xl text-sm bg-white">
                       <option value="AU">Australia</option>
-                      <option value="US">United States</option>
                       <option value="NZ">New Zealand</option>
                       <option value="GB">United Kingdom</option>
+                      <option value="US">United States</option>
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-                    <select value={entityForm.primary_currency}
-                      onChange={e => setEntityForm(f => ({ ...f, primary_currency: e.target.value }))}
-                      className="w-full px-3 py-2 border rounded-lg">
-                      {['AUD', 'USD', 'NZD', 'GBP', 'EUR', 'CAD'].map(c => <option key={c}>{c}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">{entityForm.tax_id_type || 'Tax ID'}</label>
-                    <input type="text" value={entityForm.tax_id}
-                      onChange={e => setEntityForm(f => ({ ...f, tax_id: e.target.value }))}
-                      className="w-full px-3 py-2 border rounded-lg" placeholder="Optional" />
-                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {taxIdLabel[entityForm.jurisdiction] || 'Tax ID'} (optional)
+                  </label>
+                  <input type="text" value={entityForm.tax_id}
+                    onChange={e => setEntityForm(f => ({ ...f, tax_id: e.target.value }))}
+                    className="w-full px-4 py-3 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="You can add this later" />
                 </div>
               </div>
 
               {error && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">{error}</div>
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">{error}</div>
               )}
 
               <div className="flex gap-3 mt-6">
                 <button onClick={() => setStep(0)}
-                  className="px-6 py-3 bg-gray-100 text-gray-600 rounded-lg font-medium hover:bg-gray-200">Back</button>
-                <button onClick={handleCreateEntity} disabled={loading || !entityForm.name}
-                  className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 disabled:opacity-50">
-                  {loading ? 'Creating...' : 'Create & Continue'}
+                  className="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200">Back</button>
+                <button onClick={handleCreateEntity} disabled={loading}
+                  className="flex-1 py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors">
+                  {loading ? 'Creating...' : 'Next'}
                 </button>
-                <button onClick={() => setStep(2)}
-                  className="px-6 py-3 text-gray-400 hover:text-gray-600 text-sm">Skip</button>
               </div>
             </div>
           )}
 
-          {/* Step 2: Connect Bank */}
+          {/* Step 2: Connect Email & Bank */}
           {step === 2 && (
             <div>
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <BankProviderCard name="Plaid" countries="US, CA" institutions="1,000+" />
-                <BankProviderCard name="Basiq" countries="AU, NZ" institutions="170+" />
-                <BankProviderCard name="TrueLayer" countries="UK, EU" institutions="5,000+" />
-              </div>
+              <p className="text-gray-600 mb-6">
+                Connect your email to let AI find invoices from your drivers and suppliers.
+                Or connect your bank for automatic transaction imports. You can do both.
+              </p>
 
-              <div className="bg-gray-50 border rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-600">
-                  Your bank credentials never touch our servers. Authentication happens
-                  directly between you and your bank via secure OAuth flows.
-                </p>
+              <div className="space-y-4 mb-6">
+                <ConnectOption
+                  icon={<EmailIcon />}
+                  title="Connect Gmail or Outlook"
+                  desc="AI scans your inbox for invoices, receipts, and bills — then helps you invoice your customers"
+                  action="Connect Email"
+                  color="indigo"
+                  href="/email-intelligence"
+                  onClick={() => { onComplete(); }}
+                />
+                <ConnectOption
+                  icon={<BankIcon />}
+                  title="Connect Your Bank"
+                  desc="Automatic transaction imports from 6,000+ banks via Plaid, Basiq, or TrueLayer"
+                  action="Connect Bank"
+                  color="emerald"
+                  href="/banking"
+                  onClick={() => { onComplete(); }}
+                />
               </div>
 
               <div className="flex gap-3">
+                <button onClick={() => setStep(1)}
+                  className="px-6 py-3 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200">Back</button>
                 <button onClick={() => setStep(3)}
-                  className="flex-1 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700">
-                  Connect Later (Dashboard)
+                  className="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                  I'll Do This Later
                 </button>
               </div>
-              <p className="text-center text-xs text-gray-400 mt-3">
-                You can connect bank accounts anytime from the Bank Feeds page.
-              </p>
             </div>
           )}
 
           {/* Step 3: Done */}
           {step === 3 && (
             <div className="text-center">
-              <div className="text-6xl mb-4">&#10003;</div>
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
               <p className="text-gray-600 mb-2">
-                {createdEntity
-                  ? `"${createdEntity.name}" is ready to go.`
-                  : 'Your workspace is ready.'}
+                {createdEntity ? `${createdEntity.name} is set up and ready.` : 'Your workspace is ready.'}
               </p>
               <p className="text-sm text-gray-400 mb-8">
-                Start by importing transactions, creating invoices, or asking AlecRae anything.
+                Here's what to do first:
               </p>
 
               <div className="grid grid-cols-3 gap-3 mb-8">
-                <QuickAction label="Import CSV" desc="Upload existing data" />
-                <QuickAction label="Create Invoice" desc="Send your first invoice" />
-                <QuickAction label="Ask AlecRae" desc="Ask anything in plain English" />
+                <QuickAction label="Scan Emails" desc="Find driver invoices" icon={<EmailIcon />} />
+                <QuickAction label="Create Invoice" desc="Bill a customer" icon={<InvoiceIcon />} />
+                <QuickAction label="Ask AlecRae" desc="Any question" icon={<BrainIcon />} />
               </div>
 
               <button onClick={() => onComplete()}
-                className="w-full py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+                className="w-full py-3 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition-colors">
                 Go to Dashboard
               </button>
             </div>
@@ -271,31 +250,55 @@ export default function Onboarding({ onComplete }) {
 
 function FeatureCard({ icon, title, desc }) {
   return (
-    <div className="bg-gray-50 rounded-lg p-4 flex items-center gap-3">
-      <span className="text-2xl font-mono text-indigo-500 w-8 text-center">{icon}</span>
+    <div className="bg-gray-50 rounded-xl p-4 flex items-center gap-3">
+      <div className="text-indigo-500">{icon}</div>
       <div>
-        <p className="font-medium text-sm">{title}</p>
+        <p className="font-medium text-sm text-gray-900">{title}</p>
         <p className="text-xs text-gray-400">{desc}</p>
       </div>
     </div>
   );
 }
 
-function BankProviderCard({ name, countries, institutions }) {
+function ConnectOption({ icon, title, desc, action, color, onClick }) {
+  const btnColor = color === 'emerald' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-indigo-600 hover:bg-indigo-700';
   return (
-    <div className="bg-white border rounded-lg p-4 text-center">
-      <p className="font-semibold mb-1">{name}</p>
-      <p className="text-xs text-gray-500">{countries}</p>
-      <p className="text-xs text-gray-400">{institutions} banks</p>
+    <div className="border-2 border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:border-gray-200 transition-colors">
+      <div className={`w-12 h-12 rounded-xl ${color === 'emerald' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'} flex items-center justify-center shrink-0`}>
+        {icon}
+      </div>
+      <div className="flex-1">
+        <p className="font-semibold text-gray-900 text-sm">{title}</p>
+        <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+      </div>
+      <button onClick={onClick}
+        className={`px-4 py-2 ${btnColor} text-white rounded-xl text-sm font-medium shrink-0 transition-colors`}>
+        {action}
+      </button>
     </div>
   );
 }
 
-function QuickAction({ label, desc }) {
+function QuickAction({ label, desc, icon }) {
   return (
-    <div className="bg-gray-50 rounded-lg p-3 text-center">
-      <p className="font-medium text-sm">{label}</p>
+    <div className="bg-gray-50 rounded-xl p-4 text-center">
+      <div className="text-indigo-500 flex justify-center mb-2">{icon}</div>
+      <p className="font-medium text-sm text-gray-900">{label}</p>
       <p className="text-xs text-gray-400">{desc}</p>
     </div>
   );
+}
+
+/* Mini icons */
+function InvoiceIcon() {
+  return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>;
+}
+function EmailIcon() {
+  return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>;
+}
+function BankIcon() {
+  return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" /></svg>;
+}
+function BrainIcon() {
+  return <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>;
 }

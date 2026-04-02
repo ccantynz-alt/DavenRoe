@@ -148,6 +148,14 @@ FINANCIAL_FILE_EXTENSIONS = {
     ".pdf", ".csv", ".xlsx", ".xls", ".png", ".jpg", ".jpeg",
 }
 
+# Amount extraction patterns
+AMOUNT_PATTERNS = [
+    re.compile(r"(?:total|amount\s*due|balance\s*due|grand\s*total)\s*[:=]?\s*\$\s*([\d,]+\.?\d*)", re.I),
+    re.compile(r"(?:total|amount\s*due|balance\s*due)\s*[:=]?\s*([\d,]+\.\d{2})\b", re.I),
+    re.compile(r"\$\s*([\d,]+\.\d{2})\b"),
+    re.compile(r"(?:AUD|NZD|USD|GBP)\s*([\d,]+\.\d{2})\b", re.I),
+]
+
 
 # ── Gmail API Helpers ──────────────────────────────────────────
 
@@ -423,6 +431,27 @@ class EmailClassifier:
             "signals": signals,
         }
 
+    def extract_amount(self, email_data: dict) -> float:
+        """Extract the most likely dollar amount from email content."""
+        text = " ".join([
+            email_data.get("subject", ""),
+            email_data.get("body_preview", ""),
+        ])
+
+        amounts = []
+        for pattern in AMOUNT_PATTERNS:
+            for match in pattern.finditer(text):
+                try:
+                    amount_str = match.group(1).replace(",", "")
+                    amount = float(amount_str)
+                    if 0.01 <= amount <= 1_000_000:  # Reasonable invoice range
+                        amounts.append(amount)
+                except (ValueError, IndexError):
+                    continue
+
+        # Return the largest amount found (most likely to be the total)
+        return max(amounts) if amounts else 0.0
+
 
 # ── Scan Job ──────────────────────────────────────────────────
 
@@ -574,6 +603,7 @@ class EmailScannerEngine:
                             for a in email_data.get("attachments", [])
                         ],
                         "classification": classification,
+                        "extracted_amount": self.classifier.extract_amount(email_data),
                         "imported": False,
                     })
                     job.total_matched += 1
@@ -629,6 +659,7 @@ class EmailScannerEngine:
                     "attachment_count": 0,
                     "attachments": [],
                     "classification": classification,
+                    "extracted_amount": self.classifier.extract_amount(email_data),
                     "imported": False,
                 })
                 job.total_matched += 1
