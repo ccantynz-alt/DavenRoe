@@ -85,6 +85,33 @@ async def get_dashboard_stats(user: User = Depends(get_current_user), db: AsyncS
     )
     total_revenue = float(revenue_result.scalar() or 0)
 
+    # Bills owed (payable direction — what you owe suppliers/drivers)
+    bills_owed_result = await db.execute(
+        select(func.coalesce(func.sum(Invoice.total - Invoice.amount_paid), 0)).where(
+            Invoice.direction == "payable",
+            Invoice.status.in_(["sent", "partially_paid", "overdue"]),
+        )
+    )
+    bills_owed = float(bills_owed_result.scalar() or 0)
+
+    # Overdue bills
+    overdue_bills_result = await db.execute(
+        select(func.count(Invoice.id)).where(
+            Invoice.direction == "payable",
+            Invoice.status == "overdue",
+        )
+    )
+    overdue_bills = overdue_bills_result.scalar() or 0
+
+    # Receivable outstanding (what customers owe you)
+    receivable_result = await db.execute(
+        select(func.coalesce(func.sum(Invoice.total - Invoice.amount_paid), 0)).where(
+            Invoice.direction == "receivable",
+            Invoice.status.in_(["sent", "partially_paid", "overdue"]),
+        )
+    )
+    receivable_outstanding = float(receivable_result.scalar() or 0)
+
     return {
         "pending_review": pending_review,
         "risk_alerts": risk_alerts,
@@ -94,5 +121,8 @@ async def get_dashboard_stats(user: User = Depends(get_current_user), db: AsyncS
         "outstanding_amount": outstanding_amount,
         "overdue_invoices": overdue_count,
         "total_revenue": total_revenue,
+        "bills_owed": bills_owed,
+        "overdue_bills": overdue_bills,
+        "receivable_outstanding": receivable_outstanding,
         "jurisdictions": 4,  # US, AU, NZ, GB — always 4
     }

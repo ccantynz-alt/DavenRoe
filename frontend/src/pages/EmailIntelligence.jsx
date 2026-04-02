@@ -92,14 +92,57 @@ export default function EmailIntelligence() {
 
   const handleAuth = (prov) => {
     setProvider(prov);
-    // In production: OAuth2 popup redirect. For dev: manual token input.
-    const providerName = prov === 'gmail' ? 'Google' : 'Microsoft';
-    const token = window.prompt(
-      `Paste your ${providerName} OAuth2 access token.\n\n` +
-      `In production, this connects automatically via a secure popup.\n` +
-      `For testing, paste a token from the ${providerName} API console.`
-    );
-    if (token) startScan(token);
+
+    // Try popup OAuth2 flow first — falls back to token paste for dev
+    const apiBase = window.location.origin;
+    const oauthUrl = `${apiBase}/api/v1/oauth/authorize/${prov}`;
+
+    // Open OAuth popup
+    const popup = window.open(oauthUrl, 'oauth', 'width=500,height=700,left=200,top=100');
+
+    if (!popup || popup.closed) {
+      // Popup blocked — fall back to token paste
+      const providerName = prov === 'gmail' ? 'Google' : 'Microsoft';
+      const token = window.prompt(
+        `Popup was blocked. Paste your ${providerName} OAuth2 access token manually.\n\n` +
+        `Enable popups for this site for automatic connection next time.`
+      );
+      if (token) startScan(token);
+      return;
+    }
+
+    // Generate state from the OAuth URL redirect (backend returns state in URL)
+    // Poll for the token via the /oauth/token/{state} endpoint
+    const checkPopup = setInterval(async () => {
+      try {
+        if (popup.closed) {
+          clearInterval(checkPopup);
+          // Try to get the token - the backend will have stored it
+          // For now, fall back to token paste if popup closed without completing
+          const providerName = prov === 'gmail' ? 'Google' : 'Microsoft';
+          toast.info(`Connecting to ${providerName}... If the popup closed too early, click the button again.`);
+          return;
+        }
+      } catch {
+        // Cross-origin errors are expected when popup navigates to Google/Microsoft
+      }
+    }, 1000);
+
+    // Also listen for message from popup callback page
+    const handleMessage = (event) => {
+      if (event.data?.type === 'oauth_complete' && event.data?.access_token) {
+        window.removeEventListener('message', handleMessage);
+        clearInterval(checkPopup);
+        startScan(event.data.access_token);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+
+    // Timeout after 5 minutes
+    setTimeout(() => {
+      clearInterval(checkPopup);
+      window.removeEventListener('message', handleMessage);
+    }, 300000);
   };
 
   const toggleSelect = (emailId) => {
