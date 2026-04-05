@@ -1,4 +1,39 @@
-# Ledger.AI (Astra) - Development Standards
+# AlecRae Accounting - Development Standards
+
+## AGGRESSIVE DOMINANCE MANDATE (Non-Negotiable — Founder Directive, April 2026)
+
+> **We are AGGRESSIVE. We WILL be the best. There is no second place.**
+>
+> Technology moves so fast — if you stop to smell the roses, you'll be second, third, fourth, fifth place.
+> We are living in the age of AI. We need to be INSANELY ADVANCED.
+>
+> This system must serve TWO user types equally well:
+> - **"Charlie Brown" (Novice)** — The small business owner who's never touched accounting software. Everything must be intuitive, guided, and forgiving. Smart defaults, plain-English explanations, wizards that hold their hand.
+> - **"007" (Expert)** — The accountant, tax agent, forensic specialist. Power features, keyboard shortcuts, bulk operations, deep configuration, advanced reporting. Every tool they need, zero friction.
+>
+> The UI/UX must feel like a **$100K build**. Not $10K. Not $50K. One hundred thousand dollars of polish, animation, interaction design, and visual hierarchy. Every screen must make competitors' products look dated.
+>
+> ### Non-Negotiable Design Principles:
+> 1. **NO raw HTML** — Every interactive element uses Radix UI primitives with Tailwind styling
+> 2. **NO lazy software** — Every feature is fully implemented, not stubbed
+> 3. **NO generic SaaS look** — Custom design language that screams premium
+> 4. **Fully automated** — When we apply for API access with IRD, ATO, HMRC, or IRS, the software must be so polished they approve on sight
+> 5. **We adapt for OURSELVES** — No moonwalking. No copying. We set the standard.
+> 6. **AI-native everything** — Every workflow should leverage AI where it reduces friction
+> 7. **Motion & micro-interactions** — Framer Motion on every transition. Nothing should feel static.
+> 8. **Glass morphism + depth** — Modern visual language with layering, blur, and subtle gradients
+> 9. **Dark mode first** — The app UI is dark-themed by default (dashboard, all pages). Landing page can use light sections for contrast.
+> 10. **Scan the entire internet** for the most aggressive, best architecture, components, and design patterns before building anything new
+>
+> ### Why This Matters:
+> We are building software that tax authorities will grant API access to.
+> We are building software that accountants will stake their practice on.
+> We are building software that will make Xero, QuickBooks, MYOB, Sage, and FreshBooks look like they're from 2015.
+> There is NO second place. Either we are the best, or we are irrelevant.
+>
+> **Come back to these notes before EVERY future work session. This is the DNA of the product.**
+
+---
 
 ## Autonomous Development Directive (Non-Negotiable)
 
