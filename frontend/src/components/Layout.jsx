@@ -85,6 +85,7 @@ const navSections = [
       { path: '/ask', label: 'Ask AlecRae' },
       { path: '/agentic', label: 'AI Agents' },
       { path: '/ai-insights', label: 'AI Insights' },
+      { path: '/alerts', label: 'AI Alerts' },
       { path: '/forensic-tools', label: 'Forensic Tools' },
       { path: '/smart-tools', label: 'Smart Tools' },
       { path: '/specialists', label: 'Specialist Tools' },

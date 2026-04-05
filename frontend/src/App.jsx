@@ -39,6 +39,7 @@ const AskAlecRae = lazy(() => import('./pages/AskAlecRae'));
 const AgenticDashboard = lazy(() => import('./pages/AgenticDashboard'));
 const AIInsights = lazy(() => import('./pages/AIInsights'));
 const FinancialHealthScore = lazy(() => import('./pages/FinancialHealthScore'));
+const AIAlerts = lazy(() => import('./pages/AIAlerts'));
 const ForensicTools = lazy(() => import('./pages/ForensicTools'));
 
 // Operations
@@ -194,6 +195,7 @@ function AppRoutes() {
         <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/ai-insights" element={<AIInsights />} />
+        <Route path="/alerts" element={<AIAlerts />} />
         <Route path="/financial-health" element={<ConsentGate feature="financial_health"><FinancialHealthScore /></ConsentGate>} />
         <Route path="/incorporate" element={<ConsentGate feature="incorporation"><Incorporation /></ConsentGate>} />
         <Route path="/email-scanner" element={<EmailScanner />} />
