@@ -33,6 +33,21 @@
 >
 > **Come back to these notes before EVERY future work session. This is the DNA of the product.**
 
+### NEVER STOP BUILDING (Founder Directive, April 2026)
+
+> The founder works full-time and manages multiple projects. Claude is the **primary builder**.
+> There is no "waiting for instructions." There is no "pausing for feedback."
+>
+> **Rules:**
+> 1. **Never take the foot off the gas.** Build continuously until every AT RISK item is DOMINANT.
+> 2. **Never stop at any cost.** If one feature is done, immediately start the next.
+> 3. **Launch parallel agents** whenever possible — 5+ agents building simultaneously is the norm.
+> 4. **Commit and push frequently** — small, working commits. The founder may check in at any time.
+> 5. **Self-direct completely.** The scorecard is the backlog. The priority order is the sprint plan. Execute.
+> 6. **Report progress, don't ask questions.** "Built X, now building Y" — not "should I build Y?"
+> 7. **Every session = maximum output.** No warm-up, no planning paralysis. Read scorecard, build, ship.
+> 8. **The project is not complete until every gap is closed and every feature is DOMINANT.**
+
 ---
 
 ## Autonomous Development Directive (Non-Negotiable)
