@@ -74,6 +74,7 @@ const ClientComms = lazy(() => import('./pages/ClientComms'));
 const AuditPack = lazy(() => import('./pages/AuditPack'));
 const WipTracker = lazy(() => import('./pages/WipTracker'));
 const YearEndWizard = lazy(() => import('./pages/YearEndWizard'));
+const ExpensePolicy = lazy(() => import('./pages/ExpensePolicy'));
 
 // Platform
 const Enterprise = lazy(() => import('./pages/Enterprise'));
@@ -219,6 +220,7 @@ function AppRoutes() {
         <Route path="/audit-pack" element={<AuditPack />} />
         <Route path="/wip" element={<WipTracker />} />
         <Route path="/year-end" element={<YearEndWizard />} />
+        <Route path="/expense-policy" element={<ExpensePolicy />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/recurring" element={<RecurringTransactions />} />
         <Route path="/purchase-orders" element={<PurchaseOrders />} />

@@ -32,6 +32,7 @@ const navSections = [
       { path: '/purchase-orders', label: 'Purchase Orders' },
       { path: '/live-receipt', label: 'Live Receipt' },
       { path: '/spend-monitor', label: 'Spend Monitor' },
+      { path: '/expense-policy', label: 'Expense Policy' },
     ],
   },
   {
