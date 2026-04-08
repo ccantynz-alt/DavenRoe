@@ -70,6 +70,7 @@ const SpendMonitor = lazy(() => import('./pages/SpendMonitor'));
 const EmailScanner = lazy(() => import('./pages/EmailScanner'));
 const PeerReview = lazy(() => import('./pages/PeerReview'));
 const BankRules = lazy(() => import('./pages/BankRules'));
+const ClientComms = lazy(() => import('./pages/ClientComms'));
 
 // Platform
 const Enterprise = lazy(() => import('./pages/Enterprise'));
@@ -211,6 +212,7 @@ function AppRoutes() {
         <Route path="/journal-entries" element={<JournalEntries />} />
         <Route path="/bank-reconciliation" element={<BankReconciliation />} />
         <Route path="/bank-rules" element={<BankRules />} />
+        <Route path="/client-comms" element={<ClientComms />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/recurring" element={<RecurringTransactions />} />
         <Route path="/purchase-orders" element={<PurchaseOrders />} />

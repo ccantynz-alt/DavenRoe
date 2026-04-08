@@ -18,6 +18,7 @@ const navSections = [
     label: 'Sales',
     items: [
       { path: '/clients', label: 'Clients' },
+      { path: '/client-comms', label: 'Comms Log' },
       { path: '/quotes', label: 'Quotes' },
       { path: '/invoicing', label: 'Invoicing' },
       { path: '/credit-notes', label: 'Credit Notes' },

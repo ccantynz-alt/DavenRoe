@@ -45,6 +45,7 @@ from app.api.routes import (
     projects,
     scenarios,
     bank_rules,
+    client_comms,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -206,6 +207,7 @@ app.include_router(support.router, prefix="/api/v1")
 app.include_router(projects.router, prefix="/api/v1")
 app.include_router(scenarios.router, prefix="/api/v1")
 app.include_router(bank_rules.router, prefix="/api/v1")
+app.include_router(client_comms.router, prefix="/api/v1")
 
 
 @app.get("/")
