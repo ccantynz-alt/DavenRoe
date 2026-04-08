@@ -1,4 +1,4 @@
-# Astra AI Accounting Platform
+# Marco Reid AI Accounting Platform
 # Public pages — allow search engines to index
 
 # Google (primary target)
@@ -140,4 +140,4 @@ Disallow: /agentic
 Disallow: /projects
 Disallow: /scenarios
 
-Sitemap: https://astra.ai/sitemap.xml
+Sitemap: https://marcoreid.ai/sitemap.xml
