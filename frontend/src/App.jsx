@@ -72,6 +72,7 @@ const PeerReview = lazy(() => import('./pages/PeerReview'));
 const BankRules = lazy(() => import('./pages/BankRules'));
 const ClientComms = lazy(() => import('./pages/ClientComms'));
 const AuditPack = lazy(() => import('./pages/AuditPack'));
+const WipTracker = lazy(() => import('./pages/WipTracker'));
 
 // Platform
 const Enterprise = lazy(() => import('./pages/Enterprise'));
@@ -215,6 +216,7 @@ function AppRoutes() {
         <Route path="/bank-rules" element={<BankRules />} />
         <Route path="/client-comms" element={<ClientComms />} />
         <Route path="/audit-pack" element={<AuditPack />} />
+        <Route path="/wip" element={<WipTracker />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/recurring" element={<RecurringTransactions />} />
         <Route path="/purchase-orders" element={<PurchaseOrders />} />

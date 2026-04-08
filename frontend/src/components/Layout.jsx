@@ -60,6 +60,7 @@ const navSections = [
     items: [
       { path: '/payroll', label: 'Payroll' },
       { path: '/time-tracker', label: 'Time Tracker' },
+      { path: '/wip', label: 'WIP Tracker' },
     ],
   },
   {
