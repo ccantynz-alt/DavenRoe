@@ -71,6 +71,7 @@ const EmailScanner = lazy(() => import('./pages/EmailScanner'));
 const PeerReview = lazy(() => import('./pages/PeerReview'));
 const BankRules = lazy(() => import('./pages/BankRules'));
 const ClientComms = lazy(() => import('./pages/ClientComms'));
+const AuditPack = lazy(() => import('./pages/AuditPack'));
 
 // Platform
 const Enterprise = lazy(() => import('./pages/Enterprise'));
@@ -213,6 +214,7 @@ function AppRoutes() {
         <Route path="/bank-reconciliation" element={<BankReconciliation />} />
         <Route path="/bank-rules" element={<BankRules />} />
         <Route path="/client-comms" element={<ClientComms />} />
+        <Route path="/audit-pack" element={<AuditPack />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/recurring" element={<RecurringTransactions />} />
         <Route path="/purchase-orders" element={<PurchaseOrders />} />

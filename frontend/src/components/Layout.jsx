@@ -79,6 +79,7 @@ const navSections = [
       { path: '/reports', label: 'Reports' },
       { path: '/projects', label: 'Projects' },
       { path: '/scenarios', label: 'Scenario Planning' },
+      { path: '/audit-pack', label: 'Audit Pack' },
     ],
   },
   {
