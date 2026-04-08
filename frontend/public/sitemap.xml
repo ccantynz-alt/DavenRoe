@@ -3,56 +3,56 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <!-- Homepage — highest priority -->
   <url>
-    <loc>https://astra.ai/</loc>
+    <loc>https://marcoreid.ai/</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en-AU" href="https://astra.ai/?region=au" />
-    <xhtml:link rel="alternate" hreflang="en-NZ" href="https://astra.ai/?region=nz" />
-    <xhtml:link rel="alternate" hreflang="en-GB" href="https://astra.ai/?region=uk" />
-    <xhtml:link rel="alternate" hreflang="en-US" href="https://astra.ai/?region=us" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://astra.ai/" />
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://marcoreid.ai/?region=au" />
+    <xhtml:link rel="alternate" hreflang="en-NZ" href="https://marcoreid.ai/?region=nz" />
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://marcoreid.ai/?region=uk" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://marcoreid.ai/?region=us" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://marcoreid.ai/" />
   </url>
 
   <!-- Public feature/info pages -->
   <url>
-    <loc>https://astra.ai/about</loc>
+    <loc>https://marcoreid.ai/about</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://astra.ai/security</loc>
+    <loc>https://marcoreid.ai/security</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://astra.ai/contact</loc>
+    <loc>https://marcoreid.ai/contact</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://astra.ai/help</loc>
+    <loc>https://marcoreid.ai/help</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://astra.ai/partners</loc>
+    <loc>https://marcoreid.ai/partners</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://astra.ai/case-studies</loc>
+    <loc>https://marcoreid.ai/case-studies</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://astra.ai/marketplace</loc>
+    <loc>https://marcoreid.ai/marketplace</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -60,31 +60,31 @@
 
   <!-- Legal pages -->
   <url>
-    <loc>https://astra.ai/privacy</loc>
+    <loc>https://marcoreid.ai/privacy</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://astra.ai/terms</loc>
+    <loc>https://marcoreid.ai/terms</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://astra.ai/ai-disclosure</loc>
+    <loc>https://marcoreid.ai/ai-disclosure</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://astra.ai/acceptable-use</loc>
+    <loc>https://marcoreid.ai/acceptable-use</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://astra.ai/cookies</loc>
+    <loc>https://marcoreid.ai/cookies</loc>
     <lastmod>2026-03-29</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>

@@ -1,21 +1,21 @@
 @import "tailwindcss";
 
 /* ============================================================
-   ASTRA DESIGN SYSTEM — Tailwind v4 CSS-first configuration
+   MARCO REID DESIGN SYSTEM — Tailwind v4 CSS-first configuration
    ============================================================ */
 
 @theme {
-  /* Astra brand colors */
-  --color-astra-50: #f0f4ff;
-  --color-astra-100: #dbe4ff;
-  --color-astra-200: #bac8ff;
-  --color-astra-300: #91a7ff;
-  --color-astra-400: #748ffc;
-  --color-astra-500: #5c7cfa;
-  --color-astra-600: #4c6ef5;
-  --color-astra-700: #4263eb;
-  --color-astra-800: #3b5bdb;
-  --color-astra-900: #364fc7;
+  /* Marco Reid brand colors */
+  --color-marcoReid-50: #f0f4ff;
+  --color-marcoReid-100: #dbe4ff;
+  --color-marcoReid-200: #bac8ff;
+  --color-marcoReid-300: #91a7ff;
+  --color-marcoReid-400: #748ffc;
+  --color-marcoReid-500: #5c7cfa;
+  --color-marcoReid-600: #4c6ef5;
+  --color-marcoReid-700: #4263eb;
+  --color-marcoReid-800: #3b5bdb;
+  --color-marcoReid-900: #364fc7;
 
   /* Semantic radius tokens */
   --radius-sm: 0.25rem;
