@@ -48,6 +48,7 @@ from app.api.routes import (
     client_comms,
     audit_pack,
     wip_tracker,
+    year_end,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -212,6 +213,7 @@ app.include_router(bank_rules.router, prefix="/api/v1")
 app.include_router(client_comms.router, prefix="/api/v1")
 app.include_router(audit_pack.router, prefix="/api/v1")
 app.include_router(wip_tracker.router, prefix="/api/v1")
+app.include_router(year_end.router, prefix="/api/v1")
 
 
 @app.get("/")

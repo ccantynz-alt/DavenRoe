@@ -53,6 +53,7 @@ const navSections = [
       { path: '/fixed-assets', label: 'Fixed Assets' },
       { path: '/inventory', label: 'Inventory' },
       { path: '/budgets', label: 'Budgets' },
+      { path: '/year-end', label: 'Year-End Close' },
     ],
   },
   {
