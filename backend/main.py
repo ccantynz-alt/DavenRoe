@@ -51,6 +51,9 @@ from app.api.routes import (
     year_end,
     expense_policy,
     batch_ops,
+    receipt_matching,
+    fx_revaluation,
+    deadline_countdown,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -218,6 +221,9 @@ app.include_router(wip_tracker.router, prefix="/api/v1")
 app.include_router(year_end.router, prefix="/api/v1")
 app.include_router(expense_policy.router, prefix="/api/v1")
 app.include_router(batch_ops.router, prefix="/api/v1")
+app.include_router(receipt_matching.router, prefix="/api/v1")
+app.include_router(fx_revaluation.router, prefix="/api/v1")
+app.include_router(deadline_countdown.router, prefix="/api/v1")
 
 
 @app.get("/")

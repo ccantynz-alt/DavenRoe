@@ -76,6 +76,9 @@ const WipTracker = lazy(() => import('./pages/WipTracker'));
 const YearEndWizard = lazy(() => import('./pages/YearEndWizard'));
 const ExpensePolicy = lazy(() => import('./pages/ExpensePolicy'));
 const BatchOps = lazy(() => import('./pages/BatchOps'));
+const ReceiptMatching = lazy(() => import('./pages/ReceiptMatching'));
+const FxRevaluation = lazy(() => import('./pages/FxRevaluation'));
+const DeadlineCountdown = lazy(() => import('./pages/DeadlineCountdown'));
 
 // Platform
 const Enterprise = lazy(() => import('./pages/Enterprise'));
@@ -223,6 +226,9 @@ function AppRoutes() {
         <Route path="/year-end" element={<YearEndWizard />} />
         <Route path="/expense-policy" element={<ExpensePolicy />} />
         <Route path="/batch" element={<BatchOps />} />
+        <Route path="/receipt-matching" element={<ReceiptMatching />} />
+        <Route path="/fx-revaluation" element={<FxRevaluation />} />
+        <Route path="/deadlines" element={<DeadlineCountdown />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/recurring" element={<RecurringTransactions />} />
         <Route path="/purchase-orders" element={<PurchaseOrders />} />

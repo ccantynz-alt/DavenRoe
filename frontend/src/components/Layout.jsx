@@ -41,6 +41,7 @@ const navSections = [
       { path: '/banking', label: 'Bank Feeds' },
       { path: '/bank-reconciliation', label: 'Reconciliation' },
       { path: '/bank-rules', label: 'Auto Rules' },
+      { path: '/fx-revaluation', label: 'FX Revaluation' },
       { path: '/recurring', label: 'Recurring' },
     ],
   },
@@ -74,6 +75,7 @@ const navSections = [
       { path: '/tax-advisor', label: 'Tax Advisor Toolkit' },
       { path: '/tax-agent', label: 'Tax Agent' },
       { path: '/compliance', label: 'Compliance Calendar' },
+      { path: '/deadlines', label: 'Deadline Countdown' },
     ],
   },
   {
@@ -101,6 +103,7 @@ const navSections = [
     label: 'Documents',
     items: [
       { path: '/documents', label: 'Documents' },
+      { path: '/receipt-matching', label: 'Receipt Matching' },
       { path: '/email-scanner', label: 'Email Scanner' },
     ],
   },
