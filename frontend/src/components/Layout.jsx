@@ -120,6 +120,7 @@ const navSections = [
   {
     label: 'Admin',
     items: [
+      { path: '/batch', label: 'Batch Operations' },
       { path: '/admin', label: 'Command Center' },
       { path: '/activity', label: 'Activity Feed' },
       { path: '/billing', label: 'Billing' },

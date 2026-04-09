@@ -50,6 +50,7 @@ from app.api.routes import (
     wip_tracker,
     year_end,
     expense_policy,
+    batch_ops,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -216,6 +217,7 @@ app.include_router(audit_pack.router, prefix="/api/v1")
 app.include_router(wip_tracker.router, prefix="/api/v1")
 app.include_router(year_end.router, prefix="/api/v1")
 app.include_router(expense_policy.router, prefix="/api/v1")
+app.include_router(batch_ops.router, prefix="/api/v1")
 
 
 @app.get("/")
