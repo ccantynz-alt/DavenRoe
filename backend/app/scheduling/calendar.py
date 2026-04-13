@@ -167,7 +167,7 @@ class CalendarInvite:
 
         ics = f"""BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//AlecRae Accounting//Calendar//EN
+PRODID:-//DavenRoe Accounting//Calendar//EN
 METHOD:REQUEST
 BEGIN:VEVENT
 UID:{uid}

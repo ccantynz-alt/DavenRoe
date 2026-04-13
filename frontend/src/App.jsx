@@ -35,7 +35,7 @@ const TaxRulingsAgent = lazy(() => import('./pages/TaxRulingsAgent'));
 const TaxAdvisorToolkit = lazy(() => import('./pages/TaxAdvisor'));
 
 // AI & intelligence
-const AskAlecRae = lazy(() => import('./pages/AskAlecRae'));
+const AskDavenRoe = lazy(() => import('./pages/AskDavenRoe'));
 const AgenticDashboard = lazy(() => import('./pages/AgenticDashboard'));
 const AIInsights = lazy(() => import('./pages/AIInsights'));
 const FinancialHealthScore = lazy(() => import('./pages/FinancialHealthScore'));
@@ -112,7 +112,7 @@ function PageLoader() {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('alecrae_onboarded') === 'true');
+  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('davenroe_onboarded') === 'true');
   const [showLogin, setShowLogin] = useState(false);
   const [publicPage, setPublicPage] = useState(null);
 
@@ -123,7 +123,7 @@ function AppRoutes() {
           <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
             A
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">AlecRae</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">DavenRoe</h1>
           <p className="text-gray-500">Initializing...</p>
         </div>
       </div>
@@ -163,7 +163,7 @@ function AppRoutes() {
   if (!onboarded) {
     return (
       <Onboarding onComplete={() => {
-        localStorage.setItem('alecrae_onboarded', 'true');
+        localStorage.setItem('davenroe_onboarded', 'true');
         setOnboarded(true);
       }} />
     );
@@ -184,7 +184,7 @@ function AppRoutes() {
         <Route path="/portal" element={<ClientPortal />} />
         <Route path="/specialists" element={<Specialists />} />
         <Route path="/toolkit" element={<Toolkit />} />
-        <Route path="/ask" element={<AskAlecRae />} />
+        <Route path="/ask" element={<AskDavenRoe />} />
         <Route path="/agentic" element={<AgenticDashboard />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/integrations" element={<Integrations />} />

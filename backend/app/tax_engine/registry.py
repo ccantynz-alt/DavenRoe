@@ -1,4 +1,4 @@
-"""Tax Jurisdiction Registry — the deterministic heart of AlecRae.
+"""Tax Jurisdiction Registry — the deterministic heart of DavenRoe.
 
 This is NOT AI-driven. Tax law is hard-coded and versioned.
 Every rate has an effective date range and legislation reference.

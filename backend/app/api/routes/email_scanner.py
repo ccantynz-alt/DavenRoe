@@ -161,7 +161,7 @@ async def import_results(
     req: ImportResultsRequest,
     user: User = Depends(get_current_user),
 ):
-    """Import selected email results as documents in AlecRae."""
+    """Import selected email results as documents in DavenRoe."""
     job = engine.get_scan(scan_id)
     if not job:
         raise HTTPException(status_code=404, detail="Scan not found")

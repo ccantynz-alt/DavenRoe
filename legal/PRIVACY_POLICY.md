@@ -1,27 +1,27 @@
-# AlecRae — Privacy Policy
+# DavenRoe — Privacy Policy
 
 **Last Updated: March 2026** | **Version: 2026.03.3**
 
 ## 1. Who We Are
 
-AlecRae is operated by a New Zealand entity. We provide an AI-assisted accounting software tool to users in New Zealand, Australia, the United Kingdom, the European Union, the United States, and Canada.
+DavenRoe is operated by a New Zealand entity. We provide an AI-assisted accounting software tool to users in New Zealand, Australia, the United Kingdom, the European Union, the United States, and Canada.
 
-**Data Controller / Privacy Contact:** privacy@alecrae.com
+**Data Controller / Privacy Contact:** privacy@davenroe.com
 
 ## 2. Data We Collect
 
 | Data Type | Purpose | Stored Where | Retention |
 |-----------|---------|-------------|-----------|
-| Account info (name, email, IP address) | User authentication, security | AlecRae database | Until account deletion |
-| Business entity data | Accounting operations | AlecRae database | Until account deletion |
-| Bank feed transactions | Automated bookkeeping | AlecRae database | 7 years (regulatory) |
-| Invoices and documents | Record keeping | AlecRae database | 7 years (regulatory) |
-| Payroll data (employee records, pay) | Payroll processing | AlecRae database | 7 years (regulatory) |
-| Tax filing data | Tax return preparation | AlecRae database | 7 years (regulatory) |
-| Expense/receipt data | Expense management | AlecRae database | 7 years (regulatory) |
-| AI interaction logs | Service improvement, audit | AlecRae database | 90 days |
-| Usage analytics (pages visited, features used) | Product improvement | AlecRae database | 12 months |
-| Consent records (acceptance timestamps, IPs) | Legal compliance | AlecRae database | Duration of account + 7 years |
+| Account info (name, email, IP address) | User authentication, security | DavenRoe database | Until account deletion |
+| Business entity data | Accounting operations | DavenRoe database | Until account deletion |
+| Bank feed transactions | Automated bookkeeping | DavenRoe database | 7 years (regulatory) |
+| Invoices and documents | Record keeping | DavenRoe database | 7 years (regulatory) |
+| Payroll data (employee records, pay) | Payroll processing | DavenRoe database | 7 years (regulatory) |
+| Tax filing data | Tax return preparation | DavenRoe database | 7 years (regulatory) |
+| Expense/receipt data | Expense management | DavenRoe database | 7 years (regulatory) |
+| AI interaction logs | Service improvement, audit | DavenRoe database | 90 days |
+| Usage analytics (pages visited, features used) | Product improvement | DavenRoe database | 12 months |
+| Consent records (acceptance timestamps, IPs) | Legal compliance | DavenRoe database | Duration of account + 7 years |
 
 ## 3. Third-Party Data Processors
 
@@ -69,9 +69,9 @@ If you are a California resident, you have the following additional rights under
 
 **Right to Correct:** You may request correction of inaccurate personal information.
 
-**Right to Opt-Out of Sale/Sharing:** AlecRae does **not** sell or share your personal information as defined under the CCPA/CPRA. There is nothing to opt out of. We do not and will not sell your data.
+**Right to Opt-Out of Sale/Sharing:** DavenRoe does **not** sell or share your personal information as defined under the CCPA/CPRA. There is nothing to opt out of. We do not and will not sell your data.
 
-**Right to Limit Use of Sensitive Personal Information:** AlecRae uses sensitive personal information (financial data, Social Security numbers if provided for payroll, bank account numbers) only for the purposes of providing the accounting service you requested. We do not use sensitive PI for advertising, profiling, or any secondary purpose. You may request limitation at any time.
+**Right to Limit Use of Sensitive Personal Information:** DavenRoe uses sensitive personal information (financial data, Social Security numbers if provided for payroll, bank account numbers) only for the purposes of providing the accounting service you requested. We do not use sensitive PI for advertising, profiling, or any secondary purpose. You may request limitation at any time.
 
 **Right to Non-Discrimination:** We will not discriminate against you for exercising any CCPA/CPRA rights (e.g., by charging different prices, providing different quality, or denying service).
 
@@ -88,7 +88,7 @@ If you are a California resident, you have the following additional rights under
 | G. Inferences (AI categorizations, health score) | Yes | Provide accounting service | No |
 | H. Sensitive PI (SSN, bank accounts) | If provided | Payroll processing, bank feeds | No |
 
-**Verification:** To exercise rights, email privacy@alecrae.com from your registered email address. We will verify your identity using your account credentials. Authorised agents must provide written authorisation.
+**Verification:** To exercise rights, email privacy@davenroe.com from your registered email address. We will verify your identity using your account credentials. Authorised agents must provide written authorisation.
 
 **Response Time:** We will respond to verifiable requests within 45 days. We may extend by an additional 45 days if necessary, with notice.
 
@@ -96,7 +96,7 @@ If you are a California resident, you have the following additional rights under
 
 ### 5.3 Virginia, Colorado, Connecticut, Utah, Texas, Oregon, Montana, and Other US State Privacy Laws
 
-If you reside in a US state with a comprehensive privacy law (VCDPA, CPA, CTDPA, UCPA, TDPSA, OCPA, MCDPA, etc.), you generally have rights to access, delete, correct, port, and opt-out of targeted advertising and sale. As stated above, AlecRae does not sell your data or engage in targeted advertising. You may exercise all applicable rights by contacting privacy@alecrae.com. If we deny a request, you may appeal by emailing privacy@alecrae.com with the subject line "Privacy Appeal."
+If you reside in a US state with a comprehensive privacy law (VCDPA, CPA, CTDPA, UCPA, TDPSA, OCPA, MCDPA, etc.), you generally have rights to access, delete, correct, port, and opt-out of targeted advertising and sale. As stated above, DavenRoe does not sell your data or engage in targeted advertising. You may exercise all applicable rights by contacting privacy@davenroe.com. If we deny a request, you may appeal by emailing privacy@davenroe.com with the subject line "Privacy Appeal."
 
 ### 5.4 Australian & New Zealand Users
 - **Australia:** Your rights under the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs) apply. You may lodge a complaint with the Office of the Australian Information Commissioner (OAIC).
@@ -131,11 +131,11 @@ For US users: We will comply with all applicable state breach notification laws,
 
 ## 8. Children's Privacy
 
-AlecRae is not directed at children under 16. We do not knowingly collect personal information from children. If we discover we have collected PI from a child under 16, we will promptly delete it.
+DavenRoe is not directed at children under 16. We do not knowingly collect personal information from children. If we discover we have collected PI from a child under 16, we will promptly delete it.
 
 ## 9. Do Not Track
 
-AlecRae does not currently respond to "Do Not Track" browser signals, as there is no industry-standard interpretation. However, we do not engage in cross-site tracking or behavioural advertising.
+DavenRoe does not currently respond to "Do Not Track" browser signals, as there is no industry-standard interpretation. However, we do not engage in cross-site tracking or behavioural advertising.
 
 ## 10. Data Retention
 
@@ -157,8 +157,8 @@ We may update this Privacy Policy from time to time. Material changes will be co
 
 For privacy inquiries, data subject requests, or complaints:
 
-**Email:** privacy@alecrae.com
-**US-specific privacy inquiries:** us-privacy@alecrae.com
+**Email:** privacy@davenroe.com
+**US-specific privacy inquiries:** us-privacy@davenroe.com
 **Postal:** [Registered address, New Zealand — to be inserted]
 
-For urgent security concerns: security@alecrae.com
+For urgent security concerns: security@davenroe.com

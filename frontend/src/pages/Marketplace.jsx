@@ -13,12 +13,12 @@ const APPS = [
   { id: 'hubspot', name: 'HubSpot', category: 'CRM', description: 'Two-way sync for contacts, companies, deals, and invoices with HubSpot CRM', rating: 4.6, installs: '8K+', icon: 'HS' },
   { id: 'salesforce', name: 'Salesforce', category: 'CRM', description: 'Sync contacts, deals, and invoices with Salesforce CRM', rating: 4.7, installs: '12K+', icon: 'SF' },
   { id: 'pipedrive', name: 'Pipedrive', category: 'CRM', description: 'Pipeline management integrated with invoicing and contact sync', rating: 4.4, installs: '3K+', icon: 'PD' },
-  { id: 'zoho-crm', name: 'Zoho CRM', category: 'CRM', description: 'Sync leads, contacts, and deals between AlecRae and Zoho CRM', rating: 4.3, installs: '5K+', icon: 'ZC' },
+  { id: 'zoho-crm', name: 'Zoho CRM', category: 'CRM', description: 'Sync leads, contacts, and deals between DavenRoe and Zoho CRM', rating: 4.3, installs: '5K+', icon: 'ZC' },
   { id: 'monday-crm', name: 'Monday CRM', category: 'CRM', description: 'Connect Monday.com CRM boards with client and invoice data', rating: 4.4, installs: '2K+', icon: 'MC' },
 
   // E-Commerce (6)
   { id: 'shopify', name: 'Shopify', category: 'E-Commerce', description: 'Auto-import orders, refunds, and payouts from Shopify stores', rating: 4.8, installs: '25K+', icon: 'SH' },
-  { id: 'woocommerce', name: 'WooCommerce', category: 'E-Commerce', description: 'Sync WooCommerce orders, products, and inventory with AlecRae', rating: 4.3, installs: '6K+', icon: 'WC' },
+  { id: 'woocommerce', name: 'WooCommerce', category: 'E-Commerce', description: 'Sync WooCommerce orders, products, and inventory with DavenRoe', rating: 4.3, installs: '6K+', icon: 'WC' },
   { id: 'bigcommerce', name: 'BigCommerce', category: 'E-Commerce', description: 'Import orders, customers, and product catalog from BigCommerce', rating: 4.4, installs: '4K+', icon: 'BC' },
   { id: 'amazon-seller', name: 'Amazon Seller', category: 'E-Commerce', description: 'Reconcile Amazon Seller Central orders, fees, and FBA transactions', rating: 4.5, installs: '11K+', icon: 'AZ' },
   { id: 'ebay', name: 'eBay', category: 'E-Commerce', description: 'Import eBay sales, fees, and PayPal payouts automatically', rating: 4.2, installs: '7K+', icon: 'EB' },

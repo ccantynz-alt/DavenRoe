@@ -126,7 +126,7 @@ const AGENTS = [
     id: 'narrator',
     name: 'Simple-Speak Narrator',
     tier: 'collaborator',
-    description: 'Translates financial data into plain English. Powers Ask AlecRae and report narratives.',
+    description: 'Translates financial data into plain English. Powers Ask DavenRoe and report narratives.',
     status: 'available',
     icon: '""',
     tasksToday: 22,
@@ -338,7 +338,7 @@ export default function AgenticDashboard() {
       const res = await fetch(`/api/v1/agentic/automate/${automationId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ entity_id: localStorage.getItem('alecrae_active_entity') || 'default' }),
+        body: JSON.stringify({ entity_id: localStorage.getItem('davenroe_active_entity') || 'default' }),
       });
       const data = await res.json();
       setAutomationResult(data);
@@ -568,7 +568,7 @@ export default function AgenticDashboard() {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left py-2 pr-4 font-medium text-gray-500">Capability</th>
-                    <th className="text-center py-2 px-3 font-medium text-gray-500">AlecRae</th>
+                    <th className="text-center py-2 px-3 font-medium text-gray-500">DavenRoe</th>
                     <th className="text-center py-2 px-3 font-medium text-gray-500">Xero</th>
                     <th className="text-center py-2 px-3 font-medium text-gray-500">QuickBooks</th>
                   </tr>

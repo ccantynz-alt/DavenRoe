@@ -225,7 +225,7 @@ export default function EmailScanner() {
               {[
                 { step: '1', title: 'Connect', desc: 'Securely authorize read-only access to your mailbox via OAuth2. We never see your password.' },
                 { step: '2', title: 'Scan', desc: 'AI crawls your mailbox using 5 detection strategies: keywords, known senders, attachments, body analysis, and classification.' },
-                { step: '3', title: 'Import', desc: 'Review found documents, select what to import, and they flow directly into your AlecRae document library.' },
+                { step: '3', title: 'Import', desc: 'Review found documents, select what to import, and they flow directly into your DavenRoe document library.' },
               ].map(s => (
                 <div key={s.step} className="bg-white border rounded-xl p-5">
                   <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm mb-3">{s.step}</div>

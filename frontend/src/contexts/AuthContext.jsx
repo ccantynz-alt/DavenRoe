@@ -4,8 +4,8 @@ import api from '../services/api';
 const AuthContext = createContext(null);
 
 // Admin user — works without backend
-const ADMIN_EMAIL = 'admin@alecrae.com';
-const ADMIN_PASSWORD = 'AlecRae2026!';
+const ADMIN_EMAIL = 'admin@davenroe.com';
+const ADMIN_PASSWORD = 'DavenRoe2026!';
 const ADMIN_USER = {
   id: 'admin-001',
   email: ADMIN_EMAIL,
@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('alecrae_token');
+    const token = localStorage.getItem('davenroe_token');
     if (!token) {
       setLoading(false);
       return;
@@ -36,8 +36,8 @@ export function AuthProvider({ children }) {
     api.get('/auth/me')
       .then(res => setUser(res.data))
       .catch(() => {
-        localStorage.removeItem('alecrae_token');
-        localStorage.removeItem('alecrae_onboarded');
+        localStorage.removeItem('davenroe_token');
+        localStorage.removeItem('davenroe_onboarded');
         delete api.defaults.headers.common['Authorization'];
       })
       .finally(() => setLoading(false));
@@ -46,8 +46,8 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     // Admin login — works without backend
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      localStorage.setItem('alecrae_token', 'admin-local-token');
-      localStorage.setItem('alecrae_onboarded', 'true');
+      localStorage.setItem('davenroe_token', 'admin-local-token');
+      localStorage.setItem('davenroe_onboarded', 'true');
       setUser(ADMIN_USER);
       return ADMIN_USER;
     }
@@ -55,8 +55,8 @@ export function AuthProvider({ children }) {
     // Real login via backend
     const res = await api.post('/auth/login', { email, password });
     const { access_token, user: userData } = res.data;
-    localStorage.setItem('alecrae_token', access_token);
-    localStorage.setItem('alecrae_onboarded', 'true');
+    localStorage.setItem('davenroe_token', access_token);
+    localStorage.setItem('davenroe_onboarded', 'true');
     api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
     setUser(userData);
     return userData;
@@ -65,24 +65,24 @@ export function AuthProvider({ children }) {
   const register = async (email, password, full_name, role = 'bookkeeper') => {
     // Admin login works on register form too
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      localStorage.setItem('alecrae_token', 'admin-local-token');
-      localStorage.setItem('alecrae_onboarded', 'true');
+      localStorage.setItem('davenroe_token', 'admin-local-token');
+      localStorage.setItem('davenroe_onboarded', 'true');
       setUser(ADMIN_USER);
       return ADMIN_USER;
     }
 
     const res = await api.post('/auth/register', { email, password, full_name, role });
     const { access_token, user: userData } = res.data;
-    localStorage.setItem('alecrae_token', access_token);
-    localStorage.setItem('alecrae_onboarded', 'true');
+    localStorage.setItem('davenroe_token', access_token);
+    localStorage.setItem('davenroe_onboarded', 'true');
     api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
     setUser(userData);
     return userData;
   };
 
   const logout = () => {
-    localStorage.removeItem('alecrae_token');
-    localStorage.removeItem('alecrae_onboarded');
+    localStorage.removeItem('davenroe_token');
+    localStorage.removeItem('davenroe_onboarded');
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
   };

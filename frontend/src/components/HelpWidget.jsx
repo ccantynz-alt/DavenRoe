@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import api from '../services/api';
 
 const KB_QUICK = {
-  '/': ['Understanding the Dashboard', 'How AI categorisation works', 'Setting up your AlecRae account'],
+  '/': ['Understanding the Dashboard', 'How AI categorisation works', 'Setting up your DavenRoe account'],
   '/banking': ['Connecting your first bank feed', 'Handling bank feed disconnections', 'Multi-currency transactions'],
   '/invoicing': ['Creating and sending invoices', 'Setting up online payments', 'Recurring invoices'],
   '/payroll': ['Running your first pay run', 'Managing employee details', 'Leave management'],
@@ -12,9 +12,9 @@ const KB_QUICK = {
   '/reports': ['Standard financial reports', 'Financial Health Score', 'Custom report building'],
   '/review': ['AI confidence scores', 'Review Queue and confidence scores'],
   '/agentic': ['Autonomous month-end close', 'AI Command Center'],
-  '/ask': ['Ask AlecRae — natural language queries'],
+  '/ask': ['Ask DavenRoe — natural language queries'],
   '/forensic-tools': ["Benford's Law analysis", 'Ghost vendor detection', 'Due diligence reports'],
-  '/settings': ['Setting up your AlecRae account', 'Inviting team members'],
+  '/settings': ['Setting up your DavenRoe account', 'Inviting team members'],
   '/import': ['Can I import data from Xero or QuickBooks?'],
 };
 

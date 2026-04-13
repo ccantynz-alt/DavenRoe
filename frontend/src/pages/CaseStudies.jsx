@@ -26,7 +26,7 @@ function ROICalculator() {
         </div>
         <div>
           <h3 className="text-xl font-bold text-gray-900">ROI Calculator</h3>
-          <p className="text-sm text-gray-500">See how much you could save switching to AlecRae</p>
+          <p className="text-sm text-gray-500">See how much you could save switching to DavenRoe</p>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ function ROICalculator() {
 
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-100">
             <p className="text-xs text-gray-500">
-              <span className="font-semibold">AlecRae tier selected:</span>{' '}
+              <span className="font-semibold">DavenRoe tier selected:</span>{' '}
               {clients <= 45 ? 'Practice ($149/mo)' : clients <= 150 ? 'Firm ($499/mo)' : 'Enterprise ($999/mo)'}
             </p>
             <p className="text-xs text-gray-400 mt-1">
@@ -107,7 +107,7 @@ function ROICalculator() {
           <ResultCard
             label="Annual Software Saving"
             value={`$${annualSaving.toLocaleString()}`}
-            subtitle="switching to a single AlecRae subscription"
+            subtitle="switching to a single DavenRoe subscription"
             color="emerald"
           />
           <ResultCard
@@ -172,7 +172,7 @@ const CASE_STUDIES = [
       { metric: 'Annual staff cost saved', before: '$48K overhead', after: '$0 overhead' },
     ],
     quote:
-      '"We went from dreading month-end to barely noticing it. AlecRae categorises transactions with 95% accuracy — our junior staff now spend their time on advisory instead of data entry."',
+      '"We went from dreading month-end to barely noticing it. DavenRoe categorises transactions with 95% accuracy — our junior staff now spend their time on advisory instead of data entry."',
     author: 'Sarah Chen, Managing Partner',
   },
   {
@@ -190,7 +190,7 @@ const CASE_STUDIES = [
       { metric: 'Missed compliance deadlines', before: '3 per year', after: '0 per year' },
     ],
     quote:
-      '"Having AU and NZ in one platform with a single compliance calendar changed everything. We caught three deadlines that would have resulted in penalties — AlecRae paid for itself in the first month."',
+      '"Having AU and NZ in one platform with a single compliance calendar changed everything. We caught three deadlines that would have resulted in penalties — DavenRoe paid for itself in the first month."',
     author: 'James Wiremu, Director',
   },
   {
@@ -226,7 +226,7 @@ const CASE_STUDIES = [
       { metric: 'Forensic sweeps', before: 'None', after: 'Monthly automated' },
     ],
     quote:
-      '"After the ghost vendor incident, we needed forensic capability but couldn\'t justify a dedicated tool at $15K a year. AlecRae includes Benford\'s analysis, vendor audits, and money trail tracking in the standard subscription. We run monthly sweeps for every client now."',
+      '"After the ghost vendor incident, we needed forensic capability but couldn\'t justify a dedicated tool at $15K a year. DavenRoe includes Benford\'s analysis, vendor audits, and money trail tracking in the standard subscription. We run monthly sweeps for every client now."',
     author: 'David Morales, CPA, Senior Partner',
   },
 ];
@@ -377,7 +377,7 @@ export default function CaseStudies() {
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-gray-900">Case Studies</h2>
         <p className="text-gray-500 mt-1">
-          Real outcomes from practices that switched to AlecRae
+          Real outcomes from practices that switched to DavenRoe
         </p>
       </div>
 

@@ -1,4 +1,4 @@
-"""AlecRae — The World's First Autonomous Global Accounting Agent.
+"""DavenRoe — The World's First Autonomous Global Accounting Agent.
 
 Main FastAPI application entry point.
 """
