@@ -3,25 +3,25 @@ import { useState } from 'react';
 const CONTACT_METHODS = [
   {
     title: 'Sales & Demos',
-    email: 'sales@alecrae.com',
+    email: 'sales@davenroe.com',
     description: 'Book a personalised demo or discuss pricing for your firm.',
     responseTime: 'Within 4 hours',
   },
   {
     title: 'Technical Support',
-    email: 'support@alecrae.com',
+    email: 'support@davenroe.com',
     description: 'Get help with platform features, integrations, or technical issues.',
     responseTime: 'Within 2 hours (Firm & Enterprise)',
   },
   {
     title: 'Security & Privacy',
-    email: 'security@alecrae.com',
+    email: 'security@davenroe.com',
     description: 'Security inquiries, responsible disclosure, or data access requests.',
     responseTime: 'Within 24 hours',
   },
   {
     title: 'Partnerships & Integrations',
-    email: 'partners@alecrae.com',
+    email: 'partners@davenroe.com',
     description: 'Integration partnerships, reseller programmes, or API access.',
     responseTime: 'Within 48 hours',
   },
@@ -43,7 +43,7 @@ export default function Contact({ onBack }) {
           <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-semibold tracking-tight">AlecRae</span>
+          <span className="text-xl font-semibold tracking-tight">DavenRoe</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage

@@ -121,7 +121,7 @@ export default function DashboardPreview() {
               <div className="flex-1 flex justify-center">
                 <div className="bg-white rounded-lg px-6 py-1.5 text-xs text-gray-400 border border-gray-100 min-w-[300px] text-center flex items-center justify-center gap-2">
                   <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="4"/></svg>
-                  app.alecrae.com/dashboard
+                  app.davenroe.com/dashboard
                 </div>
               </div>
               <div className="w-[52px]" />
@@ -134,7 +134,7 @@ export default function DashboardPreview() {
                 <div className="flex items-center gap-2 mb-8">
                   <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-sm font-bold shadow-lg shadow-indigo-500/20">A</div>
                   <div>
-                    <span className="font-semibold text-sm">AlecRae</span>
+                    <span className="font-semibold text-sm">DavenRoe</span>
                     <span className="block text-[9px] text-white/30 tracking-widest uppercase">Accounting</span>
                   </div>
                 </div>
@@ -149,7 +149,7 @@ export default function DashboardPreview() {
                     { name: 'Invoicing' },
                     { name: 'Forensics' },
                     { name: 'AI Agents', dot: true },
-                    { name: 'Ask AlecRae' },
+                    { name: 'Ask DavenRoe' },
                   ].map((item, i) => (
                     <div
                       key={i}

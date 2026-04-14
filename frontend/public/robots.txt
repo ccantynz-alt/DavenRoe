@@ -140,4 +140,4 @@ Disallow: /agentic
 Disallow: /projects
 Disallow: /scenarios
 
-Sitemap: https://marcoreid.ai/sitemap.xml
+Sitemap: https://davenroe.com/sitemap.xml

@@ -6,7 +6,7 @@ export default function Privacy({ onBack }) {
           <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-semibold tracking-tight">AlecRae</span>
+          <span className="text-xl font-semibold tracking-tight">DavenRoe</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage
@@ -20,7 +20,7 @@ export default function Privacy({ onBack }) {
         <div className="prose prose-gray max-w-none space-y-10">
           <Section title="1. Who We Are">
             <p className="text-gray-600">
-              AlecRae is operated by a New Zealand entity. We provide an AI-assisted accounting software tool to users in New Zealand, Australia, the United Kingdom, the European Union, the United States, and Canada.
+              DavenRoe is operated by a New Zealand entity. We provide an AI-assisted accounting software tool to users in New Zealand, Australia, the United Kingdom, the European Union, the United States, and Canada.
             </p>
           </Section>
 
@@ -128,12 +128,12 @@ export default function Privacy({ onBack }) {
 
               <h3 className="font-bold text-gray-900 mb-3">Other US State Privacy Laws</h3>
               <p className="text-sm text-gray-600">
-                If you reside in Virginia, Colorado, Connecticut, Utah, Texas, Oregon, Montana, or another US state with a comprehensive privacy law, you have similar rights to access, delete, correct, and opt out. We do not sell data or engage in targeted advertising. Exercise rights at <span className="text-indigo-600 font-medium">privacy@alecrae.com</span>. Appeals: email with subject &ldquo;Privacy Appeal.&rdquo;
+                If you reside in Virginia, Colorado, Connecticut, Utah, Texas, Oregon, Montana, or another US state with a comprehensive privacy law, you have similar rights to access, delete, correct, and opt out. We do not sell data or engage in targeted advertising. Exercise rights at <span className="text-indigo-600 font-medium">privacy@davenroe.com</span>. Appeals: email with subject &ldquo;Privacy Appeal.&rdquo;
               </p>
 
               <h3 className="font-bold text-gray-900 mt-4 mb-3">How to Exercise Rights</h3>
               <p className="text-sm text-gray-600">
-                Email <span className="text-indigo-600 font-medium">privacy@alecrae.com</span> from your registered email. We verify identity via account credentials. Response within 45 days (may extend by 45 days with notice). Authorised agents must provide written authorisation.
+                Email <span className="text-indigo-600 font-medium">privacy@davenroe.com</span> from your registered email. We verify identity via account credentials. Response within 45 days (may extend by 45 days with notice). Authorised agents must provide written authorisation.
               </p>
             </Section>
           </div>
@@ -177,11 +177,11 @@ export default function Privacy({ onBack }) {
 
           <Section title="10. Contact">
             <p className="text-gray-600">
-              Privacy: <span className="text-indigo-600 font-medium">privacy@alecrae.com</span>
+              Privacy: <span className="text-indigo-600 font-medium">privacy@davenroe.com</span>
               <br />
-              US-specific privacy: <span className="text-indigo-600 font-medium">us-privacy@alecrae.com</span>
+              US-specific privacy: <span className="text-indigo-600 font-medium">us-privacy@davenroe.com</span>
               <br />
-              Security: <span className="text-indigo-600 font-medium">security@alecrae.com</span>
+              Security: <span className="text-indigo-600 font-medium">security@davenroe.com</span>
             </p>
           </Section>
         </div>

@@ -5,7 +5,7 @@ Nobody starts from zero — if they can't bring their existing
 data in, they won't use the platform.
 
 Each platform has its own export format. We normalize everything
-into AlecRae's internal format.
+into DavenRoe's internal format.
 """
 
 import csv
@@ -141,7 +141,7 @@ class DataImporter:
         return self._parse_csv(data, column_map={}, platform="csv")
 
     def _parse_csv(self, data: str, column_map: dict, platform: str) -> dict:
-        """Parse CSV data and normalize to AlecRae format."""
+        """Parse CSV data and normalize to DavenRoe format."""
         if isinstance(data, bytes):
             data = data.decode("utf-8-sig")  # Handle BOM
 

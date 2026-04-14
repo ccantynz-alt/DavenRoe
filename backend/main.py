@@ -1,4 +1,4 @@
-"""DavenRoe — AI-Native Accounting + Tax + Forensic Intelligence Platform.
+"""DavenRoe — The World's First Autonomous Global Accounting Agent.
 
 Main FastAPI application entry point.
 """
@@ -68,12 +68,20 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup():
-    """Create database tables on startup if they don't exist."""
+    """Create database tables on startup if they don't exist.
+
+    Uses a 5-second timeout so Vercel cold starts don't hang if the
+    database is unreachable.  The app falls back to demo mode gracefully.
+    """
+    import asyncio
+
     try:
         import app.models  # noqa: F401 — ensure all models are registered with Base
         from app.core.database import create_tables
-        await create_tables()
+        await asyncio.wait_for(create_tables(), timeout=5.0)
         logger.info("Database tables verified/created")
+    except asyncio.TimeoutError:
+        logger.warning("Database connection timed out (5 s) — running in demo mode")
     except Exception as e:
         logger.warning(f"Database not available — running in demo mode: {e}")
 

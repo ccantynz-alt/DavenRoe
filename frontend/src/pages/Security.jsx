@@ -72,7 +72,7 @@ export default function SecurityPage({ onBack }) {
           <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-semibold tracking-tight">AlecRae</span>
+          <span className="text-xl font-semibold tracking-tight">DavenRoe</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage
@@ -143,7 +143,7 @@ export default function SecurityPage({ onBack }) {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-4">Security questions?</h2>
           <p className="text-gray-400 mb-2">We welcome security inquiries and responsible disclosure.</p>
-          <p className="text-gray-400">Contact us at <span className="text-indigo-400 font-medium">security@alecrae.com</span></p>
+          <p className="text-gray-400">Contact us at <span className="text-indigo-400 font-medium">security@davenroe.com</span></p>
         </div>
       </section>
     </div>

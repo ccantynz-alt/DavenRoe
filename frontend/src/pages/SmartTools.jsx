@@ -359,7 +359,7 @@ export default function SmartTools() {
           {setupChecklist && (
             <div className="bg-white border rounded-xl p-6">
               <h3 className="font-bold text-lg mb-1">Getting Started</h3>
-              <p className="text-sm text-gray-500 mb-4">Follow these steps to set up your business on AlecRae</p>
+              <p className="text-sm text-gray-500 mb-4">Follow these steps to set up your business on DavenRoe</p>
 
               <div className="mb-4">
                 <div className="flex items-center gap-2 mb-1">

@@ -26,7 +26,7 @@ registry = SpecialistRegistry()
 
 @router.get("/")
 async def list_specializations(user: User = Depends(get_current_user)):
-    """List all accounting specializations and their AlecRae toolkits."""
+    """List all accounting specializations and their DavenRoe toolkits."""
     specs = registry.list_all()
     return {
         "specializations": [
@@ -59,7 +59,7 @@ async def get_specialization(spec_id: str, user: User = Depends(get_current_user
         "certifications": spec.certifications,
         "pain_points": spec.pain_points,
         "heavy_lifting": spec.heavy_lifting,
-        "tools": spec.alecrae_tools,
+        "tools": spec.davenroe_tools,
         "jurisdictions": spec.jurisdictions,
     }
 

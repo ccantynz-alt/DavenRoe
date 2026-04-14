@@ -1,10 +1,10 @@
 """Accounting Specialist Registry.
 
 Maps every type of chartered accountant specialization to the
-tools AlecRae provides for them. This is the master index.
+tools DavenRoe provides for them. This is the master index.
 
 The key insight: every accountant specialization has 2-3 tasks
-that eat 60-80% of their time. Automate those, and AlecRae becomes
+that eat 60-80% of their time. Automate those, and DavenRoe becomes
 indispensable to every type of accountant.
 """
 
@@ -13,20 +13,20 @@ from dataclasses import dataclass, field
 
 @dataclass
 class AccountingSpecialization:
-    """Definition of an accounting specialization and what AlecRae does for it."""
+    """Definition of an accounting specialization and what DavenRoe does for it."""
     id: str
     title: str
     description: str
     certifications: list[str]  # CPA, CA, CMA, etc.
     pain_points: list[str]     # what eats their time
-    alecrae_tools: list[str]     # which AlecRae tools solve their problems
+    davenroe_tools: list[str]     # which DavenRoe tools solve their problems
     heavy_lifting: list[str]   # specific automations we provide
     jurisdictions: list[str]   # where this specialization is relevant
     status: str = "active"     # active, beta, planned
 
 
 class SpecialistRegistry:
-    """Registry of all accounting specializations and their AlecRae toolkits.
+    """Registry of all accounting specializations and their DavenRoe toolkits.
 
     This is how we serve every type of accountant:
     - Tax accountant? Tax engine + treaty calculator + auto-filing drafts
@@ -57,7 +57,7 @@ class SpecialistRegistry:
                     "BAS/GST/VAT return preparation is repetitive",
                     "Year-end tax provision calculations",
                 ],
-                alecrae_tools=["tax_engine", "treaty_engine", "tax_calculator"],
+                davenroe_tools=["tax_engine", "treaty_engine", "tax_calculator"],
                 heavy_lifting=[
                     "Auto-calculate income tax brackets for AU/NZ/US/GB with current legislation",
                     "Apply bilateral tax treaties automatically on cross-border payments",
@@ -84,7 +84,7 @@ class SpecialistRegistry:
                     "Testing journal entries for management override",
                     "Confirming receivables/payables balances",
                 ],
-                alecrae_tools=["audit_engine", "reconciliation_engine", "sampling_engine"],
+                davenroe_tools=["audit_engine", "reconciliation_engine", "sampling_engine"],
                 heavy_lifting=[
                     "Statistical sampling — auto-select sample based on risk and materiality",
                     "Journal entry testing — flag entries with fraud indicators (weekend, round numbers, just-under-approval)",
@@ -111,7 +111,7 @@ class SpecialistRegistry:
                     "Cash flow forecasting is always wrong",
                     "KPI dashboards are manually updated",
                 ],
-                alecrae_tools=["variance_engine", "cost_allocation_engine", "forecasting_engine"],
+                davenroe_tools=["variance_engine", "cost_allocation_engine", "forecasting_engine"],
                 heavy_lifting=[
                     "Auto-generate budget vs actual with variance analysis (price/volume/mix)",
                     "Cost allocation engine — allocate overhead by headcount, revenue, square footage, or custom drivers",
@@ -137,7 +137,7 @@ class SpecialistRegistry:
                     "Producing court-admissible reports under time pressure",
                     "Cross-referencing vendor/employee data manually",
                 ],
-                alecrae_tools=["benfords_engine", "anomaly_engine", "vendor_verifier", "money_trail", "due_diligence_agent"],
+                davenroe_tools=["benfords_engine", "anomaly_engine", "vendor_verifier", "money_trail", "due_diligence_agent"],
                 heavy_lifting=[
                     "Benford's Law analysis with MAD conformity and chi-squared testing",
                     "Statistical anomaly detection (Z-score, IQR, timing patterns)",
@@ -164,7 +164,7 @@ class SpecialistRegistry:
                     "RATA (Report as to Affairs) preparation takes days",
                     "Dividend calculations to creditors across classes",
                 ],
-                alecrae_tools=["solvency_engine", "creditor_engine", "voidable_scanner"],
+                davenroe_tools=["solvency_engine", "creditor_engine", "voidable_scanner"],
                 heavy_lifting=[
                     "Automated solvency tests — balance sheet test and cash flow test",
                     "Creditor waterfall — priority ranking (secured, employee, unsecured, related party)",
@@ -191,7 +191,7 @@ class SpecialistRegistry:
                     "Beneficiary reporting across multiple trusts",
                     "Trust deed compliance checking",
                 ],
-                alecrae_tools=["trust_engine", "distribution_engine", "estate_engine"],
+                davenroe_tools=["trust_engine", "distribution_engine", "estate_engine"],
                 heavy_lifting=[
                     "Trust distribution calculator — proportional and streaming allocations",
                     "Income vs capital classification for trust accounting",
@@ -218,7 +218,7 @@ class SpecialistRegistry:
                     "ACNC annual information statement preparation (AU)",
                     "Volunteer hour and in-kind donation valuation",
                 ],
-                alecrae_tools=["grant_engine", "fund_tracker", "nfp_compliance_engine"],
+                davenroe_tools=["grant_engine", "fund_tracker", "nfp_compliance_engine"],
                 heavy_lifting=[
                     "Grant acquittal report generator — auto-match expenses to grant milestones",
                     "Restricted/unrestricted fund tracking with automatic segregation",
@@ -245,7 +245,7 @@ class SpecialistRegistry:
                     "Related party transaction testing for SMSFs",
                     "Annual return preparation (SAR) is heavily manual",
                 ],
-                alecrae_tools=["smsf_engine", "pension_engine", "contribution_tracker"],
+                davenroe_tools=["smsf_engine", "pension_engine", "contribution_tracker"],
                 heavy_lifting=[
                     "SMSF compliance checklist — sole purpose test, investment strategy review",
                     "Contribution cap tracking (concessional and non-concessional) per member",
@@ -272,7 +272,7 @@ class SpecialistRegistry:
                     "STP (Single Touch Payroll) reporting errors",
                     "Termination pay calculations (notice, redundancy, unused leave)",
                 ],
-                alecrae_tools=["payroll_engine", "leave_engine", "termination_engine"],
+                davenroe_tools=["payroll_engine", "leave_engine", "termination_engine"],
                 heavy_lifting=[
                     "Multi-jurisdiction PAYG/PAYE withholding calculations",
                     "Award rate interpreter — calculate base + penalties + loadings (AU)",
@@ -301,7 +301,7 @@ class SpecialistRegistry:
                     "GASB compliance (US state/local government)",
                     "Performance reporting and KPI tracking",
                 ],
-                alecrae_tools=["fund_accounting_engine", "budget_engine", "grant_compliance_engine"],
+                davenroe_tools=["fund_accounting_engine", "budget_engine", "grant_compliance_engine"],
                 heavy_lifting=[
                     "Fund-based accounting — automatic fund segregation and inter-fund transfers",
                     "Budget vs actual with encumbrance tracking",
@@ -328,7 +328,7 @@ class SpecialistRegistry:
                     "ESG metric calculation from accounting data",
                     "Climate risk financial impact assessment",
                 ],
-                alecrae_tools=["carbon_engine", "esg_engine", "climate_risk_engine"],
+                davenroe_tools=["carbon_engine", "esg_engine", "climate_risk_engine"],
                 heavy_lifting=[
                     "Scope 1/2/3 carbon emissions calculation from transaction data",
                     "Map expense categories to emission factors (GHG Protocol)",
@@ -355,7 +355,7 @@ class SpecialistRegistry:
                     "Benchmarking clients against industry standards",
                     "Scenario modelling (what-if analysis) is manual",
                 ],
-                alecrae_tools=["forecasting_engine", "benchmark_engine", "scenario_engine"],
+                davenroe_tools=["forecasting_engine", "benchmark_engine", "scenario_engine"],
                 heavy_lifting=[
                     "Auto-generate monthly board reporting pack from ledger data",
                     "Rolling cash flow forecast (13-week and 12-month)",
