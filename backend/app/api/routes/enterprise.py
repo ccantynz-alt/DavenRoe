@@ -39,7 +39,7 @@ def _seed_defaults():
         }
         _branding[pid] = {
             "practice_id": pid,
-            "name": "Astra",
+            "name": "AlecRae",
             "logo_url": "/icon.svg",
             "primary_color": "#4c6ef5",
             "domain": None,

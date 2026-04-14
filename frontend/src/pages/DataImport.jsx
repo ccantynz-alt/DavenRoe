@@ -207,7 +207,7 @@ export default function DataImport() {
           <div className="bg-white border rounded-xl p-6">
             {wizard.source.id === 'csv' ? (
               <div>
-                <h3 className="font-semibold text-gray-900 mb-4">Map your columns to Astra fields</h3>
+                <h3 className="font-semibold text-gray-900 mb-4">Map your columns to AlecRae fields</h3>
                 {csvFile && <p className="text-sm text-gray-500 mb-4">File: {csvFile.name}</p>}
                 <div className="space-y-2">
                   {CSV_COLUMNS.map((col, i) => (
@@ -234,7 +234,7 @@ export default function DataImport() {
             ) : (
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">Select what to import</h3>
-                <p className="text-sm text-gray-500 mb-4">Choose the data types you want to bring into Astra</p>
+                <p className="text-sm text-gray-500 mb-4">Choose the data types you want to bring into AlecRae</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {DATA_TYPES.map(type => {
                     const selected = selectedTypes.includes(type.id);
@@ -459,9 +459,9 @@ export default function DataImport() {
         <h3 className="font-semibold text-gray-900 mb-3">Migration Tips</h3>
         <div className="space-y-2 text-sm text-gray-600">
           <p>1. <strong>Reconcile first.</strong> Make sure your source platform is fully reconciled before exporting. Unreconciled transactions may import as duplicates.</p>
-          <p>2. <strong>Export all data.</strong> When importing from cloud platforms, select all data types. It's easier to have everything in Astra than to go back for missing items.</p>
+          <p>2. <strong>Export all data.</strong> When importing from cloud platforms, select all data types. It's easier to have everything in AlecRae than to go back for missing items.</p>
           <p>3. <strong>Check your chart of accounts.</strong> After import, review your chart of accounts to merge any duplicates or adjust mappings.</p>
-          <p>4. <strong>Run a trial balance.</strong> Compare the trial balance in Astra with your source platform to verify the import is accurate.</p>
+          <p>4. <strong>Run a trial balance.</strong> Compare the trial balance in AlecRae with your source platform to verify the import is accurate.</p>
         </div>
       </div>
     </div>

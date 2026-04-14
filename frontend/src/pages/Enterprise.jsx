@@ -164,7 +164,7 @@ function BrandingPanel() {
         const { data } = await api.get('/enterprise/branding');
         setBranding(data);
       } catch {
-        setBranding({ name: 'Astra', logo_url: '/icon.svg', primary_color: '#4c6ef5', domain: '' });
+        setBranding({ name: 'AlecRae', logo_url: '/icon.svg', primary_color: '#4c6ef5', domain: '' });
       } finally {
         setLoading(false);
       }
@@ -251,7 +251,7 @@ function BrandingPanel() {
               placeholder="accounting.yourfirm.com"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
             />
-            <p className="text-xs text-gray-400 mt-1">Point a CNAME record to app.astra.ai to use your own domain.</p>
+            <p className="text-xs text-gray-400 mt-1">Point a CNAME record to app.alecrae.com to use your own domain.</p>
           </div>
         </div>
 
@@ -267,7 +267,7 @@ function BrandingPanel() {
                   {(branding.name || 'A').charAt(0)}
                 </div>
               )}
-              <span className="text-white font-semibold">{branding.name || 'Astra'}</span>
+              <span className="text-white font-semibold">{branding.name || 'AlecRae'}</span>
             </div>
             <div className="p-4 space-y-2">
               <div className="h-3 bg-gray-200 rounded w-3/4" />
@@ -354,7 +354,7 @@ function ImportPanel() {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-gray-900">Data Import</h3>
-        <p className="text-sm text-gray-500 mt-1">Migrate data from other accounting platforms into Astra.</p>
+        <p className="text-sm text-gray-500 mt-1">Migrate data from other accounting platforms into AlecRae.</p>
       </div>
 
       {/* Progress */}
@@ -433,7 +433,7 @@ function ImportPanel() {
         <div className="space-y-4">
           <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
             <div className="grid grid-cols-3 bg-gray-50 px-5 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider border-b">
-              <span>Astra Field</span>
+              <span>AlecRae Field</span>
               <span>Source Field</span>
               <span>Status</span>
             </div>

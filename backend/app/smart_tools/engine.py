@@ -465,7 +465,7 @@ class BusinessChecklist:
             "action": "/compliance",
             "action_label": "View Deadlines",
             "priority": 7,
-            "why": "Missing a deadline can mean fines. Astra tracks them all for you.",
+            "why": "Missing a deadline can mean fines. AlecRae tracks them all for you.",
         })
 
         return sorted(items, key=lambda x: x["priority"])
@@ -476,7 +476,7 @@ class BusinessChecklist:
             {
                 "id": "reconcile",
                 "title": "Reconcile your bank feeds",
-                "description": "Review and approve the transactions Astra has categorized for you",
+                "description": "Review and approve the transactions AlecRae has categorized for you",
                 "action": "/review",
                 "action_label": "Review Queue",
                 "frequency": "weekly",
@@ -494,7 +494,7 @@ class BusinessChecklist:
             {
                 "id": "receipts",
                 "title": "Upload any paper receipts",
-                "description": "Snap photos of receipts before they fade — Astra will OCR and categorize them",
+                "description": "Snap photos of receipts before they fade — AlecRae will OCR and categorize them",
                 "action": "/documents",
                 "action_label": "Upload Receipts",
                 "frequency": "as needed",
@@ -525,11 +525,11 @@ class BusinessChecklist:
             items.append({
                 "id": "bas",
                 "title": "Lodge your BAS (Business Activity Statement)",
-                "description": "Your quarterly BAS is due soon. Astra can prepare it for you.",
+                "description": "Your quarterly BAS is due soon. AlecRae can prepare it for you.",
                 "action": "/tax-filing",
                 "action_label": "Prepare BAS",
                 "frequency": "quarterly",
-                "effort": "15-30 minutes with Astra",
+                "effort": "15-30 minutes with AlecRae",
             })
 
         return items

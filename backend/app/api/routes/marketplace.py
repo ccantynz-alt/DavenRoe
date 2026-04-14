@@ -172,7 +172,7 @@ APP_METADATA: dict[str, dict] = {
     },
     "karbon": {
         "rating": 4.6, "install_count": 7200, "icon": "KB",
-        "long_description": "Practice management integration for accounting firms. Sync client data, track job progress, manage workflows, and automate recurring tasks between Karbon and Astra.",
+        "long_description": "Practice management integration for accounting firms. Sync client data, track job progress, manage workflows, and automate recurring tasks between Karbon and AlecRae.",
         "features": ["Client data sync", "Job tracking", "Workflow automation", "Email integration", "Time tracking import"],
         "setup_time": "15 minutes",
     },

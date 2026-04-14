@@ -62,7 +62,7 @@ class PlaidProvider(BankFeedProvider):
         countries = [country] if country else ["US"]
         result = await self._request("/link/token/create", {
             "user": {"client_user_id": user_id},
-            "client_name": "Astra",
+            "client_name": "AlecRae",
             "products": ["transactions"],
             "country_codes": countries,
             "language": "en",

@@ -24,11 +24,19 @@ export default function FeatureShowcase() {
   return (
     <div>
       {/* How It Works — minimal timeline */}
-      <section className="py-28 px-6 lg:px-12 bg-white">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-32 px-6 lg:px-12 bg-white relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-[0.02]" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(99,102,241,0.3) 1px, transparent 1px)`,
+          backgroundSize: '32px 32px',
+        }} />
+
+        <div className="max-w-6xl mx-auto relative">
           <FadeIn>
             <div className="text-center mb-20">
-              <p className="text-[11px] font-medium tracking-[0.2em] text-indigo-600 uppercase mb-3">Process</p>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 mb-6">
+                <span className="text-[11px] font-semibold text-indigo-600 tracking-wide uppercase">How It Works</span>
+              </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Four steps. Fully autonomous.</h2>
               <p className="text-lg text-gray-500 max-w-2xl mx-auto">From raw bank data to tax-compliant financial statements — with human oversight where it matters.</p>
             </div>
@@ -36,15 +44,15 @@ export default function FeatureShowcase() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {WORKFLOW.map((item, i) => (
               <FadeIn key={i} delay={i * 100}>
-                <div className="group relative bg-gray-50 rounded-2xl p-8 hover:bg-indigo-50 transition-all duration-500 border border-transparent hover:border-indigo-100">
-                  <div className="text-5xl font-bold text-gray-100 group-hover:text-indigo-100 transition-colors duration-500 mb-6 font-mono">
+                <div className="group relative bg-white rounded-2xl p-8 hover:shadow-xl hover:shadow-indigo-100/50 transition-all duration-500 border border-gray-200 hover:border-indigo-200">
+                  <div className="text-6xl font-bold bg-gradient-to-b from-gray-100 to-gray-50 bg-clip-text text-transparent group-hover:from-indigo-200 group-hover:to-indigo-50 transition-all duration-500 mb-6 font-mono">
                     {item.step}
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
                   <p className="text-gray-500 leading-relaxed text-sm">{item.description}</p>
                   {i < WORKFLOW.length - 1 && (
-                    <div className="hidden lg:block absolute top-1/2 -right-3 w-6 text-gray-300">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <div className="hidden lg:block absolute top-1/2 -right-3 w-6 text-indigo-200 group-hover:text-indigo-400 transition-colors">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                       </svg>
                     </div>
@@ -57,19 +65,26 @@ export default function FeatureShowcase() {
       </section>
 
       {/* Bento Grid — Core Capabilities */}
-      <section className="py-28 px-6 lg:px-12 bg-[#08090d] relative overflow-hidden">
+      <section className="py-32 px-6 lg:px-12 bg-[#05060a] relative overflow-hidden">
         {/* Background grid */}
         <div className="absolute inset-0 opacity-[0.03]" style={{
           backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
           backgroundSize: '48px 48px',
         }} />
+        {/* Center glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] rounded-full opacity-[0.06] blur-[150px]"
+          style={{ background: 'radial-gradient(ellipse, #6366f1 0%, transparent 60%)' }}
+        />
 
         <div className="max-w-6xl mx-auto relative">
           <FadeIn>
             <div className="text-center mb-20">
-              <p className="text-[11px] font-medium tracking-[0.2em] text-indigo-400 uppercase mb-3">Capabilities</p>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 mb-6">
+                <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+                <span className="text-[11px] font-semibold text-indigo-300 tracking-wide uppercase">Core Capabilities</span>
+              </div>
               <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4">Built for the modern practice</h2>
-              <p className="text-lg text-white/50 max-w-2xl mx-auto">Everything your competitors charge extra for — included by default.</p>
+              <p className="text-lg text-white/40 max-w-2xl mx-auto">Everything your competitors charge extra for — included by default.</p>
             </div>
           </FadeIn>
 
@@ -134,7 +149,7 @@ export default function FeatureShowcase() {
               <BentoCard accent="rose">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 mb-4">
                   <div className="w-1.5 h-1.5 rounded-full bg-rose-400" />
-                  <span className="text-[11px] font-medium text-rose-300">Unique to Astra</span>
+                  <span className="text-[11px] font-medium text-rose-300">Unique to AlecRae</span>
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Forensic Intelligence</h3>
                 <p className="text-white/50 text-sm leading-relaxed mb-4">Benford's Law analysis, ghost vendor detection, payment splitting alerts. Runs continuously.</p>
@@ -153,14 +168,14 @@ export default function FeatureShowcase() {
               </BentoCard>
             </FadeIn>
 
-            {/* Ask Astra */}
+            {/* Ask AlecRae */}
             <FadeIn delay={300}>
               <BentoCard accent="violet">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 mb-4">
                   <div className="w-1.5 h-1.5 rounded-full bg-violet-400" />
                   <span className="text-[11px] font-medium text-violet-300">AI Assistant</span>
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">Ask Astra</h3>
+                <h3 className="text-xl font-bold text-white mb-2">Ask AlecRae</h3>
                 <p className="text-white/50 text-sm leading-relaxed mb-4">Natural language queries over your entire financial dataset. Answers in under 2 seconds.</p>
                 <div className="bg-white/[0.04] rounded-lg px-3 py-2 border border-white/[0.06]">
                   <p className="text-xs text-violet-300 font-mono">"What were my top 5 expenses last quarter?"</p>
@@ -272,24 +287,28 @@ export default function FeatureShowcase() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-32 px-6 lg:px-12 bg-white">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="py-36 px-6 lg:px-12 bg-white relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: 'radial-gradient(ellipse at 50% 100%, rgba(99,102,241,0.06) 0%, transparent 50%)',
+        }} />
+        <div className="max-w-3xl mx-auto text-center relative">
           <FadeIn>
-            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+            <h2 className="text-4xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
               Ready to transform<br />your practice?
             </h2>
-            <p className="text-xl text-gray-500 mb-10 leading-relaxed">
+            <p className="text-xl text-gray-500 mb-12 leading-relaxed">
               Join the firms that have already eliminated manual data entry, automated their tax compliance, and reclaimed thousands of hours.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a href="#signup" className="px-8 py-4 bg-indigo-600 text-white rounded-xl text-lg font-semibold hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl hover:shadow-indigo-200">
-                Start Free Trial
+              <a href="#register" className="group relative px-10 py-4 bg-indigo-600 text-white rounded-xl text-lg font-semibold transition-all shadow-lg shadow-indigo-500/20 hover:shadow-2xl hover:shadow-indigo-500/30 hover:scale-[1.02] active:scale-[0.98]">
+                <span className="relative z-10">Start Free Trial</span>
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-600 via-violet-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity" />
               </a>
-              <a href="#contact" className="px-8 py-4 bg-white text-gray-700 rounded-xl text-lg font-semibold hover:bg-gray-50 transition-colors border border-gray-200">
+              <a href="#register" className="px-10 py-4 bg-white text-gray-700 rounded-xl text-lg font-semibold hover:bg-gray-50 transition-all border border-gray-200 hover:border-indigo-200 hover:text-indigo-600">
                 Book a Demo
               </a>
             </div>
-            <p className="text-sm text-gray-400 mt-6">No credit card required. 14-day full access.</p>
+            <p className="text-sm text-gray-400 mt-8">No credit card required. 14-day full access. Cancel anytime.</p>
           </FadeIn>
         </div>
       </section>
@@ -298,18 +317,46 @@ export default function FeatureShowcase() {
 }
 
 function BentoCard({ children, className = '', accent = 'indigo' }) {
+  const gradientMap = {
+    indigo: 'from-indigo-500 via-indigo-400 to-violet-500',
+    cyan: 'from-cyan-500 via-cyan-400 to-blue-500',
+    rose: 'from-rose-500 via-rose-400 to-pink-500',
+    violet: 'from-violet-500 via-violet-400 to-purple-500',
+    emerald: 'from-emerald-500 via-emerald-400 to-teal-500',
+    amber: 'from-amber-500 via-amber-400 to-orange-500',
+  };
   const glowMap = {
-    indigo: 'hover:border-indigo-500/20',
-    cyan: 'hover:border-cyan-500/20',
-    rose: 'hover:border-rose-500/20',
-    violet: 'hover:border-violet-500/20',
-    emerald: 'hover:border-emerald-500/20',
-    amber: 'hover:border-amber-500/20',
+    indigo: 'rgba(99,102,241,0.1)',
+    cyan: 'rgba(6,182,212,0.1)',
+    rose: 'rgba(244,63,94,0.1)',
+    violet: 'rgba(139,92,246,0.1)',
+    emerald: 'rgba(16,185,129,0.1)',
+    amber: 'rgba(245,158,11,0.1)',
   };
 
   return (
-    <div className={`bg-white/[0.03] backdrop-blur-sm rounded-2xl border border-white/[0.06] p-6 ${glowMap[accent]} transition-all duration-500 h-full ${className}`}>
-      {children}
+    <div className={`relative group h-full ${className}`}>
+      {/* Animated gradient border on hover */}
+      <div className="absolute -inset-[1px] rounded-2xl overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+        <div
+          className={`absolute inset-0 bg-gradient-to-r ${gradientMap[accent]}`}
+          style={{ animation: 'bento-spin 4s linear infinite' }}
+        />
+      </div>
+      {/* Glow */}
+      <div
+        className="absolute -inset-4 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl"
+        style={{ background: glowMap[accent] }}
+      />
+      <div className="relative bg-[#0a0b10] rounded-2xl border border-white/[0.06] p-6 group-hover:border-transparent transition-colors duration-300 h-full">
+        {children}
+      </div>
+      <style>{`
+        @keyframes bento-spin {
+          from { transform: rotate(0deg) scale(3); }
+          to { transform: rotate(360deg) scale(3); }
+        }
+      `}</style>
     </div>
   );
 }

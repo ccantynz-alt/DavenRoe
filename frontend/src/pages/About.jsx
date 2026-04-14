@@ -38,7 +38,7 @@ export default function About({ onBack }) {
           <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-semibold tracking-tight">Astra</span>
+          <span className="text-xl font-semibold tracking-tight">AlecRae</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage
@@ -49,12 +49,12 @@ export default function About({ onBack }) {
       <section className="py-24 px-6 lg:px-16">
         <div className="max-w-4xl mx-auto text-center">
           <FadeIn>
-            <p className="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-3">About Astra</p>
+            <p className="text-sm font-semibold tracking-widest text-indigo-600 uppercase mb-3">About AlecRae</p>
             <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
               We believe accounting firms<br />deserve better tools.
             </h1>
             <p className="text-xl text-gray-500 leading-relaxed max-w-3xl mx-auto">
-              Astra was built by accountants and engineers who saw the same problem everywhere: brilliant professionals drowning in manual data entry, copy-paste compliance, and repetitive month-end processes. We built the platform we wished existed.
+              AlecRae was built by accountants and engineers who saw the same problem everywhere: brilliant professionals drowning in manual data entry, copy-paste compliance, and repetitive month-end processes. We built the platform we wished existed.
             </p>
           </FadeIn>
         </div>

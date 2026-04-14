@@ -240,7 +240,7 @@ function NaturalLanguageReports() {
   return (
     <div>
       <div className="bg-white border rounded-xl p-6 mb-6">
-        <h3 className="font-semibold mb-4">Ask Astra About Your Finances</h3>
+        <h3 className="font-semibold mb-4">Ask AlecRae About Your Finances</h3>
         <div className="flex gap-3 mb-4">
           <input type="text" value={query} onChange={e => setQuery(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && run()}

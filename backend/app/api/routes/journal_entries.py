@@ -32,7 +32,7 @@ def _seed():
             "total_debit": 1450.00,
             "total_credit": 1450.00,
             "reference": "ACCRUAL-FEB-2026",
-            "created_by": "Astra AI — Month-End Close",
+            "created_by": "AlecRae AI — Month-End Close",
             "posted_at": "2026-02-28T23:59:00Z",
         },
         {
@@ -48,7 +48,7 @@ def _seed():
             "total_debit": 1450.00,
             "total_credit": 1450.00,
             "reference": "DEP-FEB-2026",
-            "created_by": "Astra AI — Month-End Close",
+            "created_by": "AlecRae AI — Month-End Close",
             "posted_at": "2026-02-28T23:59:00Z",
         },
         {
@@ -81,7 +81,7 @@ def _seed():
             "total_debit": 890.00,
             "total_credit": 890.00,
             "reference": "CORRECTION-0318",
-            "created_by": "admin@astra.ai",
+            "created_by": "admin@alecrae.com",
             "posted_at": "2026-03-18T14:22:00Z",
         },
         {
@@ -96,7 +96,7 @@ def _seed():
             "total_debit": 541.67,
             "total_credit": 541.67,
             "reference": "PREPAID-MAR-2026",
-            "created_by": "Astra AI — Month-End Close",
+            "created_by": "AlecRae AI — Month-End Close",
             "posted_at": "2026-03-20T09:00:00Z",
         },
         {
@@ -111,7 +111,7 @@ def _seed():
             "total_debit": 3300.00,
             "total_credit": 3300.00,
             "reference": "ACCRUAL-LEGAL-Q1",
-            "created_by": "admin@astra.ai",
+            "created_by": "admin@alecrae.com",
             "posted_at": None,
         },
     ]

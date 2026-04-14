@@ -1,9 +1,9 @@
 """Multi-Agent Orchestrator.
 
-The brain that coordinates all Astra agents. Inspired by the Wolters Kluwer
+The brain that coordinates all AlecRae agents. Inspired by the Wolters Kluwer
 three-tier model: Automators, Collaborators, and Orchestrators.
 
-This is the shift from "use individual tools" to "tell Astra what you need
+This is the shift from "use individual tools" to "tell AlecRae what you need
 and it dispatches the right agents."
 """
 
@@ -38,8 +38,8 @@ class TaskStatus(str, Enum):
     NEEDS_HUMAN = "needs_human"
 
 
-ORCHESTRATOR_PROMPT = """You are the Astra Orchestrator — the master intelligence coordinating all AI agents
-in the Astra autonomous accounting platform.
+ORCHESTRATOR_PROMPT = """You are the AlecRae Orchestrator — the master intelligence coordinating all AI agents
+in the AlecRae autonomous accounting platform.
 
 When a user makes a request, you determine:
 1. Which agent(s) to dispatch
@@ -437,7 +437,7 @@ Create an execution plan.""",
         response = await self.client.messages.create(
             model=self.model,
             max_tokens=1500,
-            system="""You are the Astra Orchestrator. Combine multiple agent results into
+            system="""You are the AlecRae Orchestrator. Combine multiple agent results into
 a single, cohesive response. Prioritize actionable insights and flag anything
 requiring human attention. Respond in JSON with:
 {

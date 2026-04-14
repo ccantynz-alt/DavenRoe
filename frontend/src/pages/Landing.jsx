@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import HeroCarousel from '../components/landing/HeroCarousel';
 import LogoBar from '../components/landing/LogoBar';
 import AnimatedStats from '../components/landing/AnimatedStats';
@@ -75,6 +75,27 @@ export default function Landing({ onLogin, onNavigate }) {
               <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">One AI platform.</span><br />
               Zero add-ons.
             </h1>
+            <div
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.05] mb-8 tracking-tight h-[1.2em]"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(30px)',
+                transition: 'all 1s ease-out 0.5s',
+              }}
+            >
+              <TypewriterText
+                phrases={[
+                  'bookkeeping.',
+                  'tax compliance.',
+                  'payroll.',
+                  'fraud detection.',
+                  'month-end close.',
+                  'bank reconciliation.',
+                  'financial reporting.',
+                ]}
+                className="bg-gradient-to-r from-indigo-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent"
+              />
+            </div>
 
             <p className="text-lg sm:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-10" style={{ opacity: loaded ? 1 : 0, transform: loaded ? 'translateY(0)' : 'translateY(20px)', transition: 'all 0.8s ease-out 0.7s' }}>
               Bookkeeping, tax filing, payroll, invoicing, and forensic fraud detection across AU, NZ, UK &amp; US — with 24 AI agents that do the work while you review and approve. Replaces 6 separate tools for $49/month.
