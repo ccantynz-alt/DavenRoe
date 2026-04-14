@@ -17,7 +17,7 @@ export default function Layout({ children }) {
       <aside className="w-64 bg-slate-900 border-r border-slate-800 flex flex-col">
         <div className="p-6 border-b border-slate-800">
           <h1 className="text-xl font-bold text-white tracking-tight">
-            Astra <span className="text-forensic-500">Forensic</span>
+            Marco Reid <span className="text-forensic-500">Forensic</span>
           </h1>
           <p className="text-xs text-slate-500 mt-1">M&A Due Diligence Platform</p>
         </div>
@@ -43,7 +43,7 @@ export default function Layout({ children }) {
             href="/"
             className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
           >
-            Back to Astra Main
+            Back to Marco Reid Main
           </a>
         </div>
       </aside>

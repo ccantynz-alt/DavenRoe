@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -35,7 +35,7 @@ const TaxRulingsAgent = lazy(() => import('./pages/TaxRulingsAgent'));
 const TaxAdvisorToolkit = lazy(() => import('./pages/TaxAdvisor'));
 
 // AI & intelligence
-const AskAlecRae = lazy(() => import('./pages/AskAlecRae'));
+const AskDavenRoe = lazy(() => import('./pages/AskDavenRoe'));
 const AgenticDashboard = lazy(() => import('./pages/AgenticDashboard'));
 const AIInsights = lazy(() => import('./pages/AIInsights'));
 const FinancialHealthScore = lazy(() => import('./pages/FinancialHealthScore'));
@@ -96,6 +96,12 @@ const AcceptableUse = lazy(() => import('./pages/AcceptableUse'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
+// Public marketing pages (no login required)
+const CompareQuickBooks = lazy(() => import('./pages/compare/QuickBooks'));
+const MigrateFromQuickBooks = lazy(() => import('./pages/migrate/FromQuickBooks'));
+const CatchUp = lazy(() => import('./pages/CatchUp'));
+const PenaltyCalculator = lazy(() => import('./pages/catchup/PenaltyCalculator'));
+
 // ─── Loading fallback ────────────────────────────────────────────────────────
 function PageLoader() {
   return (
@@ -112,9 +118,21 @@ function PageLoader() {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('alecrae_onboarded') === 'true');
+  const location = useLocation();
+  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('davenRoe_onboarded') === 'true');
   const [showLogin, setShowLogin] = useState(false);
   const [publicPage, setPublicPage] = useState(null);
+
+  // Public marketing pages — accessible to both logged-out and logged-in users
+  // These take precedence over the auth gate below
+  const publicMarketingPage = (() => {
+    const p = location.pathname;
+    if (p === '/compare/quickbooks') return <Suspense fallback={<PageLoader />}><CompareQuickBooks /></Suspense>;
+    if (p === '/migrate/from-quickbooks') return <Suspense fallback={<PageLoader />}><MigrateFromQuickBooks /></Suspense>;
+    if (p === '/catch-up') return <Suspense fallback={<PageLoader />}><CatchUp /></Suspense>;
+    if (p === '/catchup/penalty-calculator') return <Suspense fallback={<PageLoader />}><PenaltyCalculator /></Suspense>;
+    return null;
+  })();
 
   if (loading) {
     return (
@@ -123,7 +141,7 @@ function AppRoutes() {
           <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
             A
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">AlecRae</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">DavenRoe</h1>
           <p className="text-gray-500">Initializing...</p>
         </div>
       </div>
@@ -131,6 +149,9 @@ function AppRoutes() {
   }
 
   const goHome = () => { setPublicPage(null); setShowLogin(false); };
+
+  // Public marketing pages (accessible always, logged in or out)
+  if (publicMarketingPage) return publicMarketingPage;
 
   // Public pages (accessible without login)
   if (!user) {
@@ -162,77 +183,81 @@ function AppRoutes() {
 
   if (!onboarded) {
     return (
-      <Onboarding onComplete={() => {
-        localStorage.setItem('alecrae_onboarded', 'true');
-        setOnboarded(true);
-      }} />
+      <Suspense fallback={<PageLoader />}>
+        <Onboarding onComplete={() => {
+          localStorage.setItem('davenRoe_onboarded', 'true');
+          setOnboarded(true);
+        }} />
+      </Suspense>
     );
   }
 
   return (
     <Layout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/clients" element={<Clients />} />
-        <Route path="/review" element={<ReviewQueue />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/tax" element={<TaxEngine />} />
-        <Route path="/banking" element={<BankFeeds />} />
-        <Route path="/invoicing" element={<Invoicing />} />
-        <Route path="/documents" element={<Documents />} />
-        <Route path="/compliance" element={<ComplianceCalendar />} />
-        <Route path="/portal" element={<ClientPortal />} />
-        <Route path="/specialists" element={<Specialists />} />
-        <Route path="/toolkit" element={<Toolkit />} />
-        <Route path="/ask" element={<AskAlecRae />} />
-        <Route path="/agentic" element={<AgenticDashboard />} />
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/integrations" element={<Integrations />} />
-        <Route path="/enterprise" element={<Enterprise />} />
-        <Route path="/activity" element={<ActivityFeed />} />
-        <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
-        <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
-        <Route path="/marketplace" element={<Marketplace />} />
-        <Route path="/ai-insights" element={<AIInsights />} />
-        <Route path="/financial-health" element={<ConsentGate feature="financial_health"><FinancialHealthScore /></ConsentGate>} />
-        <Route path="/incorporate" element={<ConsentGate feature="incorporation"><Incorporation /></ConsentGate>} />
-        <Route path="/email-scanner" element={<EmailScanner />} />
-        <Route path="/tax-agent" element={<TaxAgent />} />
-        <Route path="/peer-review" element={<PeerReview />} />
-        <Route path="/smart-tools" element={<SmartTools />} />
-        <Route path="/time-tracker" element={<TimeTracker />} />
-        <Route path="/live-receipt" element={<LiveReceipt />} />
-        <Route path="/live-receipt/:id" element={<LiveReceipt />} />
-        <Route path="/spend-monitor" element={<ConsentGate feature="spend_monitor"><SpendMonitor /></ConsentGate>} />
-        <Route path="/suppliers" element={<Suppliers />} />
-        <Route path="/bills" element={<Bills />} />
-        <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
-        <Route path="/journal-entries" element={<JournalEntries />} />
-        <Route path="/bank-reconciliation" element={<BankReconciliation />} />
-        <Route path="/quotes" element={<Quotes />} />
-        <Route path="/recurring" element={<RecurringTransactions />} />
-        <Route path="/purchase-orders" element={<PurchaseOrders />} />
-        <Route path="/credit-notes" element={<CreditNotes />} />
-        <Route path="/fixed-assets" element={<FixedAssets />} />
-        <Route path="/budgets" element={<Budgets />} />
-        <Route path="/projects" element={<ProjectManagement />} />
-        <Route path="/scenarios" element={<ScenarioPlanning />} />
-        <Route path="/help" element={<HelpCenter />} />
-        <Route path="/practice" element={<PracticeDashboard />} />
-        <Route path="/forensic-tools" element={<ForensicTools />} />
-        <Route path="/tax-advisor" element={<TaxAdvisorToolkit />} />
-        <Route path="/tax-rulings" element={<TaxRulingsAgent />} />
-        <Route path="/case-studies" element={<CaseStudies />} />
-        <Route path="/partners" element={<PartnerProgram />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/import" element={<DataImport />} />
-        <Route path="/billing" element={<Billing />} />
-        <Route path="/ai-disclosure" element={<AIDisclosure />} />
-        <Route path="/acceptable-use" element={<AcceptableUse />} />
-        <Route path="/cookies" element={<CookiePolicy />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/clients" element={<Clients />} />
+          <Route path="/review" element={<ReviewQueue />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/tax" element={<TaxEngine />} />
+          <Route path="/banking" element={<BankFeeds />} />
+          <Route path="/invoicing" element={<Invoicing />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/compliance" element={<ComplianceCalendar />} />
+          <Route path="/portal" element={<ClientPortal />} />
+          <Route path="/specialists" element={<Specialists />} />
+          <Route path="/toolkit" element={<Toolkit />} />
+          <Route path="/ask" element={<AskDavenRoe />} />
+          <Route path="/agentic" element={<AgenticDashboard />} />
+          <Route path="/inventory" element={<Inventory />} />
+          <Route path="/integrations" element={<Integrations />} />
+          <Route path="/enterprise" element={<Enterprise />} />
+          <Route path="/activity" element={<ActivityFeed />} />
+          <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
+          <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
+          <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/ai-insights" element={<AIInsights />} />
+          <Route path="/financial-health" element={<ConsentGate feature="financial_health"><FinancialHealthScore /></ConsentGate>} />
+          <Route path="/incorporate" element={<ConsentGate feature="incorporation"><Incorporation /></ConsentGate>} />
+          <Route path="/email-scanner" element={<EmailScanner />} />
+          <Route path="/tax-agent" element={<TaxAgent />} />
+          <Route path="/peer-review" element={<PeerReview />} />
+          <Route path="/smart-tools" element={<SmartTools />} />
+          <Route path="/time-tracker" element={<TimeTracker />} />
+          <Route path="/live-receipt" element={<LiveReceipt />} />
+          <Route path="/live-receipt/:id" element={<LiveReceipt />} />
+          <Route path="/spend-monitor" element={<ConsentGate feature="spend_monitor"><SpendMonitor /></ConsentGate>} />
+          <Route path="/suppliers" element={<Suppliers />} />
+          <Route path="/bills" element={<Bills />} />
+          <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
+          <Route path="/journal-entries" element={<JournalEntries />} />
+          <Route path="/bank-reconciliation" element={<BankReconciliation />} />
+          <Route path="/quotes" element={<Quotes />} />
+          <Route path="/recurring" element={<RecurringTransactions />} />
+          <Route path="/purchase-orders" element={<PurchaseOrders />} />
+          <Route path="/credit-notes" element={<CreditNotes />} />
+          <Route path="/fixed-assets" element={<FixedAssets />} />
+          <Route path="/budgets" element={<Budgets />} />
+          <Route path="/projects" element={<ProjectManagement />} />
+          <Route path="/scenarios" element={<ScenarioPlanning />} />
+          <Route path="/help" element={<HelpCenter />} />
+          <Route path="/practice" element={<PracticeDashboard />} />
+          <Route path="/forensic-tools" element={<ForensicTools />} />
+          <Route path="/tax-advisor" element={<TaxAdvisorToolkit />} />
+          <Route path="/tax-rulings" element={<TaxRulingsAgent />} />
+          <Route path="/case-studies" element={<CaseStudies />} />
+          <Route path="/partners" element={<PartnerProgram />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/import" element={<DataImport />} />
+          <Route path="/billing" element={<Billing />} />
+          <Route path="/ai-disclosure" element={<AIDisclosure />} />
+          <Route path="/acceptable-use" element={<AcceptableUse />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NotFound onBack={() => window.location.href = '/'} />} />
+        </Routes>
+      </Suspense>
     </Layout>
   );
 }

@@ -1,4 +1,4 @@
-"""AlecRae — The World's First Autonomous Global Accounting Agent.
+"""DavenRoe — AI-Native Accounting + Tax + Forensic Intelligence Platform.
 
 Main FastAPI application entry point.
 """
@@ -44,6 +44,8 @@ from app.api.routes import (
     support,
     projects,
     scenarios,
+    compliance,
+    catch_up,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -55,8 +57,9 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     description=(
-        "Autonomous global accounting platform with AI-powered bookkeeping, "
-        "multi-jurisdiction tax compliance, and treaty-aware cross-border calculations."
+        "AI-native global accounting platform with autonomous bookkeeping, "
+        "multi-jurisdiction tax compliance, forensic intelligence, native 4-country payroll, "
+        "and treaty-aware cross-border calculations across AU, NZ, UK, US."
     ),
     docs_url="/docs",
     redoc_url="/redoc",
@@ -204,6 +207,8 @@ app.include_router(budgets.router, prefix="/api/v1")
 app.include_router(support.router, prefix="/api/v1")
 app.include_router(projects.router, prefix="/api/v1")
 app.include_router(scenarios.router, prefix="/api/v1")
+app.include_router(compliance.router, prefix="/api/v1")
+app.include_router(catch_up.router)  # Public catch-up endpoints (no auth required, prefix in router)
 
 
 @app.get("/")
@@ -243,6 +248,10 @@ async def root():
             "forensic_accounting": "M&A Due Diligence — Benford's Law, anomaly detection, vendor/payroll cross-ref",
             "specialist_toolkits": "12 accounting specializations, 90+ automations",
             "universal_toolkit": "Calculators, validators, reconciliation, reference — everyday tools for every user",
+        },
+        "capture": {
+            "catch_up": "/api/v1/catch-up — public years-behind rescue assessment (no auth)",
+            "compare": "/compare/quickbooks, /migrate/from-quickbooks — public marketing pages",
         },
     }
 
