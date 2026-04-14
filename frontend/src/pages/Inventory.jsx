@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DemoDataBanner from '../components/DemoDataBanner';
 
 const DEMO_ITEMS = [
   { id: 1, sku: 'WDG-001', name: 'Premium Widget A', category: 'Widgets', location: 'Sydney Warehouse', qty: 342, reorder: 50, unit_cost: 12.50, sell_price: 29.99, method: 'FIFO', status: 'in_stock' },
@@ -52,6 +53,8 @@ export default function Inventory() {
           + Add Item
         </button>
       </div>
+
+      <DemoDataBanner feature="Inventory" ctaTo="/clients" ctaLabel="Import your stock" />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

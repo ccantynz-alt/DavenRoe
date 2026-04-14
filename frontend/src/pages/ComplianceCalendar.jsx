@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DemoDataBanner from '../components/DemoDataBanner';
 
 // All major tax deadlines across US, AU, NZ, GB
 const DEADLINES = [
@@ -108,6 +109,8 @@ export default function ComplianceCalendar() {
           </button>
         </div>
       </div>
+
+      <DemoDataBanner feature="The Compliance Calendar" ctaTo="/clients" ctaLabel="Add your entities" />
 
       {/* Filters */}
       <div className="flex gap-3 mb-6 flex-wrap">
