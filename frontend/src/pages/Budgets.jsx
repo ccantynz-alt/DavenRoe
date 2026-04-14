@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useToast } from '../components/Toast';
+import DemoDataBanner from '../components/DemoDataBanner';
 
 const STATUS_COLORS = {
   active: 'bg-green-100 text-green-700',
@@ -109,6 +110,8 @@ export default function Budgets() {
           {showCreate ? 'Cancel' : '+ Create Budget'}
         </button>
       </div>
+
+      <DemoDataBanner feature="Budgets" ctaTo="/reports" ctaLabel="Use my financials" />
 
       {showCreate && (
         <CreateBudgetForm

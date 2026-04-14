@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '../components/Toast';
 import ProprietaryNotice from '../components/ProprietaryNotice';
+import DemoDataBanner from '../components/DemoDataBanner';
 
 // ─── Demo Data ──────────────────────────────────────────────────────────────────
 
@@ -508,7 +509,9 @@ export default function ForensicTools() {
           Export Report
         </button>
       </div>
-      <p className="text-gray-500 mb-8">Advanced fraud detection and financial irregularity analysis — powered by AlecRae AI</p>
+      <p className="text-gray-500 mb-8">Advanced fraud detection and financial irregularity analysis — powered by DavenRoe AI</p>
+
+      <DemoDataBanner feature="Forensic Tools" ctaTo="/banking" ctaLabel="Connect bank feeds" />
 
       <SummaryCards
         flags={totalFlags}

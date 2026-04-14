@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useToast } from '../components/Toast';
 import ProprietaryNotice from '../components/ProprietaryNotice';
+import DemoDataBanner from '../components/DemoDataBanner';
 
 const PRESETS = [
   { id: 'hire', label: 'Hire new employees', icon: '👤', fields: ['num_hires', 'avg_salary', 'start_month'] },
@@ -185,6 +186,8 @@ export default function ScenarioPlanning() {
         <h1 className="text-2xl font-bold text-gray-900">Scenario Planning</h1>
         <p className="text-sm text-gray-500 mt-0.5">Model "what if" scenarios and see the 12-month financial impact</p>
       </div>
+
+      <DemoDataBanner feature="Scenario Planning" ctaTo="/reports" ctaLabel="Use my financials" />
 
       {/* Baseline inputs */}
       <div className="bg-white border rounded-xl p-5">
