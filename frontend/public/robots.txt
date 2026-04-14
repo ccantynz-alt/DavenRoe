@@ -1,4 +1,4 @@
-# Astra AI Accounting Platform
+# Marco Reid AI Accounting Platform
 # Public pages — allow search engines to index
 
 # Google (primary target)

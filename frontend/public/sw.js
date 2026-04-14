@@ -1,11 +1,11 @@
 /**
- * Astra Service Worker
+ * Marco Reid Service Worker
  * Provides offline caching with network-first strategy for API calls
  * and cache-first strategy for static assets.
  */
 
-const CACHE_NAME = 'astra-v1';
-const STATIC_CACHE = 'astra-static-v1';
+const CACHE_NAME = 'marcoReid-v1';
+const STATIC_CACHE = 'marcoReid-static-v1';
 
 const APP_SHELL = [
   '/',

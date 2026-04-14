@@ -12,7 +12,7 @@ const SelectTrigger = React.forwardRef(({ className, children, ...props }, ref) 
     ref={ref}
     className={cn(
       'flex h-10 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm',
-      'placeholder:text-gray-400 focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20',
+      'placeholder:text-gray-400 focus:border-marcoReid-500 focus:outline-none focus:ring-2 focus:ring-marcoReid-500/20',
       'disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
       className
     )}
@@ -63,7 +63,7 @@ const SelectItem = React.forwardRef(({ className, children, ...props }, ref) => 
     ref={ref}
     className={cn(
       'relative flex w-full cursor-default select-none items-center rounded-md py-1.5 pl-8 pr-2 text-sm outline-none',
-      'focus:bg-astra-50 focus:text-astra-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'focus:bg-marcoReid-50 focus:text-marcoReid-900 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}

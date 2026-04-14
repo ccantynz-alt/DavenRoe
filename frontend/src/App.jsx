@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -96,6 +96,12 @@ const AcceptableUse = lazy(() => import('./pages/AcceptableUse'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
+// Public marketing pages (no login required)
+const CompareQuickBooks = lazy(() => import('./pages/compare/QuickBooks'));
+const MigrateFromQuickBooks = lazy(() => import('./pages/migrate/FromQuickBooks'));
+const CatchUp = lazy(() => import('./pages/CatchUp'));
+const PenaltyCalculator = lazy(() => import('./pages/catchup/PenaltyCalculator'));
+
 // ─── Loading fallback ────────────────────────────────────────────────────────
 function PageLoader() {
   return (
@@ -116,6 +122,17 @@ function AppRoutes() {
   const [showLogin, setShowLogin] = useState(false);
   const [publicPage, setPublicPage] = useState(null);
 
+  // Public marketing pages — accessible to both logged-out and logged-in users
+  // These take precedence over the auth gate below
+  const publicMarketingPage = (() => {
+    const p = location.pathname;
+    if (p === '/compare/quickbooks') return <Suspense fallback={<PageLoader />}><CompareQuickBooks /></Suspense>;
+    if (p === '/migrate/from-quickbooks') return <Suspense fallback={<PageLoader />}><MigrateFromQuickBooks /></Suspense>;
+    if (p === '/catch-up') return <Suspense fallback={<PageLoader />}><CatchUp /></Suspense>;
+    if (p === '/catchup/penalty-calculator') return <Suspense fallback={<PageLoader />}><PenaltyCalculator /></Suspense>;
+    return null;
+  })();
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950">
@@ -131,6 +148,9 @@ function AppRoutes() {
   }
 
   const goHome = () => { setPublicPage(null); setShowLogin(false); };
+
+  // Public marketing pages (accessible always, logged in or out)
+  if (publicMarketingPage) return publicMarketingPage;
 
   // Public pages (accessible without login)
   if (!user) {

@@ -1,6 +1,6 @@
 # DavenRoe — Privacy Policy
 
-**Last Updated: March 2026** | **Version: 2026.03.3**
+**Last Updated: April 2026** | **Version: 2026.04.1**
 
 ## 1. Who We Are
 

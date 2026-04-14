@@ -1,6 +1,6 @@
 # DavenRoe — AI Disclosure & Transparency Statement
 
-**Last Updated: March 2026**
+**Last Updated: April 2026**
 
 ## What AI Does in DavenRoe
 
