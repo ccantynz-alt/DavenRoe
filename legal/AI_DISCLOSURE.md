@@ -1,10 +1,10 @@
-# Astra — AI Disclosure & Transparency Statement
+# DavenRoe — AI Disclosure & Transparency Statement
 
-**Last Updated: March 2026**
+**Last Updated: April 2026**
 
-## What AI Does in Astra
+## What AI Does in DavenRoe
 
-Astra uses artificial intelligence in specific, clearly defined areas.
+DavenRoe uses artificial intelligence in specific, clearly defined areas.
 This document explains exactly what the AI does and does not do.
 
 ## Deterministic (Non-AI) Components — 100% Rule-Based
@@ -37,7 +37,7 @@ The following components use the Claude AI model. Their outputs are
 1. **AI never files anything.** Tax returns, BAS, GST returns, and 1099s are
    drafted by the system but require explicit human submission.
 
-2. **AI never moves money.** Astra reads bank feeds but cannot initiate
+2. **AI never moves money.** DavenRoe reads bank feeds but cannot initiate
    transactions, transfers, or payments.
 
 3. **AI always shows its work.** Every AI categorization includes a confidence
@@ -59,7 +59,7 @@ The following components use the Claude AI model. Their outputs are
 
 ## How to Override AI Decisions
 
-Every AI suggestion in Astra can be:
+Every AI suggestion in DavenRoe can be:
 - **Approved** — accepted as-is
 - **Edited** — modified before approval
 - **Flagged** — marked for professional review
