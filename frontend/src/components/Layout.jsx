@@ -98,6 +98,7 @@ const navSections = [
     items: [
       { path: '/documents', label: 'Documents' },
       { path: '/email-scanner', label: 'Email Scanner' },
+      { path: '/email-harvester', label: 'Email Harvester' },
     ],
   },
   {

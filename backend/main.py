@@ -49,6 +49,7 @@ from app.api.routes import (
     timeline,
     catch_up_engine,
     accountant_pack,
+    email_harvester,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -223,6 +224,7 @@ app.include_router(catch_up.router)  # Public catch-up endpoints (no auth requir
 app.include_router(timeline.router, prefix="/api/v1")
 app.include_router(catch_up_engine.router, prefix="/api/v1")
 app.include_router(accountant_pack.router, prefix="/api/v1")
+app.include_router(email_harvester.router, prefix="/api/v1")
 
 
 @app.get("/")

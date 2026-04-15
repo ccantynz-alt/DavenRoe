@@ -78,6 +78,7 @@ const ClientPortal = lazy(() => import('./pages/ClientPortal'));
 const ActivityFeed = lazy(() => import('./pages/ActivityFeed'));
 const Timeline = lazy(() => import('./pages/Timeline'));
 const AccountantPack = lazy(() => import('./pages/AccountantPack'));
+const EmailHarvester = lazy(() => import('./pages/EmailHarvester'));
 const Incorporation = lazy(() => import('./pages/Incorporation'));
 const DataImport = lazy(() => import('./pages/DataImport'));
 const Billing = lazy(() => import('./pages/Billing'));
@@ -214,6 +215,7 @@ function AppRoutes() {
         <Route path="/activity" element={<ActivityFeed />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/accountant-pack" element={<AccountantPack />} />
+        <Route path="/email-harvester" element={<EmailHarvester />} />
         <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
         <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
         <Route path="/marketplace" element={<Marketplace />} />
