@@ -76,6 +76,8 @@ const Integrations = lazy(() => import('./pages/Integrations'));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
 const ClientPortal = lazy(() => import('./pages/ClientPortal'));
 const ActivityFeed = lazy(() => import('./pages/ActivityFeed'));
+const Timeline = lazy(() => import('./pages/Timeline'));
+const AccountantPack = lazy(() => import('./pages/AccountantPack'));
 const Incorporation = lazy(() => import('./pages/Incorporation'));
 const DataImport = lazy(() => import('./pages/DataImport'));
 const Billing = lazy(() => import('./pages/Billing'));
@@ -210,6 +212,8 @@ function AppRoutes() {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/enterprise" element={<Enterprise />} />
         <Route path="/activity" element={<ActivityFeed />} />
+        <Route path="/timeline" element={<Timeline />} />
+        <Route path="/accountant-pack" element={<AccountantPack />} />
         <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
         <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
         <Route path="/marketplace" element={<Marketplace />} />
