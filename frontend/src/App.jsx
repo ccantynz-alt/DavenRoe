@@ -49,6 +49,7 @@ const Bills = lazy(() => import('./pages/Bills'));
 const ChartOfAccounts = lazy(() => import('./pages/ChartOfAccounts'));
 const JournalEntries = lazy(() => import('./pages/JournalEntries'));
 const BankReconciliation = lazy(() => import('./pages/BankReconciliation'));
+const BankRules = lazy(() => import('./pages/BankRules'));
 const Quotes = lazy(() => import('./pages/Quotes'));
 const RecurringTransactions = lazy(() => import('./pages/RecurringTransactions'));
 const PurchaseOrders = lazy(() => import('./pages/PurchaseOrders'));
@@ -209,6 +210,7 @@ function AppRoutes() {
         <Route path="/chart-of-accounts" element={<ChartOfAccounts />} />
         <Route path="/journal-entries" element={<JournalEntries />} />
         <Route path="/bank-reconciliation" element={<BankReconciliation />} />
+        <Route path="/bank-rules" element={<BankRules />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/recurring" element={<RecurringTransactions />} />
         <Route path="/purchase-orders" element={<PurchaseOrders />} />

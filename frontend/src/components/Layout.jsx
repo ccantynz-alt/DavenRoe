@@ -37,6 +37,7 @@ const navSections = [
     label: 'Banking',
     items: [
       { path: '/banking', label: 'Bank Feeds' },
+      { path: '/bank-rules', label: 'Bank Rules' },
       { path: '/bank-reconciliation', label: 'Reconciliation' },
       { path: '/recurring', label: 'Recurring' },
     ],
