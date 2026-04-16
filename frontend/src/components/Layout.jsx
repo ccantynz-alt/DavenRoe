@@ -10,6 +10,7 @@ const navSections = [
     label: 'Overview',
     items: [
       { path: '/', label: 'Dashboard' },
+      { path: '/timeline', label: 'Timeline' },
       { path: '/practice', label: 'Practice Overview' },
       { path: '/financial-health', label: 'Health Score' },
     ],
@@ -65,6 +66,7 @@ const navSections = [
     items: [
       { path: '/tax', label: 'Tax Engine' },
       { path: '/tax-filing', label: 'Tax Filing' },
+      { path: '/accountant-pack', label: 'Get Ready for Accountant' },
       { path: '/tax-rulings', label: 'Tax Rulings Agent' },
       { path: '/tax-advisor', label: 'Tax Advisor Toolkit' },
       { path: '/tax-agent', label: 'Tax Agent' },
@@ -96,6 +98,7 @@ const navSections = [
     items: [
       { path: '/documents', label: 'Documents' },
       { path: '/email-scanner', label: 'Email Scanner' },
+      { path: '/email-harvester', label: 'Email Harvester' },
     ],
   },
   {

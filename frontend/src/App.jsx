@@ -76,6 +76,9 @@ const Integrations = lazy(() => import('./pages/Integrations'));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
 const ClientPortal = lazy(() => import('./pages/ClientPortal'));
 const ActivityFeed = lazy(() => import('./pages/ActivityFeed'));
+const Timeline = lazy(() => import('./pages/Timeline'));
+const AccountantPack = lazy(() => import('./pages/AccountantPack'));
+const EmailHarvester = lazy(() => import('./pages/EmailHarvester'));
 const Incorporation = lazy(() => import('./pages/Incorporation'));
 const DataImport = lazy(() => import('./pages/DataImport'));
 const Billing = lazy(() => import('./pages/Billing'));
@@ -98,7 +101,10 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Public marketing pages (no login required)
 const CompareQuickBooks = lazy(() => import('./pages/compare/QuickBooks'));
+const CompareXero = lazy(() => import('./pages/compare/Xero'));
+const CompareMYOB = lazy(() => import('./pages/compare/MYOB'));
 const MigrateFromQuickBooks = lazy(() => import('./pages/migrate/FromQuickBooks'));
+const MigrateFromXero = lazy(() => import('./pages/migrate/FromXero'));
 const CatchUp = lazy(() => import('./pages/CatchUp'));
 const PenaltyCalculator = lazy(() => import('./pages/catchup/PenaltyCalculator'));
 
@@ -127,7 +133,10 @@ function AppRoutes() {
   const publicMarketingPage = (() => {
     const p = location.pathname;
     if (p === '/compare/quickbooks') return <Suspense fallback={<PageLoader />}><CompareQuickBooks /></Suspense>;
+    if (p === '/compare/xero') return <Suspense fallback={<PageLoader />}><CompareXero /></Suspense>;
+    if (p === '/compare/myob') return <Suspense fallback={<PageLoader />}><CompareMYOB /></Suspense>;
     if (p === '/migrate/from-quickbooks') return <Suspense fallback={<PageLoader />}><MigrateFromQuickBooks /></Suspense>;
+    if (p === '/migrate/from-xero') return <Suspense fallback={<PageLoader />}><MigrateFromXero /></Suspense>;
     if (p === '/catch-up') return <Suspense fallback={<PageLoader />}><CatchUp /></Suspense>;
     if (p === '/catchup/penalty-calculator') return <Suspense fallback={<PageLoader />}><PenaltyCalculator /></Suspense>;
     return null;
@@ -210,6 +219,9 @@ function AppRoutes() {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/enterprise" element={<Enterprise />} />
         <Route path="/activity" element={<ActivityFeed />} />
+        <Route path="/timeline" element={<Timeline />} />
+        <Route path="/accountant-pack" element={<AccountantPack />} />
+        <Route path="/email-harvester" element={<EmailHarvester />} />
         <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
         <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
         <Route path="/marketplace" element={<Marketplace />} />

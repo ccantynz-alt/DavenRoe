@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import HeroCarousel from '../components/landing/HeroCarousel';
 import LogoBar from '../components/landing/LogoBar';
 import AnimatedStats from '../components/landing/AnimatedStats';
+import LivePipelineDemo from '../components/landing/LivePipelineDemo';
 import DashboardPreview from '../components/landing/DashboardPreview';
 import FeatureShowcase from '../components/landing/FeatureShowcase';
 import ComparisonTable from '../components/landing/ComparisonTable';
@@ -253,6 +254,7 @@ export default function Landing({ onLogin, onNavigate }) {
 
       <LogoBar />
       <AnimatedStats />
+      <LivePipelineDemo />
       <DashboardPreview />
 
       <div id="features"><FeatureShowcase /></div>
