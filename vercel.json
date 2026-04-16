@@ -3,6 +3,26 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.py" },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "davenroe.co.nz" }],
+      "destination": "/nz"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.davenroe.co.nz" }],
+      "destination": "/nz"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "davenroe.com.au" }],
+      "destination": "/au"
+    },
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.davenroe.com.au" }],
+      "destination": "/au"
+    },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
