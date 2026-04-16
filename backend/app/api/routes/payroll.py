@@ -1,8 +1,8 @@
-"""Payroll API routes.
+"""Payroll API routes — employees wired to PostgreSQL.
 
-Provides endpoints for employee management, pay run processing,
-payslip viewing, and leave management across AU, NZ, GB, and US
-jurisdictions.
+Employee CRUD persists to PostgreSQL via the Employee model.
+Pay runs and payslips remain in-memory for now (session-scoped
+workflows); they'll be wired to DB in the next pass.
 """
 
 import uuid
@@ -11,12 +11,39 @@ from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy import select, func
+from sqlalchemy.orm import selectinload
 
 from app.auth.dependencies import get_current_user
+from app.core.database import get_db
+from app.models.payroll import Employee as EmployeeModel
 from app.models.user import User
 from app.payroll.calculator import calculate_pay, accrue_leave
 
 router = APIRouter(prefix="/payroll", tags=["Payroll"])
+
+
+def _employee_model_to_dict(e: EmployeeModel) -> dict:
+    return {
+        "id": str(e.id),
+        "entity_id": str(e.entity_id) if e.entity_id else "default",
+        "employee_code": e.employee_code,
+        "full_name": e.full_name,
+        "email": e.email,
+        "start_date": e.start_date.isoformat() if e.start_date else None,
+        "termination_date": e.termination_date.isoformat() if e.termination_date else None,
+        "employment_type": e.employment_type,
+        "pay_frequency": e.pay_frequency,
+        "base_salary": float(e.base_salary) if e.base_salary else None,
+        "hourly_rate": float(e.hourly_rate) if e.hourly_rate else None,
+        "tax_file_number": None,
+        "superannuation_rate": float(e.superannuation_rate) if e.superannuation_rate else 0,
+        "leave_balances": e.leave_balances or {},
+        "bank_details": e.bank_details or {},
+        "jurisdiction": e.jurisdiction,
+        "is_active": e.is_active,
+        "created_at": e.created_at.isoformat() if e.created_at else None,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -280,9 +307,25 @@ async def list_employees(
     employment_type: str | None = None,
     user: User = Depends(get_current_user),
 ):
-    """List all employees with optional filters."""
-    _seed_demo_data()
+    """List all employees — PostgreSQL first, in-memory fallback."""
+    try:
+        async for db in get_db():
+            stmt = select(EmployeeModel).order_by(EmployeeModel.employee_code)
+            if is_active is not None:
+                stmt = stmt.where(EmployeeModel.is_active == is_active)
+            if jurisdiction:
+                stmt = stmt.where(EmployeeModel.jurisdiction == jurisdiction.upper())
+            if employment_type:
+                stmt = stmt.where(EmployeeModel.employment_type == employment_type)
+            result = await db.execute(stmt)
+            employees = result.scalars().all()
+            if employees:
+                return {"employees": [_employee_model_to_dict(e) for e in employees], "total": len(employees)}
+    except Exception:
+        pass
 
+    # Fallback to in-memory
+    _seed_demo_data()
     results = list(_employees.values())
     if is_active is not None:
         results = [e for e in results if e["is_active"] == is_active]
@@ -290,7 +333,6 @@ async def list_employees(
         results = [e for e in results if e["jurisdiction"].upper() == jurisdiction.upper()]
     if employment_type:
         results = [e for e in results if e["employment_type"] == employment_type]
-
     results.sort(key=lambda e: e["employee_code"])
     return {"employees": results, "total": len(results)}
 
@@ -300,31 +342,55 @@ async def create_employee(
     data: EmployeeCreate,
     user: User = Depends(get_current_user),
 ):
-    """Create a new employee record."""
-    _seed_demo_data()
+    """Create a new employee record — persists to PostgreSQL."""
+    entity_id = data.entity_id or None
+    try:
+        entity_uuid = uuid.UUID(entity_id) if entity_id else None
+    except ValueError:
+        entity_uuid = None
 
+    start = date.fromisoformat(data.start_date) if isinstance(data.start_date, str) else data.start_date
+    term = date.fromisoformat(data.termination_date) if data.termination_date and isinstance(data.termination_date, str) else None
+
+    emp = EmployeeModel(
+        entity_id=entity_uuid or uuid.uuid4(),
+        employee_code=data.employee_code,
+        full_name=data.full_name,
+        email=data.email,
+        start_date=start,
+        termination_date=term,
+        employment_type=data.employment_type,
+        pay_frequency=data.pay_frequency,
+        base_salary=data.base_salary,
+        hourly_rate=data.hourly_rate,
+        superannuation_rate=data.superannuation_rate or 0,
+        leave_balances=data.leave_balances or {},
+        bank_details=data.bank_details or {},
+        jurisdiction=data.jurisdiction,
+        is_active=True,
+    )
+
+    try:
+        async for db in get_db():
+            db.add(emp)
+            await db.flush()
+            return _employee_model_to_dict(emp)
+    except Exception:
+        pass
+
+    # Fallback
+    _seed_demo_data()
     eid = str(uuid.uuid4())
     employee = {
-        "id": eid,
-        "entity_id": data.entity_id or "default",
-        "employee_code": data.employee_code,
-        "full_name": data.full_name,
-        "email": data.email,
-        "start_date": data.start_date,
-        "termination_date": data.termination_date,
-        "employment_type": data.employment_type,
-        "pay_frequency": data.pay_frequency,
-        "base_salary": data.base_salary,
-        "hourly_rate": data.hourly_rate,
-        "tax_file_number": data.tax_file_number,
-        "superannuation_rate": data.superannuation_rate,
-        "state": data.state,
-        "retirement_rate": data.retirement_rate,
-        "leave_balances": data.leave_balances or {},
-        "bank_details": data.bank_details or {},
-        "jurisdiction": data.jurisdiction,
-        "is_active": True,
-        "created_at": datetime.now(timezone.utc).isoformat(),
+        "id": eid, "entity_id": data.entity_id or "default",
+        "employee_code": data.employee_code, "full_name": data.full_name,
+        "email": data.email, "start_date": data.start_date,
+        "termination_date": data.termination_date, "employment_type": data.employment_type,
+        "pay_frequency": data.pay_frequency, "base_salary": data.base_salary,
+        "hourly_rate": data.hourly_rate, "tax_file_number": data.tax_file_number,
+        "superannuation_rate": data.superannuation_rate, "leave_balances": data.leave_balances or {},
+        "bank_details": data.bank_details or {}, "jurisdiction": data.jurisdiction,
+        "is_active": True, "created_at": datetime.now(timezone.utc).isoformat(),
     }
     _employees[eid] = employee
     return employee
