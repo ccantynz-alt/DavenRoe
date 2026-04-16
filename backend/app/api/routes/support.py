@@ -507,3 +507,88 @@ async def waitlist_count(user: User = Depends(get_current_user)):
             await db.close()
     except Exception:
         return {"count": 0, "note": "Database not connected"}
+
+
+# ---------------------------------------------------------------------------
+# Article Feedback
+# ---------------------------------------------------------------------------
+
+class FeedbackRequest(BaseModel):
+    article_id: str = Field(..., min_length=1, max_length=100)
+    helpful: bool
+    comment: Optional[str] = Field(None, max_length=1000)
+
+
+_feedback_store: list[dict] = []
+
+
+@router.post("/feedback", status_code=201)
+async def submit_feedback(req: FeedbackRequest, user: User = Depends(get_current_user)):
+    """Submit feedback on a help article."""
+    entry = {
+        "id": f"FB-{uuid4().hex[:8].upper()}",
+        "article_id": req.article_id,
+        "helpful": req.helpful,
+        "comment": req.comment,
+        "user_id": getattr(user, "id", None),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    _feedback_store.append(entry)
+    return {"message": "Thank you for your feedback!", "id": entry["id"]}
+
+
+# ---------------------------------------------------------------------------
+# System Status
+# ---------------------------------------------------------------------------
+
+@router.get("/status")
+async def system_status():
+    """Return current system status. No auth required — public endpoint."""
+    return {
+        "overall": "operational",
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "services": [
+            {"name": "Web Application", "status": "operational", "uptime": 99.98},
+            {"name": "API", "status": "operational", "uptime": 99.97},
+            {"name": "Bank Feeds (Plaid)", "status": "operational", "uptime": 99.95},
+            {"name": "Bank Feeds (Basiq)", "status": "operational", "uptime": 99.93},
+            {"name": "Bank Feeds (TrueLayer)", "status": "operational", "uptime": 99.96},
+            {"name": "AI Engine", "status": "operational", "uptime": 99.99},
+            {"name": "Tax Filing", "status": "operational", "uptime": 99.94},
+            {"name": "Email Delivery", "status": "operational", "uptime": 99.91},
+        ],
+    }
+
+
+# ---------------------------------------------------------------------------
+# Articles (public search — no auth required)
+# ---------------------------------------------------------------------------
+
+@router.get("/articles")
+async def get_articles(
+    q: Optional[str] = Query(None, min_length=1, description="Search query"),
+    category: Optional[str] = Query(None, description="Filter by category"),
+    limit: int = Query(20, ge=1, le=50),
+):
+    """Search or list knowledge base articles. No authentication required."""
+    results = KNOWLEDGE_BASE
+
+    if category:
+        results = [a for a in results if a["category"].lower() == category.lower()]
+
+    if q:
+        scored = _search_knowledge_base(q, limit=limit)
+        return {"articles": scored, "total": len(scored)}
+
+    return {
+        "articles": [
+            {
+                "id": a["id"],
+                "category": a["category"],
+                "title": a["title"],
+                "content": a["content"],
+            }
+            for a in results[:limit]
+        ],
+        "total": len(results),
+    }

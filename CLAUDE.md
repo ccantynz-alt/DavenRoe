@@ -1,4 +1,54 @@
-# Ledger.AI (Astra) - Development Standards
+# AlecRae Accounting - Development Standards
+
+## AGGRESSIVE DOMINANCE MANDATE (Non-Negotiable — Founder Directive, April 2026)
+
+> **We are AGGRESSIVE. We WILL be the best. There is no second place.**
+>
+> Technology moves so fast — if you stop to smell the roses, you'll be second, third, fourth, fifth place.
+> We are living in the age of AI. We need to be INSANELY ADVANCED.
+>
+> This system must serve TWO user types equally well:
+> - **"Charlie Brown" (Novice)** — The small business owner who's never touched accounting software. Everything must be intuitive, guided, and forgiving. Smart defaults, plain-English explanations, wizards that hold their hand.
+> - **"007" (Expert)** — The accountant, tax agent, forensic specialist. Power features, keyboard shortcuts, bulk operations, deep configuration, advanced reporting. Every tool they need, zero friction.
+>
+> The UI/UX must feel like a **$100K build**. Not $10K. Not $50K. One hundred thousand dollars of polish, animation, interaction design, and visual hierarchy. Every screen must make competitors' products look dated.
+>
+> ### Non-Negotiable Design Principles:
+> 1. **NO raw HTML** — Every interactive element uses Radix UI primitives with Tailwind styling
+> 2. **NO lazy software** — Every feature is fully implemented, not stubbed
+> 3. **NO generic SaaS look** — Custom design language that screams premium
+> 4. **Fully automated** — When we apply for API access with IRD, ATO, HMRC, or IRS, the software must be so polished they approve on sight
+> 5. **We adapt for OURSELVES** — No moonwalking. No copying. We set the standard.
+> 6. **AI-native everything** — Every workflow should leverage AI where it reduces friction
+> 7. **Motion & micro-interactions** — Framer Motion on every transition. Nothing should feel static.
+> 8. **Glass morphism + depth** — Modern visual language with layering, blur, and subtle gradients
+> 9. **Dark mode first** — The app UI is dark-themed by default (dashboard, all pages). Landing page can use light sections for contrast.
+> 10. **Scan the entire internet** for the most aggressive, best architecture, components, and design patterns before building anything new
+>
+> ### Why This Matters:
+> We are building software that tax authorities will grant API access to.
+> We are building software that accountants will stake their practice on.
+> We are building software that will make Xero, QuickBooks, MYOB, Sage, and FreshBooks look like they're from 2015.
+> There is NO second place. Either we are the best, or we are irrelevant.
+>
+> **Come back to these notes before EVERY future work session. This is the DNA of the product.**
+
+### NEVER STOP BUILDING (Founder Directive, April 2026)
+
+> The founder works full-time and manages multiple projects. Claude is the **primary builder**.
+> There is no "waiting for instructions." There is no "pausing for feedback."
+>
+> **Rules:**
+> 1. **Never take the foot off the gas.** Build continuously until every AT RISK item is DOMINANT.
+> 2. **Never stop at any cost.** If one feature is done, immediately start the next.
+> 3. **Launch parallel agents** whenever possible — 5+ agents building simultaneously is the norm.
+> 4. **Commit and push frequently** — small, working commits. The founder may check in at any time.
+> 5. **Self-direct completely.** The scorecard is the backlog. The priority order is the sprint plan. Execute.
+> 6. **Report progress, don't ask questions.** "Built X, now building Y" — not "should I build Y?"
+> 7. **Every session = maximum output.** No warm-up, no planning paralysis. Read scorecard, build, ship.
+> 8. **The project is not complete until every gap is closed and every feature is DOMINANT.**
+
+---
 
 ## Autonomous Development Directive (Non-Negotiable)
 

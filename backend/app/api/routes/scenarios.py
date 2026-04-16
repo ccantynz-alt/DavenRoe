@@ -1,12 +1,20 @@
-"""Scenario Planning API — what-if financial modelling and projection."""
+"""Scenario Planning API — what-if financial modelling, Monte Carlo simulation, and projection."""
 
-from fastapi import APIRouter, Depends
+import math
+import random
+import uuid
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.auth.dependencies import get_current_user
 from app.models.user import User
 
 router = APIRouter(prefix="/scenarios", tags=["Scenario Planning"])
+
+# In-memory store (replaced by DB in production)
+_scenarios_store: dict[str, dict] = {}
 
 
 class Baseline(BaseModel):
@@ -15,30 +23,44 @@ class Baseline(BaseModel):
     cash_on_hand: float = Field(0)
 
 
-class Scenario(BaseModel):
+class ScenarioItem(BaseModel):
     type: str = Field(..., min_length=1)
     params: dict = Field(default_factory=dict)
 
 
+class ScenarioCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    baseline: Baseline
+    scenarios: list[ScenarioItem] = Field(default_factory=list)
+
+
 class SimulationRequest(BaseModel):
     baseline: Baseline
-    scenarios: list[Scenario] = Field(default_factory=list)
+    scenarios: list[ScenarioItem] = Field(default_factory=list)
+    monte_carlo_runs: int = Field(default=500, ge=10, le=5000)
 
 
-def _run_simulation(baseline: Baseline, scenarios: list[Scenario]) -> list[dict]:
-    """Run a 12-month cash flow simulation with the given scenarios applied."""
+def _apply_scenarios(baseline: Baseline, scenarios: list[ScenarioItem], noise: float = 0.0) -> list[dict]:
+    """Run a 12-month cash flow simulation with the given scenarios applied.
+
+    If noise > 0, applies random variation for Monte Carlo simulation.
+    """
     import calendar
-    from datetime import date
 
     months = []
     for i in range(12):
         month_num = i + 1
         month_name = calendar.month_abbr[month_num]
+        rev = baseline.monthly_revenue
+        exp = baseline.monthly_expenses
+        if noise > 0:
+            rev *= (1 + random.gauss(0, noise))
+            exp *= (1 + random.gauss(0, noise * 0.5))
         months.append({
             "month": month_num,
             "label": month_name,
-            "revenue": baseline.monthly_revenue,
-            "expenses": baseline.monthly_expenses,
+            "revenue": rev,
+            "expenses": exp,
             "cash_adjustment": 0,
         })
 
@@ -93,6 +115,15 @@ def _run_simulation(baseline: Baseline, scenarios: list[Scenario]) -> list[dict]
             for m in months:
                 m["expenses"] += payment
 
+        elif sc.type == "equipment":
+            cost = float(p.get("purchase_cost", 0))
+            month_idx = max(0, int(p.get("purchase_month", 1)) - 1)
+            monthly_savings = float(p.get("monthly_savings", 0))
+            if month_idx < 12:
+                months[month_idx]["expenses"] += cost
+            for i in range(month_idx, 12):
+                months[i]["expenses"] -= monthly_savings
+
         elif sc.type == "custom":
             impact = float(p.get("monthly_impact", 0))
             for m in months:
@@ -114,15 +145,96 @@ def _run_simulation(baseline: Baseline, scenarios: list[Scenario]) -> list[dict]
     return months
 
 
+@router.post("/scenarios")
+async def create_scenario(req: ScenarioCreate, user: User = Depends(get_current_user)):
+    """Save a scenario for later comparison."""
+    scenario_id = str(uuid.uuid4())
+    _scenarios_store[scenario_id] = {
+        "id": scenario_id,
+        "name": req.name,
+        "baseline": req.baseline.model_dump(),
+        "scenarios": [s.model_dump() for s in req.scenarios],
+        "created_at": datetime.utcnow().isoformat(),
+        "user_id": str(user.id) if hasattr(user, "id") else "demo",
+    }
+    return _scenarios_store[scenario_id]
+
+
+@router.get("/scenarios")
+async def list_scenarios(user: User = Depends(get_current_user)):
+    """List all saved scenarios."""
+    user_id = str(user.id) if hasattr(user, "id") else "demo"
+    return [s for s in _scenarios_store.values() if s.get("user_id") == user_id]
+
+
+@router.get("/scenarios/{scenario_id}")
+async def get_scenario(scenario_id: str, user: User = Depends(get_current_user)):
+    """Get a specific saved scenario."""
+    if scenario_id not in _scenarios_store:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+    return _scenarios_store[scenario_id]
+
+
+@router.delete("/scenarios/{scenario_id}")
+async def delete_scenario(scenario_id: str, user: User = Depends(get_current_user)):
+    """Delete a saved scenario."""
+    if scenario_id not in _scenarios_store:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+    del _scenarios_store[scenario_id]
+    return {"status": "deleted"}
+
+
 @router.post("/simulate")
 async def simulate(req: SimulationRequest, user: User = Depends(get_current_user)):
-    """Run a what-if simulation and return 12-month projection."""
-    baseline_months = _run_simulation(req.baseline, [])
-    scenario_months = _run_simulation(req.baseline, req.scenarios) if req.scenarios else None
+    """Run a what-if simulation with Monte Carlo analysis and return projections."""
+    baseline_months = _apply_scenarios(req.baseline, [])
+    scenario_months = _apply_scenarios(req.baseline, req.scenarios) if req.scenarios else None
+
+    # Monte Carlo simulation
+    monte_carlo = None
+    if req.scenarios:
+        runs = req.monte_carlo_runs
+        all_end_cash = []
+        all_month_cash = [[] for _ in range(12)]
+
+        for _ in range(runs):
+            run_months = _apply_scenarios(req.baseline, req.scenarios, noise=0.05)
+            all_end_cash.append(run_months[11]["cash_balance"])
+            for i in range(12):
+                all_month_cash[i].append(run_months[i]["cash_balance"])
+
+        all_end_cash.sort()
+        p10 = all_end_cash[int(runs * 0.10)]
+        p50 = all_end_cash[int(runs * 0.50)]
+        p90 = all_end_cash[int(runs * 0.90)]
+
+        percentiles_by_month = []
+        for i in range(12):
+            vals = sorted(all_month_cash[i])
+            percentiles_by_month.append({
+                "month": i + 1,
+                "p10": round(vals[int(runs * 0.10)], 2),
+                "p25": round(vals[int(runs * 0.25)], 2),
+                "p50": round(vals[int(runs * 0.50)], 2),
+                "p75": round(vals[int(runs * 0.75)], 2),
+                "p90": round(vals[int(runs * 0.90)], 2),
+            })
+
+        prob_negative = round(sum(1 for c in all_end_cash if c < 0) / runs * 100, 1)
+
+        monte_carlo = {
+            "runs": runs,
+            "end_cash_p10": round(p10, 2),
+            "end_cash_p50": round(p50, 2),
+            "end_cash_p90": round(p90, 2),
+            "probability_negative": prob_negative,
+            "percentiles_by_month": percentiles_by_month,
+        }
 
     result = {
         "baseline": baseline_months,
         "scenario": scenario_months,
+        "monte_carlo": monte_carlo,
     }
 
     if scenario_months:

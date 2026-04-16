@@ -44,12 +44,7 @@ from app.api.routes import (
     support,
     projects,
     scenarios,
-    compliance,
-    catch_up,
-    timeline,
-    catch_up_engine,
-    accountant_pack,
-    email_harvester,
+    alerts,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -219,12 +214,7 @@ app.include_router(budgets.router, prefix="/api/v1")
 app.include_router(support.router, prefix="/api/v1")
 app.include_router(projects.router, prefix="/api/v1")
 app.include_router(scenarios.router, prefix="/api/v1")
-app.include_router(compliance.router, prefix="/api/v1")
-app.include_router(catch_up.router)  # Public catch-up endpoints (no auth required, prefix in router)
-app.include_router(timeline.router, prefix="/api/v1")
-app.include_router(catch_up_engine.router, prefix="/api/v1")
-app.include_router(accountant_pack.router, prefix="/api/v1")
-app.include_router(email_harvester.router, prefix="/api/v1")
+app.include_router(alerts.router, prefix="/api/v1")
 
 
 @app.get("/")
