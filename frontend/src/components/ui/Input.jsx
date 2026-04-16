@@ -9,7 +9,7 @@ const Input = forwardRef(({ className, type, ...props }, ref) => {
         'flex h-10 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm transition-colors',
         'file:border-0 file:bg-transparent file:text-sm file:font-medium',
         'placeholder:text-gray-400',
-        'focus:border-astra-500 focus:outline-none focus:ring-2 focus:ring-astra-500/20',
+        'focus:border-marcoReid-500 focus:outline-none focus:ring-2 focus:ring-marcoReid-500/20',
         'disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}

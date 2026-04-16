@@ -28,7 +28,7 @@ export const useAppStore = create(
       toggleCommandPalette: () => set((s) => ({ commandPaletteOpen: !s.commandPaletteOpen })),
     }),
     {
-      name: 'astra-app-store',
+      name: 'marcoReid-app-store',
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,
         activeEntityId: state.activeEntityId,

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ToastProvider } from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -35,7 +35,7 @@ const TaxRulingsAgent = lazy(() => import('./pages/TaxRulingsAgent'));
 const TaxAdvisorToolkit = lazy(() => import('./pages/TaxAdvisor'));
 
 // AI & intelligence
-const AskAlecRae = lazy(() => import('./pages/AskAlecRae'));
+const AskDavenRoe = lazy(() => import('./pages/AskDavenRoe'));
 const AgenticDashboard = lazy(() => import('./pages/AgenticDashboard'));
 const AIInsights = lazy(() => import('./pages/AIInsights'));
 const FinancialHealthScore = lazy(() => import('./pages/FinancialHealthScore'));
@@ -77,6 +77,9 @@ const Integrations = lazy(() => import('./pages/Integrations'));
 const Marketplace = lazy(() => import('./pages/Marketplace'));
 const ClientPortal = lazy(() => import('./pages/ClientPortal'));
 const ActivityFeed = lazy(() => import('./pages/ActivityFeed'));
+const Timeline = lazy(() => import('./pages/Timeline'));
+const AccountantPack = lazy(() => import('./pages/AccountantPack'));
+const EmailHarvester = lazy(() => import('./pages/EmailHarvester'));
 const Incorporation = lazy(() => import('./pages/Incorporation'));
 const DataImport = lazy(() => import('./pages/DataImport'));
 const Billing = lazy(() => import('./pages/Billing'));
@@ -97,6 +100,15 @@ const AcceptableUse = lazy(() => import('./pages/AcceptableUse'));
 const CookiePolicy = lazy(() => import('./pages/CookiePolicy'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
+// Public marketing pages (no login required)
+const CompareQuickBooks = lazy(() => import('./pages/compare/QuickBooks'));
+const CompareXero = lazy(() => import('./pages/compare/Xero'));
+const CompareMYOB = lazy(() => import('./pages/compare/MYOB'));
+const MigrateFromQuickBooks = lazy(() => import('./pages/migrate/FromQuickBooks'));
+const MigrateFromXero = lazy(() => import('./pages/migrate/FromXero'));
+const CatchUp = lazy(() => import('./pages/CatchUp'));
+const PenaltyCalculator = lazy(() => import('./pages/catchup/PenaltyCalculator'));
+
 // ─── Loading fallback ────────────────────────────────────────────────────────
 function PageLoader() {
   return (
@@ -113,9 +125,23 @@ function PageLoader() {
 
 function AppRoutes() {
   const { user, loading } = useAuth();
-  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('alecrae_onboarded') === 'true');
+  const [onboarded, setOnboarded] = useState(() => localStorage.getItem('davenroe_onboarded') === 'true');
   const [showLogin, setShowLogin] = useState(false);
   const [publicPage, setPublicPage] = useState(null);
+
+  // Public marketing pages — accessible to both logged-out and logged-in users
+  // These take precedence over the auth gate below
+  const publicMarketingPage = (() => {
+    const p = location.pathname;
+    if (p === '/compare/quickbooks') return <Suspense fallback={<PageLoader />}><CompareQuickBooks /></Suspense>;
+    if (p === '/compare/xero') return <Suspense fallback={<PageLoader />}><CompareXero /></Suspense>;
+    if (p === '/compare/myob') return <Suspense fallback={<PageLoader />}><CompareMYOB /></Suspense>;
+    if (p === '/migrate/from-quickbooks') return <Suspense fallback={<PageLoader />}><MigrateFromQuickBooks /></Suspense>;
+    if (p === '/migrate/from-xero') return <Suspense fallback={<PageLoader />}><MigrateFromXero /></Suspense>;
+    if (p === '/catch-up') return <Suspense fallback={<PageLoader />}><CatchUp /></Suspense>;
+    if (p === '/catchup/penalty-calculator') return <Suspense fallback={<PageLoader />}><PenaltyCalculator /></Suspense>;
+    return null;
+  })();
 
   if (loading) {
     return (
@@ -124,7 +150,7 @@ function AppRoutes() {
           <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
             A
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">AlecRae</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">DavenRoe</h1>
           <p className="text-gray-500">Initializing...</p>
         </div>
       </div>
@@ -132,6 +158,9 @@ function AppRoutes() {
   }
 
   const goHome = () => { setPublicPage(null); setShowLogin(false); };
+
+  // Public marketing pages (accessible always, logged in or out)
+  if (publicMarketingPage) return publicMarketingPage;
 
   // Public pages (accessible without login)
   if (!user) {
@@ -164,7 +193,7 @@ function AppRoutes() {
   if (!onboarded) {
     return (
       <Onboarding onComplete={() => {
-        localStorage.setItem('alecrae_onboarded', 'true');
+        localStorage.setItem('davenroe_onboarded', 'true');
         setOnboarded(true);
       }} />
     );
@@ -185,12 +214,15 @@ function AppRoutes() {
         <Route path="/portal" element={<ClientPortal />} />
         <Route path="/specialists" element={<Specialists />} />
         <Route path="/toolkit" element={<Toolkit />} />
-        <Route path="/ask" element={<AskAlecRae />} />
+        <Route path="/ask" element={<AskDavenRoe />} />
         <Route path="/agentic" element={<AgenticDashboard />} />
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/enterprise" element={<Enterprise />} />
         <Route path="/activity" element={<ActivityFeed />} />
+        <Route path="/timeline" element={<Timeline />} />
+        <Route path="/accountant-pack" element={<AccountantPack />} />
+        <Route path="/email-harvester" element={<EmailHarvester />} />
         <Route path="/payroll" element={<ConsentGate feature="payroll"><Payroll /></ConsentGate>} />
         <Route path="/tax-filing" element={<ConsentGate feature="tax_filing"><TaxFiling /></ConsentGate>} />
         <Route path="/marketplace" element={<Marketplace />} />

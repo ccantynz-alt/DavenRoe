@@ -68,7 +68,7 @@ const DEMO_PROJECTS = [
     id: '3', name: 'ERP Migration', client: 'NovaTech Solutions', status: 'planning',
     start_date: '2026-04-01', due_date: '2026-09-30', budget: 120000, spent: 0,
     billable_hours: 0, non_billable_hours: 6, hourly_rate: 180,
-    revenue: 0, description: 'Migrate from legacy ERP to AlecRae platform, including data migration and staff training',
+    revenue: 0, description: 'Migrate from legacy ERP to DavenRoe platform, including data migration and staff training',
     milestones: [
       { id: 'm1', name: 'Requirements gathering', due: '2026-04-30', done: false },
       { id: 'm2', name: 'Data migration plan', due: '2026-05-31', done: false },

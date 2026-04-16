@@ -1,4 +1,4 @@
-"""AlecRae — The World's First Autonomous Global Accounting Agent.
+"""DavenRoe — The World's First Autonomous Global Accounting Agent.
 
 Main FastAPI application entry point.
 """
@@ -56,8 +56,9 @@ app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
     description=(
-        "Autonomous global accounting platform with AI-powered bookkeeping, "
-        "multi-jurisdiction tax compliance, and treaty-aware cross-border calculations."
+        "AI-native global accounting platform with autonomous bookkeeping, "
+        "multi-jurisdiction tax compliance, forensic intelligence, native 4-country payroll, "
+        "and treaty-aware cross-border calculations across AU, NZ, UK, US."
     ),
     docs_url="/docs",
     redoc_url="/redoc",
@@ -66,12 +67,20 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup():
-    """Create database tables on startup if they don't exist."""
+    """Create database tables on startup if they don't exist.
+
+    Uses a 5-second timeout so Vercel cold starts don't hang if the
+    database is unreachable.  The app falls back to demo mode gracefully.
+    """
+    import asyncio
+
     try:
         import app.models  # noqa: F401 — ensure all models are registered with Base
         from app.core.database import create_tables
-        await create_tables()
+        await asyncio.wait_for(create_tables(), timeout=5.0)
         logger.info("Database tables verified/created")
+    except asyncio.TimeoutError:
+        logger.warning("Database connection timed out (5 s) — running in demo mode")
     except Exception as e:
         logger.warning(f"Database not available — running in demo mode: {e}")
 
@@ -245,6 +254,10 @@ async def root():
             "forensic_accounting": "M&A Due Diligence — Benford's Law, anomaly detection, vendor/payroll cross-ref",
             "specialist_toolkits": "12 accounting specializations, 90+ automations",
             "universal_toolkit": "Calculators, validators, reconciliation, reference — everyday tools for every user",
+        },
+        "capture": {
+            "catch_up": "/api/v1/catch-up — public years-behind rescue assessment (no auth)",
+            "compare": "/compare/quickbooks, /migrate/from-quickbooks — public marketing pages",
         },
     }
 

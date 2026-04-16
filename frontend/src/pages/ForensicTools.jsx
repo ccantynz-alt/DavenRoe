@@ -508,7 +508,7 @@ export default function ForensicTools() {
           Export Report
         </button>
       </div>
-      <p className="text-gray-500 mb-8">Advanced fraud detection and financial irregularity analysis — powered by AlecRae AI</p>
+      <p className="text-gray-500 mb-8">Advanced fraud detection and financial irregularity analysis — powered by DavenRoe AI</p>
 
       <SummaryCards
         flags={totalFlags}

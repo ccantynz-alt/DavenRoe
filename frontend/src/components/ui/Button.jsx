@@ -4,16 +4,16 @@ import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-astra-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marcoReid-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
   {
     variants: {
       variant: {
-        default: 'bg-astra-600 text-white shadow-sm hover:bg-astra-700 active:bg-astra-800',
+        default: 'bg-marcoReid-600 text-white shadow-sm hover:bg-marcoReid-700 active:bg-marcoReid-800',
         destructive: 'bg-red-600 text-white shadow-sm hover:bg-red-700 active:bg-red-800',
         outline: 'border border-gray-300 bg-white text-gray-700 shadow-sm hover:bg-gray-50 hover:text-gray-900',
         secondary: 'bg-gray-100 text-gray-900 shadow-sm hover:bg-gray-200',
         ghost: 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
-        link: 'text-astra-600 underline-offset-4 hover:underline',
+        link: 'text-marcoReid-600 underline-offset-4 hover:underline',
         success: 'bg-emerald-600 text-white shadow-sm hover:bg-emerald-700 active:bg-emerald-800',
       },
       size: {

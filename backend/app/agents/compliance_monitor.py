@@ -35,7 +35,7 @@ class ObligationFrequency(str, Enum):
     AD_HOC = "ad_hoc"
 
 
-COMPLIANCE_PROMPT = """You are the Compliance Monitor AI for AlecRae, an autonomous accounting platform.
+COMPLIANCE_PROMPT = """You are the Compliance Monitor AI for DavenRoe, an autonomous accounting platform.
 
 You monitor regulatory compliance across multiple jurisdictions (US, AU, NZ, GB).
 Analyze the entity's compliance status and generate actionable alerts.

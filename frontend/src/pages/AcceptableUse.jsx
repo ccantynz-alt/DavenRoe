@@ -6,7 +6,7 @@ export default function AcceptableUse({ onBack }) {
           <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
             <span className="text-white font-bold text-lg">A</span>
           </div>
-          <span className="text-xl font-semibold tracking-tight">AlecRae</span>
+          <span className="text-xl font-semibold tracking-tight">DavenRoe</span>
         </div>
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">
           &larr; Back to homepage
@@ -18,19 +18,19 @@ export default function AcceptableUse({ onBack }) {
         <p className="text-sm text-gray-400 mb-12">Last Updated: March 2026 &middot; Version 2026.03.1</p>
 
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-12 text-sm text-amber-800">
-          <strong>Important:</strong> This Acceptable Use Policy (&ldquo;AUP&rdquo;) governs your use of the AlecRae platform and all associated services. Violation of this policy may result in immediate account suspension or termination. This AUP is incorporated by reference into the <a href="/terms" className="text-amber-900 underline">Terms of Service</a>.
+          <strong>Important:</strong> This Acceptable Use Policy (&ldquo;AUP&rdquo;) governs your use of the DavenRoe platform and all associated services. Violation of this policy may result in immediate account suspension or termination. This AUP is incorporated by reference into the <a href="/terms" className="text-amber-900 underline">Terms of Service</a>.
         </div>
 
         <div className="space-y-10">
           <Section title="1. Scope">
             <p>
-              This policy applies to all users of the AlecRae platform, including account holders, invited team members, client portal users, and any person who accesses AlecRae&apos;s features, outputs, or data through any means. &ldquo;Use&rdquo; includes accessing, uploading data to, generating outputs from, or relying upon any feature of the platform.
+              This policy applies to all users of the DavenRoe platform, including account holders, invited team members, client portal users, and any person who accesses DavenRoe&apos;s features, outputs, or data through any means. &ldquo;Use&rdquo; includes accessing, uploading data to, generating outputs from, or relying upon any feature of the platform.
             </p>
           </Section>
 
           <Section title="2. Permitted Uses">
             <p className="mb-4">
-              AlecRae is designed exclusively for <strong>lawful business financial management</strong>. Permitted uses include:
+              DavenRoe is designed exclusively for <strong>lawful business financial management</strong>. Permitted uses include:
             </p>
             <ul className="space-y-2 text-sm">
               {[
@@ -54,7 +54,7 @@ export default function AcceptableUse({ onBack }) {
 
           <Section title="3. Prohibited Uses">
             <h3 className="font-semibold text-gray-900 mt-4 mb-2">3.1 Financial Crime</h3>
-            <p className="mb-3">You must not use AlecRae to facilitate, conceal, or further any financial crime, including but not limited to:</p>
+            <p className="mb-3">You must not use DavenRoe to facilitate, conceal, or further any financial crime, including but not limited to:</p>
             <ul className="space-y-2 text-sm mb-4">
               {[
                 'Money laundering or structuring transactions to avoid reporting thresholds',
@@ -89,7 +89,7 @@ export default function AcceptableUse({ onBack }) {
               {[
                 'Using forensic analysis outputs (Benford\'s Law, ghost vendor detection, money trail) to harass, intimidate, or discriminate against employees or contractors',
                 'Taking disciplinary or legal action against any person based solely on automated forensic alerts without independent investigation',
-                'Violating employment law, workplace privacy regulations, or whistleblower protections based on AlecRae outputs',
+                'Violating employment law, workplace privacy regulations, or whistleblower protections based on DavenRoe outputs',
                 'Using forensic tools to conduct surveillance beyond the scope of legitimate financial audit',
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-gray-600">
@@ -103,7 +103,7 @@ export default function AcceptableUse({ onBack }) {
               {[
                 'Sharing login credentials with unauthorised third parties',
                 'Allowing access to your account by persons not authorised under your subscription',
-                'Reverse engineering, decompiling, or disassembling any part of the AlecRae platform',
+                'Reverse engineering, decompiling, or disassembling any part of the DavenRoe platform',
                 'Scraping, crawling, or automated extraction of data from the platform',
                 'Attempting to bypass rate limits, access controls, or security measures',
                 'Introducing malicious code, viruses, or harmful software',
@@ -119,7 +119,7 @@ export default function AcceptableUse({ onBack }) {
             <h3 className="font-semibold text-gray-900 mt-4 mb-2">3.5 Other Prohibited Conduct</h3>
             <ul className="space-y-2 text-sm">
               {[
-                'Using AlecRae for any purpose that violates applicable local, state, national, or international law',
+                'Using DavenRoe for any purpose that violates applicable local, state, national, or international law',
                 'Creating accounts under false identities or with fraudulent business information',
                 'Reselling, sublicensing, or redistributing access to the platform without written authorisation',
                 'Using the platform to process data for businesses or entities you are not authorised to represent',
@@ -135,7 +135,7 @@ export default function AcceptableUse({ onBack }) {
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 text-sm text-red-800">
               <strong>Warning:</strong> Violations of this Acceptable Use Policy may result in immediate and severe consequences, including permanent loss of access to the platform and all associated data.
             </div>
-            <p className="mb-4">AlecRae reserves the right, at its sole discretion, to take any or all of the following actions upon detecting or receiving a report of a violation:</p>
+            <p className="mb-4">DavenRoe reserves the right, at its sole discretion, to take any or all of the following actions upon detecting or receiving a report of a violation:</p>
             <ul className="space-y-2 text-sm">
               {[
                 'Immediate suspension of your account and all associated user accounts',
@@ -157,10 +157,10 @@ export default function AcceptableUse({ onBack }) {
 
           <Section title="5. Monitoring &amp; Enforcement">
             <p className="mb-3">
-              AlecRae employs automated and manual monitoring to detect violations of this policy. This includes anomaly detection on usage patterns, audit logging of all platform actions, and periodic review of flagged accounts. All monitoring is conducted in accordance with our <a href="/privacy" className="text-indigo-600 underline">Privacy Policy</a>.
+              DavenRoe employs automated and manual monitoring to detect violations of this policy. This includes anomaly detection on usage patterns, audit logging of all platform actions, and periodic review of flagged accounts. All monitoring is conducted in accordance with our <a href="/privacy" className="text-indigo-600 underline">Privacy Policy</a>.
             </p>
             <p>
-              AlecRae is not obligated to actively monitor all user activity but reserves the right to investigate any suspected violation and to take action as described in Section 4.
+              DavenRoe is not obligated to actively monitor all user activity but reserves the right to investigate any suspected violation and to take action as described in Section 4.
             </p>
           </Section>
 
@@ -170,28 +170,28 @@ export default function AcceptableUse({ onBack }) {
             </p>
             <div className="bg-gray-50 rounded-xl p-4">
               <p className="text-sm text-gray-700 mb-2">
-                <strong>Email:</strong> <span className="text-indigo-600 font-medium">abuse@alecrae.com</span>
+                <strong>Email:</strong> <span className="text-indigo-600 font-medium">abuse@davenroe.com</span>
               </p>
               <p className="text-sm text-gray-700 mb-2">
                 <strong>Include:</strong> A description of the suspected violation, the user or account involved (if known), and any supporting evidence.
               </p>
               <p className="text-sm text-gray-500">
-                All reports are treated confidentially. AlecRae will not retaliate against any user who reports a violation in good faith.
+                All reports are treated confidentially. DavenRoe will not retaliate against any user who reports a violation in good faith.
               </p>
             </div>
           </Section>
 
           <Section title="7. Changes to This Policy">
             <p>
-              AlecRae may update this Acceptable Use Policy at any time. Material changes will be communicated via email and in-app notification at least 14 days before taking effect. Continued use of the platform after the effective date constitutes acceptance of the updated policy. The current version is always available at <a href="/acceptable-use" className="text-indigo-600 underline">alecrae.com/acceptable-use</a>.
+              DavenRoe may update this Acceptable Use Policy at any time. Material changes will be communicated via email and in-app notification at least 14 days before taking effect. Continued use of the platform after the effective date constitutes acceptance of the updated policy. The current version is always available at <a href="/acceptable-use" className="text-indigo-600 underline">davenroe.com/acceptable-use</a>.
             </p>
           </Section>
 
           <Section title="8. Contact">
             <p>
-              Abuse reports: <span className="text-indigo-600 font-medium">abuse@alecrae.com</span> &middot;
-              Legal: <span className="text-indigo-600 font-medium">legal@alecrae.com</span> &middot;
-              Privacy: <span className="text-indigo-600 font-medium">privacy@alecrae.com</span>
+              Abuse reports: <span className="text-indigo-600 font-medium">abuse@davenroe.com</span> &middot;
+              Legal: <span className="text-indigo-600 font-medium">legal@davenroe.com</span> &middot;
+              Privacy: <span className="text-indigo-600 font-medium">privacy@davenroe.com</span>
             </p>
           </Section>
         </div>

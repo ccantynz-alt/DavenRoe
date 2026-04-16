@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { askAlecRae } from '../services/api';
+import { askDavenRoe } from '../services/api';
 import LegalDisclaimer from '../components/LegalDisclaimer';
 
-export default function AskAlecRae() {
+export default function AskDavenRoe() {
   const [query, setQuery] = useState('');
   const [conversation, setConversation] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export default function AskAlecRae() {
     setLoading(true);
 
     try {
-      const res = await askAlecRae(userMsg);
+      const res = await askDavenRoe(userMsg);
       setConversation((prev) => [...prev, { role: 'astra', content: res.data }]);
     } catch (err) {
       setConversation((prev) => [
@@ -38,7 +38,7 @@ export default function AskAlecRae() {
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
       <div className="mb-6">
-        <h2 className="text-3xl font-bold">Ask AlecRae</h2>
+        <h2 className="text-3xl font-bold">Ask DavenRoe</h2>
         <p className="text-gray-500 mt-1">Ask anything about your finances in plain English</p>
         <LegalDisclaimer type="ai" className="mt-3" />
       </div>
@@ -73,7 +73,7 @@ export default function AskAlecRae() {
               <p>{msg.content}</p>
             ) : (
               <div>
-                <p className="font-semibold text-sm text-astra-600 mb-2">AlecRae</p>
+                <p className="font-semibold text-sm text-astra-600 mb-2">DavenRoe</p>
                 <p className="text-gray-700">{msg.content.summary}</p>
                 {msg.content.key_metrics?.length > 0 && (
                   <div className="flex gap-4 mt-3">
@@ -98,7 +98,7 @@ export default function AskAlecRae() {
         ))}
         {loading && (
           <div className="bg-white border rounded-xl p-4 mr-12 animate-pulse">
-            <p className="text-gray-400">AlecRae is thinking...</p>
+            <p className="text-gray-400">DavenRoe is thinking...</p>
           </div>
         )}
       </div>

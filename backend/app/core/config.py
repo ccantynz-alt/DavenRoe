@@ -6,7 +6,7 @@ from functools import lru_cache
 
 class Settings(BaseSettings):
     # App
-    app_name: str = "AlecRae"
+    app_name: str = "DavenRoe"
     app_version: str = "0.1.0"
     debug: bool = False
     secret_key: str = "change-me-in-production"

@@ -3,50 +3,50 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <!-- Homepage — highest priority -->
   <url>
-    <loc>https://alecrae.com/</loc>
+    <loc>https://davenroe.com/</loc>
     <lastmod>2026-03-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="en-AU" href="https://astra.ai/?region=au" />
-    <xhtml:link rel="alternate" hreflang="en-NZ" href="https://astra.ai/?region=nz" />
-    <xhtml:link rel="alternate" hreflang="en-GB" href="https://astra.ai/?region=uk" />
-    <xhtml:link rel="alternate" hreflang="en-US" href="https://astra.ai/?region=us" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://astra.ai/" />
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://davenroe.com/?region=au" />
+    <xhtml:link rel="alternate" hreflang="en-NZ" href="https://davenroe.com/?region=nz" />
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://davenroe.com/?region=uk" />
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://davenroe.com/?region=us" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://davenroe.com/" />
   </url>
 
   <!-- Public feature/info pages -->
   <url>
-    <loc>https://alecrae.com/about</loc>
+    <loc>https://davenroe.com/about</loc>
     <lastmod>2026-03-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://alecrae.com/security</loc>
+    <loc>https://davenroe.com/security</loc>
     <lastmod>2026-03-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://alecrae.com/privacy</loc>
+    <loc>https://davenroe.com/privacy</loc>
     <lastmod>2026-03-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://alecrae.com/terms</loc>
+    <loc>https://davenroe.com/terms</loc>
     <lastmod>2026-03-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://alecrae.com/contact</loc>
+    <loc>https://davenroe.com/contact</loc>
     <lastmod>2026-03-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://alecrae.com/help</loc>
+    <loc>https://davenroe.com/help</loc>
     <lastmod>2026-03-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>

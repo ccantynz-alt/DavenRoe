@@ -2,10 +2,10 @@ import { useState } from 'react';
 import api from '../services/api';
 
 const STEPS = [
-  { id: 'welcome', title: 'Welcome to AlecRae', subtitle: 'Let\'s set up your accounting in under 2 minutes' },
+  { id: 'welcome', title: 'Welcome to DavenRoe', subtitle: 'Let\'s set up your accounting in under 2 minutes' },
   { id: 'entity', title: 'Create Your Business', subtitle: 'Tell us about your company' },
   { id: 'bank', title: 'Connect Your Bank', subtitle: 'Automatic transaction import' },
-  { id: 'done', title: 'You\'re All Set', subtitle: 'Start working with AlecRae' },
+  { id: 'done', title: 'You\'re All Set', subtitle: 'Start working with DavenRoe' },
 ];
 
 const SAMPLE_ENTITIES = [
@@ -99,7 +99,7 @@ export default function Onboarding({ onComplete }) {
               <div className="grid grid-cols-2 gap-4 mb-8">
                 <FeatureCard icon="$" title="Tax Engine" desc="US, AU, NZ, GB + 6 treaties" />
                 <FeatureCard icon=">" title="AI Ledger" desc="Auto-categorize & review" />
-                <FeatureCard icon="?" title="Ask AlecRae" desc="Natural language queries" />
+                <FeatureCard icon="?" title="Ask DavenRoe" desc="Natural language queries" />
                 <FeatureCard icon="!" title="Forensic Tools" desc="Anomaly detection & audit" />
               </div>
 
@@ -248,13 +248,13 @@ export default function Onboarding({ onComplete }) {
                   : 'Your workspace is ready.'}
               </p>
               <p className="text-sm text-gray-400 mb-8">
-                Start by importing transactions, creating invoices, or asking AlecRae anything.
+                Start by importing transactions, creating invoices, or asking DavenRoe anything.
               </p>
 
               <div className="grid grid-cols-3 gap-3 mb-8">
                 <QuickAction label="Import CSV" desc="Upload existing data" />
                 <QuickAction label="Create Invoice" desc="Send your first invoice" />
-                <QuickAction label="Ask AlecRae" desc="Ask anything in plain English" />
+                <QuickAction label="Ask DavenRoe" desc="Ask anything in plain English" />
               </div>
 
               <button onClick={() => onComplete()}

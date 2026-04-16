@@ -8,11 +8,11 @@ import { useState } from 'react';
 const FAQS = [
   {
     q: 'Is the AI actually doing my bookkeeping, or is this just auto-categorisation?',
-    a: "It's real double-entry bookkeeping. AlecRae doesn't just label transactions — it drafts full journal entries with debits, credits, GST components, and account allocations. Every entry follows GAAP/IFRS standards. Your team reviews exceptions through a dedicated approval queue, with AI confidence scores on every line.",
+    a: "It's real double-entry bookkeeping. DavenRoe doesn't just label transactions — it drafts full journal entries with debits, credits, GST components, and account allocations. Every entry follows GAAP/IFRS standards. Your team reviews exceptions through a dedicated approval queue, with AI confidence scores on every line.",
   },
   {
     q: 'How does multi-jurisdiction tax work? Do I need to configure it?',
-    a: "AlecRae ships with full tax engines for Australia, United States, New Zealand, and the United Kingdom — including all major tax types (GST, VAT, PAYG, PAYE, corporate tax, withholding tax). When your client has cross-border income, the treaty engine automatically identifies applicable bilateral agreements and calculates the optimal withholding rate. No configuration needed — it's built in.",
+    a: "DavenRoe ships with full tax engines for Australia, United States, New Zealand, and the United Kingdom — including all major tax types (GST, VAT, PAYG, PAYE, corporate tax, withholding tax). When your client has cross-border income, the treaty engine automatically identifies applicable bilateral agreements and calculates the optimal withholding rate. No configuration needed — it's built in.",
   },
   {
     q: "What exactly is the forensic module? Is this like Benford's Law?",
@@ -36,7 +36,7 @@ const FAQS = [
   },
   {
     q: 'Can I migrate from Xero or QuickBooks?',
-    a: "Yes. AlecRae includes built-in importers for Xero, QuickBooks, MYOB, and standard CSV/Excel files. The migration tool maps your existing chart of accounts, transaction history, and client data. Most firms complete migration within a single session.",
+    a: "Yes. DavenRoe includes built-in importers for Xero, QuickBooks, MYOB, and standard CSV/Excel files. The migration tool maps your existing chart of accounts, transaction history, and client data. Most firms complete migration within a single session.",
   },
 ];
 

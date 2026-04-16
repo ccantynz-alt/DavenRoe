@@ -66,12 +66,17 @@ def _init_db():
             db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
             logger.info("Auto-converted connection string to asyncpg format")
 
+        # Timeout args so Vercel serverless doesn't hang on slow/missing DB
+        connect_args.setdefault("timeout", 5)  # asyncpg connect timeout (seconds)
+
         _engine = create_async_engine(
             db_url,
             echo=settings.debug,
             pool_size=5,
             max_overflow=5,
             pool_pre_ping=True,
+            pool_timeout=5,           # max wait for a connection from pool
+            pool_recycle=300,          # recycle connections every 5 min (serverless)
             connect_args=connect_args,
         )
         _async_session = async_sessionmaker(

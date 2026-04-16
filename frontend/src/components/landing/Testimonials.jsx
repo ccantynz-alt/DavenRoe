@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from 'react';
 
 const TESTIMONIALS = [
   {
-    quote: "We closed month-end for 47 clients in the time it used to take us to do one. AlecRae didn't just save us hours — it changed the economics of our entire practice.",
+    quote: "We closed month-end for 47 clients in the time it used to take us to do one. DavenRoe didn't just save us hours — it changed the economics of our entire practice.",
     name: 'Sarah Chen',
     role: 'Managing Partner',
     firm: 'Chen & Associates',
@@ -27,7 +27,7 @@ const TESTIMONIALS = [
     avatar: 'JW',
   },
   {
-    quote: "AlecRae's forensic module flagged a $140,000 vendor fraud scheme that our annual audit missed two years running. The Benford's analysis is extraordinary.",
+    quote: "DavenRoe's forensic module flagged a $140,000 vendor fraud scheme that our annual audit missed two years running. The Benford's analysis is extraordinary.",
     name: 'David Kapoor',
     role: 'Forensic Accounting Lead',
     firm: 'Kapoor Whitfield',

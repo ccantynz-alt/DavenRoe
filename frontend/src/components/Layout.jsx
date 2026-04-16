@@ -10,6 +10,7 @@ const navSections = [
     label: 'Overview',
     items: [
       { path: '/', label: 'Dashboard' },
+      { path: '/timeline', label: 'Timeline' },
       { path: '/practice', label: 'Practice Overview' },
       { path: '/financial-health', label: 'Health Score' },
     ],
@@ -65,6 +66,7 @@ const navSections = [
     items: [
       { path: '/tax', label: 'Tax Engine' },
       { path: '/tax-filing', label: 'Tax Filing' },
+      { path: '/accountant-pack', label: 'Get Ready for Accountant' },
       { path: '/tax-rulings', label: 'Tax Rulings Agent' },
       { path: '/tax-advisor', label: 'Tax Advisor Toolkit' },
       { path: '/tax-agent', label: 'Tax Agent' },
@@ -82,7 +84,7 @@ const navSections = [
   {
     label: 'AI & Intelligence',
     items: [
-      { path: '/ask', label: 'Ask AlecRae' },
+      { path: '/ask', label: 'Ask DavenRoe' },
       { path: '/agentic', label: 'AI Agents' },
       { path: '/ai-insights', label: 'AI Insights' },
       { path: '/alerts', label: 'AI Alerts' },
@@ -97,6 +99,7 @@ const navSections = [
     items: [
       { path: '/documents', label: 'Documents' },
       { path: '/email-scanner', label: 'Email Scanner' },
+      { path: '/email-harvester', label: 'Email Harvester' },
     ],
   },
   {
@@ -191,7 +194,7 @@ export default function Layout({ children }) {
       )}>
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <div>
-            <h1 style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic text-white drop-shadow-md">AlecRae</h1>
+            <h1 style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic text-white drop-shadow-md">DavenRoe</h1>
             <p className="text-[10px] text-gray-400 tracking-widest uppercase">Accounting</p>
           </div>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-400 hover:text-white">
@@ -238,7 +241,7 @@ export default function Layout({ children }) {
               <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <h1 style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic text-gray-900">AlecRae</h1>
+          <h1 style={{ fontFamily: "'Cormorant Garamond', serif" }} className="text-2xl font-light italic text-gray-900">DavenRoe</h1>
           <div className="w-6" />
         </header>
 
