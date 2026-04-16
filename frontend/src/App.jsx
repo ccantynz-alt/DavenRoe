@@ -101,6 +101,8 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Public marketing pages (no login required)
 const CompareQuickBooks = lazy(() => import('./pages/compare/QuickBooks'));
+const CompareXero = lazy(() => import('./pages/compare/Xero'));
+const CompareMYOB = lazy(() => import('./pages/compare/MYOB'));
 const MigrateFromQuickBooks = lazy(() => import('./pages/migrate/FromQuickBooks'));
 const CatchUp = lazy(() => import('./pages/CatchUp'));
 const PenaltyCalculator = lazy(() => import('./pages/catchup/PenaltyCalculator'));
@@ -130,6 +132,8 @@ function AppRoutes() {
   const publicMarketingPage = (() => {
     const p = location.pathname;
     if (p === '/compare/quickbooks') return <Suspense fallback={<PageLoader />}><CompareQuickBooks /></Suspense>;
+    if (p === '/compare/xero') return <Suspense fallback={<PageLoader />}><CompareXero /></Suspense>;
+    if (p === '/compare/myob') return <Suspense fallback={<PageLoader />}><CompareMYOB /></Suspense>;
     if (p === '/migrate/from-quickbooks') return <Suspense fallback={<PageLoader />}><MigrateFromQuickBooks /></Suspense>;
     if (p === '/catch-up') return <Suspense fallback={<PageLoader />}><CatchUp /></Suspense>;
     if (p === '/catchup/penalty-calculator') return <Suspense fallback={<PageLoader />}><PenaltyCalculator /></Suspense>;
