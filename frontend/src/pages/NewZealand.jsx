@@ -102,6 +102,19 @@ export default function NewZealand() {
     document.title = 'DavenRoe NZ — AI Accounting Software for New Zealand | GST, IR3, Payroll';
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute('content', 'DavenRoe: AI-powered accounting software built for New Zealand. GST returns, IR3/IR4, provisional tax, PAYE, KiwiSaver, compliance calendar. Replaces Xero + Dext + Fathom for $149/mo NZD. Try free for 30 days.');
+
+    // SEO: canonical + hreflang for multi-domain setup
+    const setLink = (rel, href, hreflang) => {
+      let el = document.querySelector(`link[hreflang="${hreflang || ''}"][rel="${rel}"]`) || document.createElement('link');
+      el.setAttribute('rel', rel);
+      el.setAttribute('href', href);
+      if (hreflang) el.setAttribute('hreflang', hreflang);
+      if (!el.parentNode) document.head.appendChild(el);
+    };
+    setLink('canonical', 'https://davenroe.co.nz', '');
+    setLink('alternate', 'https://davenroe.co.nz', 'en-NZ');
+    setLink('alternate', 'https://davenroe.com.au', 'en-AU');
+    setLink('alternate', 'https://davenroe.com', 'x-default');
   }, []);
 
   return (

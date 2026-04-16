@@ -103,6 +103,19 @@ export default function Australia() {
     document.title = 'DavenRoe AU — AI Accounting Software for Australia | BAS, STP, Payroll';
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute('content', 'DavenRoe: AI-powered accounting software built for Australia. BAS preparation, STP, PAYG, Superannuation, compliance calendar. Replaces Xero + MYOB + Dext + Fathom for A$164/mo AUD. Try free for 30 days.');
+
+    // SEO: canonical + hreflang for multi-domain setup
+    const setLink = (rel, href, hreflang) => {
+      let el = document.querySelector(`link[hreflang="${hreflang || ''}"][rel="${rel}"]`) || document.createElement('link');
+      el.setAttribute('rel', rel);
+      el.setAttribute('href', href);
+      if (hreflang) el.setAttribute('hreflang', hreflang);
+      if (!el.parentNode) document.head.appendChild(el);
+    };
+    setLink('canonical', 'https://davenroe.com.au', '');
+    setLink('alternate', 'https://davenroe.co.nz', 'en-NZ');
+    setLink('alternate', 'https://davenroe.com.au', 'en-AU');
+    setLink('alternate', 'https://davenroe.com', 'x-default');
   }, []);
 
   return (
