@@ -84,6 +84,7 @@ const navSections = [
   {
     label: 'AI & Intelligence',
     items: [
+      { path: '/ask-daven', label: 'Ask Daven (Voice)' },
       { path: '/ask', label: 'Ask DavenRoe' },
       { path: '/agentic', label: 'AI Agents' },
       { path: '/ai-insights', label: 'AI Insights' },

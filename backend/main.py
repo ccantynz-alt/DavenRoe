@@ -50,6 +50,7 @@ from app.api.routes import (
     catch_up_engine,
     accountant_pack,
     email_harvester,
+    ask_daven,
 )
 from app.core.config import get_settings
 from app.legal.middleware import LegalHeadersMiddleware
@@ -225,6 +226,7 @@ app.include_router(timeline.router, prefix="/api/v1")
 app.include_router(catch_up_engine.router, prefix="/api/v1")
 app.include_router(accountant_pack.router, prefix="/api/v1")
 app.include_router(email_harvester.router, prefix="/api/v1")
+app.include_router(ask_daven.router, prefix="/api/v1")
 
 
 @app.get("/")
