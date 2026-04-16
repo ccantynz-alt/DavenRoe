@@ -107,6 +107,8 @@ const MigrateFromQuickBooks = lazy(() => import('./pages/migrate/FromQuickBooks'
 const MigrateFromXero = lazy(() => import('./pages/migrate/FromXero'));
 const CatchUp = lazy(() => import('./pages/CatchUp'));
 const PenaltyCalculator = lazy(() => import('./pages/catchup/PenaltyCalculator'));
+const NewZealand = lazy(() => import('./pages/NewZealand'));
+const Australia = lazy(() => import('./pages/Australia'));
 
 // ─── Loading fallback ────────────────────────────────────────────────────────
 function PageLoader() {
@@ -139,6 +141,8 @@ function AppRoutes() {
     if (p === '/migrate/from-xero') return <Suspense fallback={<PageLoader />}><MigrateFromXero /></Suspense>;
     if (p === '/catch-up') return <Suspense fallback={<PageLoader />}><CatchUp /></Suspense>;
     if (p === '/catchup/penalty-calculator') return <Suspense fallback={<PageLoader />}><PenaltyCalculator /></Suspense>;
+    if (p === '/nz') return <Suspense fallback={<PageLoader />}><NewZealand /></Suspense>;
+    if (p === '/au') return <Suspense fallback={<PageLoader />}><Australia /></Suspense>;
     return null;
   })();
 
