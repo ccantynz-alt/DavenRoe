@@ -119,7 +119,8 @@ const navSections = [
   {
     label: 'Admin',
     items: [
-      { path: '/admin', label: 'Command Center' },
+      { path: '/ops', label: 'Operations Centre' },
+      { path: '/admin', label: 'Platform Admin' },
       { path: '/activity', label: 'Activity Feed' },
       { path: '/billing', label: 'Billing' },
       { path: '/settings', label: 'Settings' },
