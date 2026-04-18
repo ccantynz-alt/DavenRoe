@@ -26,6 +26,8 @@ export default function MyBusiness() {
   const [stats, setStats] = useState(null);
   const [invoiceSummary, setInvoiceSummary] = useState(null);
   const [compliance, setCompliance] = useState(null);
+  const [gstPosition, setGstPosition] = useState(null);
+  const [incomeTax, setIncomeTax] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -33,11 +35,13 @@ export default function MyBusiness() {
       setLoading(true);
       const entityId = localStorage.getItem('davenroe_active_entity');
 
-      const [entityRes, statsRes, invoiceRes, complianceRes] = await Promise.allSettled([
+      const [entityRes, statsRes, invoiceRes, complianceRes, gstRes, taxRes] = await Promise.allSettled([
         entityId ? api.get(`/clients/${entityId}`).catch(() => null) : null,
         api.get('/dashboard/stats').catch(() => null),
         api.get('/invoicing/summary/all').catch(() => null),
         api.get('/compliance/summary').catch(() => null),
+        api.get('/platform-accounting/gst-position').catch(() => null),
+        api.get('/platform-accounting/income-tax-estimate').catch(() => null),
       ]);
 
       if (entityRes.status === 'fulfilled' && entityRes.value?.data) {
@@ -51,6 +55,12 @@ export default function MyBusiness() {
       }
       if (complianceRes.status === 'fulfilled' && complianceRes.value?.data) {
         setCompliance(complianceRes.value.data);
+      }
+      if (gstRes.status === 'fulfilled' && gstRes.value?.data) {
+        setGstPosition(gstRes.value.data);
+      }
+      if (taxRes.status === 'fulfilled' && taxRes.value?.data) {
+        setIncomeTax(taxRes.value.data);
       }
       setLoading(false);
     }
@@ -122,10 +132,35 @@ export default function MyBusiness() {
             <Link to="/tax" className="text-xs text-indigo-600 hover:text-indigo-800 font-medium">View tax engine →</Link>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <MiniCard label="GST collected" value="—" sub="Run catch-up to calculate" />
-            <MiniCard label="GST paid" value="—" sub="Connect bank feeds" />
-            <MiniCard label="Net GST payable" value="—" sub="File via Tax Filing" />
-            <MiniCard label="Income tax estimate" value="—" sub="Run catch-up engine" />
+            {gstPosition?.positions?.length > 0 ? (
+              <>
+                {gstPosition.positions.map((p) => (
+                  <MiniCard
+                    key={p.jurisdiction}
+                    label={`${p.jurisdiction} GST collected (${p.gst_rate === '0.15' ? '15%' : p.gst_rate === '0.10' ? '10%' : p.gst_rate})`}
+                    value={`${p.currency} ${Number(p.total_gst_collected).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+                    sub={`${p.transaction_count} transactions · Net ${p.currency} ${Number(p.total_net).toLocaleString()}`}
+                  />
+                ))}
+                <MiniCard
+                  label="Total GST payable"
+                  value={`$${Number(gstPosition.total_gst_payable).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
+                  sub={gstPosition.filing_note?.split('.')[0]}
+                />
+                <MiniCard
+                  label="Income tax estimate"
+                  value={incomeTax ? `$${Number(incomeTax.estimated_income_tax).toLocaleString()}` : '—'}
+                  sub={incomeTax ? `${incomeTax.effective_rate} effective · ${incomeTax.tax_rate_applied}` : 'Loading...'}
+                />
+              </>
+            ) : (
+              <>
+                <MiniCard label="GST collected" value="—" sub="Revenue data loading..." />
+                <MiniCard label="GST paid" value="—" sub="Connect bank feeds" />
+                <MiniCard label="Net GST payable" value="—" sub="File via Tax Filing" />
+                <MiniCard label="Income tax estimate" value="—" sub="Run catch-up engine" />
+              </>
+            )}
           </div>
           <Link to="/accountant-pack" className="mt-4 inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 font-medium">
             Generate accountant pack <ArrowRight className="w-4 h-4" />
