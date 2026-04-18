@@ -37,6 +37,7 @@ const TaxAdvisorToolkit = lazy(() => import('./pages/TaxAdvisor'));
 // AI & intelligence
 const AskDavenRoe = lazy(() => import('./pages/AskDavenRoe'));
 const AskDaven = lazy(() => import('./pages/AskDaven'));
+const MyBusiness = lazy(() => import('./pages/MyBusiness'));
 const AgenticDashboard = lazy(() => import('./pages/AgenticDashboard'));
 const AIInsights = lazy(() => import('./pages/AIInsights'));
 const FinancialHealthScore = lazy(() => import('./pages/FinancialHealthScore'));
@@ -207,6 +208,7 @@ function AppRoutes() {
     <Layout>
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/my-business" element={<MyBusiness />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/review" element={<ReviewQueue />} />
         <Route path="/reports" element={<Reports />} />
