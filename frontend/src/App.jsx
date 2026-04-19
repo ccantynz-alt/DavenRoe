@@ -39,6 +39,7 @@ const AskDavenRoe = lazy(() => import('./pages/AskDavenRoe'));
 const AskDaven = lazy(() => import('./pages/AskDaven'));
 const MyBusiness = lazy(() => import('./pages/MyBusiness'));
 const OperationsCentre = lazy(() => import('./pages/OperationsCentre'));
+const ReceiptScanner = lazy(() => import('./pages/ReceiptScanner'));
 const AgenticDashboard = lazy(() => import('./pages/AgenticDashboard'));
 const AIInsights = lazy(() => import('./pages/AIInsights'));
 const FinancialHealthScore = lazy(() => import('./pages/FinancialHealthScore'));
@@ -211,6 +212,7 @@ function AppRoutes() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/my-business" element={<MyBusiness />} />
         <Route path="/ops" element={<OperationsCentre />} />
+        <Route path="/receipt-scanner" element={<ReceiptScanner />} />
         <Route path="/clients" element={<Clients />} />
         <Route path="/review" element={<ReviewQueue />} />
         <Route path="/reports" element={<Reports />} />

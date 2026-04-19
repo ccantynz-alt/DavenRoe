@@ -1,14 +1,54 @@
 {
-  "name": "DavenRoe - Autonomous Accounting",
+  "name": "DavenRoe - AI Accounting",
   "short_name": "DavenRoe",
-  "description": "AI-powered global accounting platform",
-  "theme_color": "#4c6ef5",
+  "description": "AI-powered accounting for NZ & AU. GST, payroll, forensics, tax filing — all in one app.",
+  "theme_color": "#4f46e5",
   "background_color": "#111827",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "scope": "/",
-  "start_url": "/",
+  "start_url": "/my-business",
+  "id": "com.davenroe.app",
+  "categories": ["business", "finance", "productivity"],
+  "lang": "en-NZ",
+  "dir": "ltr",
   "icons": [
-    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Scan Receipt",
+      "short_name": "Scan",
+      "url": "/receipt-scanner",
+      "description": "Take a photo of a receipt and auto-extract",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ask Daven",
+      "short_name": "Ask",
+      "url": "/ask-daven",
+      "description": "Voice AI tax advisor",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Create Invoice",
+      "short_name": "Invoice",
+      "url": "/invoicing",
+      "description": "Create and send an invoice"
+    },
+    {
+      "name": "Timeline",
+      "short_name": "Timeline",
+      "url": "/timeline",
+      "description": "See all events in chronological order"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }
